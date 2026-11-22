@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { @apply border-slate-200; }
+  body { @apply bg-mist text-ink font-body antialiased; }
+  a { @apply transition-colors; }
+}
+
+@layer components {
+  .eyebrow { @apply text-xs font-bold tracking-[.24em] uppercase text-gold; }
+  .page-shell { @apply mx-auto w-full max-w-7xl px-5 md:px-8; }
+  .card { @apply rounded-2xl border border-slate-200 bg-white shadow-sm; }
+  .button-primary { @apply inline-flex items-center justify-center rounded-full bg-wine px-6 py-3 text-sm font-bold text-white shadow-lg shadow-wine/20 hover:-translate-y-0.5 hover:bg-[#5f1a23] focus:outline-none focus:ring-2 focus:ring-wine focus:ring-offset-2; }
+  .button-secondary { @apply inline-flex items-center justify-center rounded-full border border-ink/15 bg-white px-6 py-3 text-sm font-bold text-ink hover:border-gold hover:text-wine; }
+  .field { @apply mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-sm outline-none focus:border-wine focus:ring-2 focus:ring-wine/10; }
+}
