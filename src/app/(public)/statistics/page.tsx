@@ -2,8 +2,197 @@ import Link from "next/link";
 import { BarChart3, Users } from "lucide-react";
 import { count, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { assemblies, conferenceFamilies, registrationCategories, registrations } from "@/db/schema";
+import {
+  assemblies,
+  conferenceFamilies,
+  registrationCategories,
+  registrations,
+} from "@/db/schema";
 
-async function stats() { try { const db = getDb(); const [total] = await db.select({ total: count() }).from(registrations).where(eq(registrations.status, "CONFIRMED")); const families = await db.select({ name: conferenceFamilies.name, total: count(registrations.id) }).from(conferenceFamilies).leftJoin(registrations, eq(conferenceFamilies.id, registrations.familyId)).groupBy(conferenceFamilies.id).orderBy(conferenceFamilies.name); const leaderboard = await db.select({ id: assemblies.id, name: assemblies.name, family: conferenceFamilies.name, total: count(registrations.id) }).from(assemblies).leftJoin(conferenceFamilies, eq(assemblies.familyId, conferenceFamilies.id)).leftJoin(registrations, eq(assemblies.id, registrations.assemblyId)).groupBy(assemblies.id, conferenceFamilies.name).orderBy(sql`${count(registrations.id)} desc`); const categories = await db.select({ name: registrationCategories.name, total: count(registrations.id) }).from(registrationCategories).leftJoin(registrations, eq(registrationCategories.id, registrations.categoryId)).groupBy(registrationCategories.id); return { total: total?.total ?? 0, families, leaderboard, categories }; } catch { return { total: 0, families: [], leaderboard: [], categories: [] }; } }
-export default async function StatisticsPage() { const data = await stats(); return <main className="min-h-screen bg-mist"><header className="bg-ink py-8 text-white"><div className="page-shell flex items-center justify-between"><Link href="/" className="font-display text-xl">ACC 2027</Link><Link href="/register" className="text-sm font-bold text-gold">Register</Link></div></header><div className="page-shell py-14"><p className="eyebrow">Public registration view</p><h1 className="mt-3 font-display text-4xl md:text-5xl">Conference statistics</h1><p className="mt-4 max-w-xl text-slate-600">A privacy-conscious view of our growing conference community.</p><div className="mt-10 grid gap-5 md:grid-cols-3"><Metric icon={<Users/>} label="Confirmed registrations" value={String(data.total)}/><Metric icon={<BarChart3/>} label="Assemblies represented" value={String(data.leaderboard.filter((x) => Number(x.total) > 0).length)}/><Metric icon={<Users/>} label="Conference families" value={String(data.families.length)}/></div><div className="mt-12 grid gap-8 lg:grid-cols-[.85fr_1.15fr]"><section className="card p-6"><h2 className="font-display text-2xl">By family</h2><div className="mt-6 space-y-5">{data.families.map((item) => <div key={item.name}><div className="flex justify-between text-sm"><span>{item.name}</span><strong>{item.total}</strong></div><div className="mt-2 h-2 rounded-full bg-slate-100"><div className="h-full rounded-full bg-gold" style={{ width: `${data.total ? Math.round(Number(item.total) / data.total * 100) : 0}%` }}/></div></div>)}{!data.families.length && <Empty/>}</div></section><section className="card p-6"><h2 className="font-display text-2xl">Assembly leaderboard</h2><div className="mt-5 divide-y">{data.leaderboard.map((item, index) => <div key={item.id} className="flex items-center justify-between gap-4 py-4"><div className="flex items-center gap-4"><span className="grid size-8 place-items-center rounded-full bg-mist text-xs font-bold text-wine">{index + 1}</span><div><p className="font-semibold">{item.name}</p><p className="text-xs text-slate-500">{item.family ?? "Family not assigned"}</p></div></div><div className="text-right"><p className="font-bold">{item.total}</p><p className="text-xs text-slate-500">{data.total ? Math.round(Number(item.total) / data.total * 100) : 0}%</p></div></div>)}{!data.leaderboard.length && <Empty/>}</div></section></div><section className="card mt-8 p-6"><h2 className="font-display text-2xl">Registration categories</h2><div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{data.categories.map((item) => <div key={item.name} className="rounded-xl bg-mist p-4"><p className="text-sm text-slate-500">{item.name}</p><p className="mt-2 font-display text-3xl">{item.total}</p></div>)}</div></section></div></main>; }
-function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) { return <div className="card p-6"><div className="text-wine">{icon}</div><p className="mt-7 text-sm text-slate-500">{label}</p><p className="mt-1 font-display text-4xl">{value}</p></div>; } function Empty() { return <p className="py-8 text-center text-sm text-slate-500">Statistics will appear as registrations are confirmed.</p>; }
+async function stats() {
+  try {
+    const db = getDb();
+    const [total] = await db
+      .select({ total: count() })
+      .from(registrations)
+      .where(eq(registrations.status, "CONFIRMED"));
+    const families = await db
+      .select({ name: conferenceFamilies.name, total: count(registrations.id) })
+      .from(conferenceFamilies)
+      .leftJoin(
+        registrations,
+        eq(conferenceFamilies.id, registrations.familyId),
+      )
+      .groupBy(conferenceFamilies.id)
+      .orderBy(conferenceFamilies.name);
+    const leaderboard = await db
+      .select({
+        id: assemblies.id,
+        name: assemblies.name,
+        family: conferenceFamilies.name,
+        total: count(registrations.id),
+      })
+      .from(assemblies)
+      .leftJoin(
+        conferenceFamilies,
+        eq(assemblies.familyId, conferenceFamilies.id),
+      )
+      .leftJoin(registrations, eq(assemblies.id, registrations.assemblyId))
+      .groupBy(assemblies.id, conferenceFamilies.name)
+      .orderBy(sql`${count(registrations.id)} desc`);
+    const categories = await db
+      .select({
+        name: registrationCategories.name,
+        total: count(registrations.id),
+      })
+      .from(registrationCategories)
+      .leftJoin(
+        registrations,
+        eq(registrationCategories.id, registrations.categoryId),
+      )
+      .groupBy(registrationCategories.id);
+    return { total: total?.total ?? 0, families, leaderboard, categories };
+  } catch {
+    return { total: 0, families: [], leaderboard: [], categories: [] };
+  }
+}
+
+export default async function StatisticsPage() {
+  const data = await stats();
+  return (
+    <main className="min-h-screen bg-mist">
+      <header className="bg-ink py-8 text-white">
+        <div className="page-shell flex items-center justify-between">
+          <Link href="/" className="font-display text-xl">
+            ACC 2027
+          </Link>
+          <Link href="/register" className="text-sm font-bold text-gold">
+            Register
+          </Link>
+        </div>
+      </header>
+      <div className="page-shell py-14">
+        <p className="eyebrow">Public registration view</p>
+        <h1 className="mt-3 font-display text-4xl md:text-5xl">
+          Conference statistics
+        </h1>
+        <p className="mt-4 max-w-xl text-slate-600">
+          A privacy-conscious view of our growing conference community.
+        </p>
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          <Metric
+            icon={<Users />}
+            label="Confirmed registrations"
+            value={String(data.total)}
+          />
+          <Metric
+            icon={<BarChart3 />}
+            label="Assemblies represented"
+            value={String(
+              data.leaderboard.filter((x) => Number(x.total) > 0).length,
+            )}
+          />
+          <Metric
+            icon={<Users />}
+            label="Conference families"
+            value={String(data.families.length)}
+          />
+        </div>
+        <div className="mt-12 grid gap-8 lg:grid-cols-[.85fr_1.15fr]">
+          <section className="card p-6">
+            <h2 className="font-display text-2xl">By family</h2>
+            <div className="mt-6 space-y-5">
+              {data.families.map((item) => (
+                <div key={item.name}>
+                  <div className="flex justify-between text-sm">
+                    <span>{item.name}</span>
+                    <strong>{item.total}</strong>
+                  </div>
+                  <div className="mt-2 h-2 rounded-full bg-slate-100">
+                    <div
+                      className="h-full rounded-full bg-gold"
+                      style={{
+                        width: `${data.total ? Math.round((Number(item.total) / data.total) * 100) : 0}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+              {!data.families.length && <Empty />}
+            </div>
+          </section>
+          <section className="card p-6">
+            <h2 className="font-display text-2xl">Assembly leaderboard</h2>
+            <div className="mt-5 divide-y">
+              {data.leaderboard.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-4 py-4"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="grid size-8 place-items-center rounded-full bg-mist text-xs font-bold text-wine">
+                      {index + 1}
+                    </span>
+                    <div>
+                      <p className="font-semibold">{item.name}</p>
+                      <p className="text-xs text-slate-500">
+                        {item.family ?? "Family not assigned"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold">{item.total}</p>
+                    <p className="text-xs text-slate-500">
+                      {data.total
+                        ? Math.round((Number(item.total) / data.total) * 100)
+                        : 0}
+                      %
+                    </p>
+                  </div>
+                </div>
+              ))}
+              {!data.leaderboard.length && <Empty />}
+            </div>
+          </section>
+        </div>
+        <section className="card mt-8 p-6">
+          <h2 className="font-display text-2xl">Registration categories</h2>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {data.categories.map((item) => (
+              <div key={item.name} className="rounded-xl bg-mist p-4">
+                <p className="text-sm text-slate-500">{item.name}</p>
+                <p className="mt-2 font-display text-3xl">{item.total}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function Metric({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="card p-6">
+      <div className="text-wine">{icon}</div>
+      <p className="mt-7 text-sm text-slate-500">{label}</p>
+      <p className="mt-1 font-display text-4xl">{value}</p>
+    </div>
+  );
+}
+
+function Empty() {
+  return (
+    <p className="py-8 text-center text-sm text-slate-500">
+      Statistics will appear as registrations are confirmed.
+    </p>
+  );
+}
