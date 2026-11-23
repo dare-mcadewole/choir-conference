@@ -17,6 +17,5 @@ export default defineConfig({
   dialect: "postgresql",
   dbCredentials: {
     url: databaseUrl,
-    ssl: true,
   },
 });

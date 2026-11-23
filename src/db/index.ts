@@ -1,5 +1,8 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
+import { loadEnvConfig } from "@next/env";
+
+loadEnvConfig(process.cwd());
 
 export function getDb() {
   if (!process.env.DATABASE_URL)
@@ -8,7 +11,6 @@ export function getDb() {
   return drizzle({
     connection: {
       connectionString: process.env.DATABASE_URL,
-      ssl: true,
     },
     schema,
   });
