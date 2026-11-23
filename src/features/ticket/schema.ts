@@ -22,13 +22,13 @@ export const ticketTypes = pgTable(
   {
     id: id(),
     name: varchar("name", { length: 80 }).notNull(),
-    categorySlug: varchar("category_slug", { length: 100 }).notNull(),
+    slug: varchar("slug", { length: 100 }).notNull(),
     price: numeric("price", { precision: 12, scale: 2 }).notNull(),
     currency: varchar("currency", { length: 3 }).notNull().default("NGN"),
     active: boolean("active").notNull().default(true),
     ...timestamps,
   },
-  (table) => [uniqueIndex("ticket_type_category_unique").on(table.categorySlug)],
+  (table) => [uniqueIndex("ticket_type_category_unique").on(table.slug)],
 );
 
 export const tickets = pgTable(
