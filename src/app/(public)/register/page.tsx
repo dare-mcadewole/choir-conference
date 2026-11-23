@@ -41,8 +41,8 @@ export default async function RegisterPage({
         </Link>
         <div className="mx-auto mt-12 max-w-3xl">
           <p className="eyebrow">All Choirs&apos; Conference 2027</p>
-          <h1 className="mt-4 font-display text-4xl md:text-5xl">
-            Reserve your place.
+          <h1 className="mt-4 font-display text-4xl md:text-5xl uppercase">
+            Reserve your place
           </h1>
           <p className="mt-4 max-w-xl text-slate-600">
             Complete the form below. Your conference family will be assigned
