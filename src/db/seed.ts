@@ -15,7 +15,7 @@ async function seed() {
     .values({
       title: "All Choirs' Conference 2027",
       theme: "The Able Minister",
-      anchorScripture: "II COR. 3:6",
+      anchorScripture: "II CORINTHIANS 3:6",
       eventStartDate: new Date("2027-01-08"),
       eventEndDate: new Date("2027-01-09"),
       opensAt: new Date("2026-11-24"),
@@ -57,7 +57,7 @@ async function seed() {
     .values(
       [
         "Student",
-        "Worker",
+        "Employed",
         "Self-employed",
         "Unemployed",
         "Entrepreneur",
