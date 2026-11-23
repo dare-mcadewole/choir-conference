@@ -2,6 +2,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { CheckCircle2, ChevronLeft, Loader2 } from "lucide-react";
 import { submitRegistration } from "@/features/registration/actions";
+import { Button } from "@/components/ui/button";
 
 type Option = {
   id: string;
@@ -41,6 +42,7 @@ export function RegistrationForm({
     () => levels.filter((level) => level.institutionType === institution?.type),
     [levels, institution],
   );
+
   if (!assemblies.length)
     return (
       <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-900">
@@ -51,6 +53,7 @@ export function RegistrationForm({
         </p>
       </div>
     );
+
   if (success)
     return (
       <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
@@ -71,6 +74,7 @@ export function RegistrationForm({
         )}
       </div>
     );
+
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
@@ -92,6 +96,7 @@ export function RegistrationForm({
         ? form.get("academicLevelId") || undefined
         : undefined,
     };
+
     startTransition(async () => {
       const response = await submitRegistration(data);
       if (!response.ok) {
@@ -105,6 +110,7 @@ export function RegistrationForm({
       setSuccess(response);
     });
   }
+
   return (
     <form onSubmit={onSubmit} className="space-y-7">
       <div className="grid gap-5 md:grid-cols-2">
@@ -116,6 +122,7 @@ export function RegistrationForm({
             required
           />
         </Field>
+
         <Field label="Email address">
           <input
             className="field"
@@ -125,6 +132,7 @@ export function RegistrationForm({
             required
           />
         </Field>
+
         <Field label="Phone number">
           <input
             className="field"
@@ -134,6 +142,7 @@ export function RegistrationForm({
             required
           />
         </Field>
+
         <Field label="Gender">
           <select name="gender" className="field" required defaultValue="">
             <option value="" disabled>
@@ -143,6 +152,7 @@ export function RegistrationForm({
             <option value="FEMALE">Female</option>
           </select>
         </Field>
+
         <Field label="Assembly">
           <select name="assemblyId" className="field" required defaultValue="">
             <option value="" disabled>
@@ -155,6 +165,7 @@ export function RegistrationForm({
             ))}
           </select>
         </Field>
+
         <Field label="Category">
           <select
             name="categoryId"
@@ -177,6 +188,7 @@ export function RegistrationForm({
           </select>
         </Field>
       </div>
+
       <Field label="Position held (select all that apply)">
         <div className="grid gap-3 sm:grid-cols-2">
           {positions.map((item) => (
@@ -190,6 +202,7 @@ export function RegistrationForm({
           ))}
         </div>
       </Field>
+
       <Field label="Are you a Central Choir member?">
         <div className="flex gap-3">
           <label className="rounded-xl border px-5 py-3 text-sm">
@@ -214,6 +227,7 @@ export function RegistrationForm({
           </label>
         </div>
       </Field>
+
       {isStudent && (
         <div className="rounded-2xl bg-gold/10 p-5">
           <p className="text-sm font-bold text-ink">Student details</p>
@@ -259,13 +273,20 @@ export function RegistrationForm({
           </div>
         </div>
       )}
+
       {error && (
         <p className="rounded-xl bg-red-50 p-4 text-sm text-red-700">{error}</p>
       )}
-      <button disabled={isPending} className="button-primary w-full md:w-auto">
-        {isPending && <Loader2 className="mr-2 animate-spin" size={17} />}
+
+      <Button
+        type="submit"
+        loading={isPending}
+        className="w-full md:w-auto"
+        disabled={isPending}
+      >
         Complete registration
-      </button>
+      </Button>
+
       <p className="text-xs leading-5 text-slate-500">
         By registering, you consent to the conference team processing your
         details for the purposes of this event.
@@ -273,6 +294,7 @@ export function RegistrationForm({
     </form>
   );
 }
+
 function Field({
   label,
   children,
