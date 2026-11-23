@@ -8,7 +8,7 @@ async function getLandingData() {
   try {
     const db = getDb();
     const [settings, people] = await Promise.all([
-      db.query.conferenceSettings.findFirst(),
+      db.query.conference.findFirst(),
       db
         .select()
         .from(speakers)

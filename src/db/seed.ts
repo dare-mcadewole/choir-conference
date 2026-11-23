@@ -1,5 +1,5 @@
 import { getDb } from "./index";
-import { conferenceSettings } from "@/features/conference/schema";
+import { conference } from "@/features/conference/schema";
 import { conferenceFamilies } from "@/features/family/schema";
 import { academicLevels } from "@/features/institution/schema";
 import {
@@ -11,7 +11,7 @@ import { ticketTypes } from "@/features/ticket/schema";
 async function seed() {
   const db = getDb();
   await db
-    .insert(conferenceSettings)
+    .insert(conference)
     .values({
       title: "All Choirs' Conference 2027",
       theme: "The Able Minister",

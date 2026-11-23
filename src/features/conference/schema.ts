@@ -6,8 +6,10 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { id, timestamps } from "@/db/schema-helpers";
+import { relations } from "drizzle-orm";
+import { conferenceFamilyAssemblies } from "@/db/schema";
 
-export const conferenceSettings = pgTable("conference_settings", {
+export const conference = pgTable("conference", {
   id: id(),
   title: varchar("title", { length: 200 }).notNull(),
   theme: varchar("theme", { length: 200 }).notNull(),
@@ -32,3 +34,7 @@ export const conferenceSettings = pgTable("conference_settings", {
   isActive: boolean("is_active").default(true),
   ...timestamps,
 });
+
+export const conferenceRelations = relations(conference, ({ many }) => ({
+  conferenceFamilyAssemblies: many(conferenceFamilyAssemblies),
+}));

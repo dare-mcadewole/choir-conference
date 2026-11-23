@@ -3,11 +3,8 @@ import { randomBytes } from "crypto";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
 import { conferenceFamilies } from "@/features/family/schema";
-import { conferenceSettings } from "@/features/conference/schema";
-import {
-  academicLevels,
-  institutions,
-} from "@/features/institution/schema";
+import { conference } from "@/features/conference/schema";
+import { academicLevels, institutions } from "@/features/institution/schema";
 import {
   historicalRegistrants,
   positionOptions,
@@ -29,25 +26,15 @@ export async function lookupRegistrant(query: string) {
   const phone = email ? null : normalizePhone(query);
   const current = await db.query.registrations.findFirst({
     where: or(
-      email ? eq(registrations.normalizedEmail, email) : undefined,
-      phone ? eq(registrations.normalizedPhone, phone) : undefined,
+      email ? eq(registrations.email, email) : undefined,
+      phone ? eq(registrations.phone, phone) : undefined,
     ),
   });
   if (current) return { state: "registered" as const };
   const prior = await db.query.historicalRegistrants.findFirst({
     where: or(
-      email
-        ? eq(
-            historicalRegistrants.normalizedEmail,
-            email,
-          )
-        : undefined,
-      phone
-        ? eq(
-            historicalRegistrants.normalizedPhone,
-            phone,
-          )
-        : undefined,
+      email ? eq(historicalRegistrants.normalizedEmail, email) : undefined,
+      phone ? eq(historicalRegistrants.normalizedPhone, phone) : undefined,
     ),
   });
   return prior
@@ -64,7 +51,7 @@ export async function lookupRegistrant(query: string) {
 
 export async function createRegistration(input: RegistrationInput) {
   const db = getDb();
-  const settings = await db.query.conferenceSettings.findFirst();
+  const settings = await db.query.conference.findFirst();
   if (!settings?.registrationOpen)
     throw new Error("Registration is currently closed.");
   const assembly = await db.query.assemblies.findFirst({
@@ -73,10 +60,7 @@ export async function createRegistration(input: RegistrationInput) {
       eq(assemblies.active, true),
     ),
   });
-  if (!assembly?.familyId)
-    throw new Error(
-      "This assembly has not yet been assigned to a conference family.",
-    );
+
   const category = await db.query.registrationCategories.findFirst({
     where: and(
       eq(registrationCategories.id, input.categoryId),
@@ -111,8 +95,8 @@ export async function createRegistration(input: RegistrationInput) {
   if (!settings.allowDuplicates) {
     const duplicate = await db.query.registrations.findFirst({
       where: or(
-        eq(registrations.normalizedEmail, normalizedEmail),
-        eq(registrations.normalizedPhone, normalizedPhone),
+        eq(registrations.email, normalizedEmail),
+        eq(registrations.phone, normalizedPhone),
       ),
     });
     if (duplicate)
@@ -122,7 +106,7 @@ export async function createRegistration(input: RegistrationInput) {
   }
   const ticketType = await db.query.ticketTypes.findFirst({
     where: eq(
-      ticketTypes.categorySlug,
+      ticketTypes.slug,
       category.slug === "student" ? "student" : "non-student",
     ),
   });
@@ -135,15 +119,12 @@ export async function createRegistration(input: RegistrationInput) {
     .insert(registrations)
     .values({
       fullName: input.fullName,
-      email: input.email,
-      phone: input.phone,
+      email: normalizedEmail,
+      phone: normalizedPhone,
       gender: input.gender,
       assemblyId: input.assemblyId,
       categoryId: input.categoryId,
       centralChoirMember: input.centralChoirMember,
-      normalizedEmail,
-      normalizedPhone,
-      familyId: assembly.familyId,
       institutionId: category.slug === "student" ? input.institutionId : null,
       academicLevelId:
         category.slug === "student" ? input.academicLevelId : null,
@@ -191,28 +172,20 @@ export async function publicRegistrationOptions() {
         .select({
           id: assemblies.id,
           name: assemblies.name,
-          familyId: assemblies.familyId,
           familyName: conferenceFamilies.name,
         })
         .from(assemblies)
-        .leftJoin(
-          conferenceFamilies,
-          eq(assemblies.familyId, conferenceFamilies.id),
-        )
         .where(eq(assemblies.active, true)),
       db
         .select()
         .from(registrationCategories)
         .where(eq(registrationCategories.active, true)),
-      db
-        .select()
-        .from(positionOptions)
-        .where(eq(positionOptions.active, true)),
+      db.select().from(positionOptions).where(eq(positionOptions.active, true)),
       db.select().from(institutions).where(eq(institutions.active, true)),
       db.select().from(academicLevels).where(eq(academicLevels.active, true)),
     ]);
   return {
-    assemblies: assembliesData.filter((item) => item.familyId),
+    assemblies: assembliesData,
     categories,
     positions,
     institutions: institutionsData,

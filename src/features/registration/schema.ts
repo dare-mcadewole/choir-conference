@@ -50,20 +50,15 @@ export const registrations = pgTable(
     id: id(),
     fullName: varchar("full_name", { length: 200 }).notNull(),
     email: varchar("email", { length: 255 }).notNull(),
-    normalizedEmail: varchar("normalized_email", { length: 255 }).notNull(),
     phone: varchar("phone", { length: 50 }).notNull(),
-    normalizedPhone: varchar("normalized_phone", { length: 50 }).notNull(),
     gender: varchar("gender", { length: 32 }).notNull(),
     assemblyId: uuid("assembly_id")
       .notNull()
       .references(() => assemblies.id),
-    familyId: uuid("family_id")
-      .notNull()
-      .references(() => conferenceFamilies.id),
     categoryId: uuid("category_id")
       .notNull()
       .references(() => registrationCategories.id),
-    centralChoirMember: boolean("central_choir_member").notNull(),
+    centralChoirMember: boolean("central_choir_member").default(false),
     institutionId: uuid("institution_id").references(() => institutions.id),
     academicLevelId: uuid("academic_level_id").references(
       () => academicLevels.id,
@@ -77,8 +72,8 @@ export const registrations = pgTable(
   },
   (table) => [
     uniqueIndex("registration_code_unique").on(table.registrationCode),
-    index("registration_email_idx").on(table.normalizedEmail),
-    index("registration_phone_idx").on(table.normalizedPhone),
+    index("registration_email_idx").on(table.email),
+    index("registration_phone_idx").on(table.phone),
     index("registration_assembly_idx").on(table.assemblyId),
     index("registration_status_idx").on(table.status),
   ],
