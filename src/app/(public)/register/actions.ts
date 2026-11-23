@@ -1,5 +1,5 @@
 "use server";
-import { registrationSchema } from "@/features/registration/schema";
+import { registrationSchema } from "@/features/registration/validation";
 import { createRegistration } from "@/features/registration/service";
 
 export async function submitRegistration(payload: unknown) {

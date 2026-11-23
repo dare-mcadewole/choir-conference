@@ -15,7 +15,7 @@ import {
 } from "@/db/schema";
 import { normalizeEmail, normalizePhone } from "@/lib/utils";
 import { initializePaystackCheckout } from "@/lib/payments";
-import type { RegistrationInput } from "./schema";
+import type { RegistrationInput } from "./validation";
 
 const code = () => `ACC27-${randomBytes(4).toString("hex").toUpperCase()}`;
 const token = () => randomBytes(32).toString("base64url");
