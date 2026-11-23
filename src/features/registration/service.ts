@@ -14,7 +14,7 @@ import {
   tickets,
 } from "@/db/schema";
 import { normalizeEmail, normalizePhone } from "@/lib/utils";
-import { initializePaystackCheckout } from "@/lib/payments";
+import { initializePaystackCheckout } from "@/features/payment/service";
 import type { RegistrationInput } from "./validation";
 
 const code = () => `ACC27-${randomBytes(4).toString("hex").toUpperCase()}`;

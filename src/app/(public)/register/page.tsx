@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import { RegistrationForm } from "@/components/forms/registration-form";
+import { RegistrationForm } from "@/features/registration/components/form";
 import {
   publicRegistrationOptions,
   lookupRegistrant,

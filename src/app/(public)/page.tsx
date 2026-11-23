@@ -1,6 +1,6 @@
 import { ArrowDown, Music2, Plus } from "lucide-react";
 import { asc, eq } from "drizzle-orm";
-import { RegistrationLookup } from "@/components/public/lookup";
+import { RegistrationLookup } from "@/features/registration/components/lookup";
 import { getDb } from "@/db";
 import { speakers } from "@/db/schema";
 

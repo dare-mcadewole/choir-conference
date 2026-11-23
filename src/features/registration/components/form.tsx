@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState, useTransition } from "react";
 import { CheckCircle2, ChevronLeft, Loader2 } from "lucide-react";
-import { submitRegistration } from "@/app/(public)/register/actions";
+import { submitRegistration } from "@/features/registration/actions";
 
 type Option = {
   id: string;

@@ -41,7 +41,7 @@ export function RegistrationLookup() {
         onChange={(event) => setValue(event.target.value)}
         className="
           h-14 border-0 bg-white px-4 !text-lg shadow-none
-          placeholder:text-zinc-400 placeholder:text-sm tracking-wider ring-1 ring-secondary
+          placeholder:text-zinc-400 placeholder:text-sm tracking-wider ring-1 ring-white
           focus-visible:ring-1 focus-visible:ring-secondary-600 font-bold
           rounded-b-none w-full
         "
