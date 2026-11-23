@@ -7,10 +7,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { id, timestamps } from "@/db/schema-helpers";
-import {
-  conferenceFamilies,
-  conferenceFamilyAssemblies,
-} from "@/features/family/schema";
+import { conferenceFamilyAssemblies } from "@/features/family/schema";
 import { relations } from "drizzle-orm";
 
 export const assemblies = pgTable(
