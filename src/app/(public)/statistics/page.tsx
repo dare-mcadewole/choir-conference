@@ -2,12 +2,12 @@ import Link from "next/link";
 import { BarChart3, Users } from "lucide-react";
 import { count, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db";
+import { assemblies } from "@/features/assembly/schema";
+import { conferenceFamilies } from "@/features/family/schema";
 import {
-  assemblies,
-  conferenceFamilies,
   registrationCategories,
   registrations,
-} from "@/db/schema";
+} from "@/features/registration/schema";
 
 async function stats() {
   try {

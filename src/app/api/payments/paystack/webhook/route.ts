@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   reconcileSuccessfulPayment,
   verifyPaystackSignature,
-} from "@/lib/payments";
+} from "@/features/payment/service";
 
 export async function POST(request: NextRequest) {
   const raw = await request.text();

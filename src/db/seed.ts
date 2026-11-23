@@ -1,12 +1,12 @@
 import { getDb } from "./index";
+import { conferenceSettings } from "@/features/conference/schema";
+import { conferenceFamilies } from "@/features/family/schema";
+import { academicLevels } from "@/features/institution/schema";
 import {
-  academicLevels,
-  conferenceFamilies,
-  conferenceSettings,
   positionOptions,
   registrationCategories,
-  ticketTypes,
-} from "./schema";
+} from "@/features/registration/schema";
+import { ticketTypes } from "@/features/ticket/schema";
 
 async function seed() {
   const db = getDb();

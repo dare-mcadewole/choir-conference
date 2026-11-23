@@ -9,7 +9,9 @@ import {
 } from "lucide-react";
 import { count, eq, sum } from "drizzle-orm";
 import { getDb } from "@/db";
-import { assemblies, payments, registrations } from "@/db/schema";
+import { assemblies } from "@/features/assembly/schema";
+import { payments } from "@/features/payment/schema";
+import { registrations } from "@/features/registration/schema";
 
 async function overview() {
   try {

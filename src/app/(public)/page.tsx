@@ -2,7 +2,7 @@ import { ArrowDown, Music2, Plus } from "lucide-react";
 import { asc, eq } from "drizzle-orm";
 import { RegistrationLookup } from "@/features/registration/components/lookup";
 import { getDb } from "@/db";
-import { speakers } from "@/db/schema";
+import { speakers } from "@/features/speaker/schema";
 
 async function getLandingData() {
   try {

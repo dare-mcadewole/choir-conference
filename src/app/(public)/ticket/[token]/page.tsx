@@ -3,12 +3,10 @@ import QRCode from "qrcode";
 import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import {
-  assemblies,
-  conferenceFamilies,
-  registrations,
-  tickets,
-} from "@/db/schema";
+import { assemblies } from "@/features/assembly/schema";
+import { conferenceFamilies } from "@/features/family/schema";
+import { registrations } from "@/features/registration/schema";
+import { tickets } from "@/features/ticket/schema";
 
 export default async function TicketPage({
   params,

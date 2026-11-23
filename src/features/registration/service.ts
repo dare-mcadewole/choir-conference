@@ -1,18 +1,21 @@
 import { and, eq, or } from "drizzle-orm";
 import { randomBytes } from "crypto";
 import { getDb } from "@/db";
+import { assemblies } from "@/features/assembly/schema";
+import { conferenceFamilies } from "@/features/family/schema";
+import { conferenceSettings } from "@/features/conference/schema";
 import {
   academicLevels,
-  assemblies,
-  conferenceFamilies,
-  conferenceSettings,
   institutions,
+} from "@/features/institution/schema";
+import {
+  historicalRegistrants,
+  positionOptions,
   registrationCategories,
   registrationPositions,
   registrations,
-  ticketTypes,
-  tickets,
-} from "@/db/schema";
+} from "@/features/registration/schema";
+import { ticketTypes, tickets } from "@/features/ticket/schema";
 import { normalizeEmail, normalizePhone } from "@/lib/utils";
 import { initializePaystackCheckout } from "@/features/payment/service";
 import type { RegistrationInput } from "./validation";
@@ -35,13 +38,13 @@ export async function lookupRegistrant(query: string) {
     where: or(
       email
         ? eq(
-            (await import("@/db/schema")).historicalRegistrants.normalizedEmail,
+            historicalRegistrants.normalizedEmail,
             email,
           )
         : undefined,
       phone
         ? eq(
-            (await import("@/db/schema")).historicalRegistrants.normalizedPhone,
+            historicalRegistrants.normalizedPhone,
             phone,
           )
         : undefined,
@@ -203,8 +206,8 @@ export async function publicRegistrationOptions() {
         .where(eq(registrationCategories.active, true)),
       db
         .select()
-        .from((await import("@/db/schema")).positionOptions)
-        .where(eq((await import("@/db/schema")).positionOptions.active, true)),
+        .from(positionOptions)
+        .where(eq(positionOptions.active, true)),
       db.select().from(institutions).where(eq(institutions.active, true)),
       db.select().from(academicLevels).where(eq(academicLevels.active, true)),
     ]);

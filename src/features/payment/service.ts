@@ -1,7 +1,9 @@
 import crypto from "crypto";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { payments, registrations, tickets, webhookEvents } from "@/db/schema";
+import { payments, webhookEvents } from "@/features/payment/schema";
+import { registrations } from "@/features/registration/schema";
+import { tickets } from "@/features/ticket/schema";
 
 export type PaymentProvider = {
   verify(reference: string): Promise<{
@@ -38,6 +40,7 @@ export function verifyPaystackSignature(raw: string, signature: string | null) {
     .createHmac("sha512", secret)
     .update(raw)
     .digest("hex");
+  if (signature.length !== expected.length) return false;
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
 }
 export async function initializePaystackCheckout({

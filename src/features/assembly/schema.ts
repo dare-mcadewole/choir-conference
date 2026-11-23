@@ -7,7 +7,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { id, timestamps } from "@/db/schema-helpers";
-import { families } from "@/features/family/schema";
+import { conferenceFamilies } from "@/features/family/schema";
 
 export const assemblies = pgTable(
   "assemblies",
@@ -15,7 +15,7 @@ export const assemblies = pgTable(
     id: id(),
     name: varchar("name", { length: 160 }).notNull(),
     slug: varchar("slug", { length: 180 }).notNull(),
-    familyId: uuid("family_id").references(() => families.id, {
+    familyId: uuid("family_id").references(() => conferenceFamilies.id, {
       onDelete: "restrict",
     }),
     active: boolean("active").notNull().default(true),

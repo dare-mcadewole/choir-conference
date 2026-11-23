@@ -2,7 +2,9 @@ import Link from "next/link";
 import { CheckCircle2, Download, MessageCircle, Ticket } from "lucide-react";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { assemblies, conferenceFamilies, registrations } from "@/db/schema";
+import { assemblies } from "@/features/assembly/schema";
+import { conferenceFamilies } from "@/features/family/schema";
+import { registrations } from "@/features/registration/schema";
 
 export default async function ConfirmationPage({
   params,

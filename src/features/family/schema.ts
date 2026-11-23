@@ -7,7 +7,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { id, timestamps } from "@/db/schema-helpers";
 
-export const families = pgTable(
+export const conferenceFamilies = pgTable(
   "conference_families",
   {
     id: id(),
@@ -15,7 +15,7 @@ export const families = pgTable(
     slug: varchar("slug", { length: 80 }).notNull(),
     icon: varchar("icon", { length: 60 }).notNull(),
     description: text("description"),
-    url: text("url"),
+    whatsappUrl: text("whatsapp_url"),
     active: boolean("active").notNull().default(true),
     ...timestamps,
   },
