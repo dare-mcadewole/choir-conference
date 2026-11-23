@@ -1,12 +1,15 @@
 "use client";
+
 import { useState } from "react";
-import { Search, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Mail } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function RegistrationLookup() {
   const [value, setValue] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
   async function check() {
     if (!value.trim()) {
       window.location.href = "/register";
@@ -27,37 +30,50 @@ export function RegistrationLookup() {
   }
 
   return (
-    <div className="w-full max-w-xl rounded-2xl border border-white/15 bg-white/10 p-2 backdrop-blur">
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <label className="flex min-w-0 flex-1 items-center gap-2 px-3">
-          <Search size={18} className="text-gold" />
-          <input
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            className="w-full bg-transparent py-2 text-sm outline-none placeholder:text-white/50"
-            placeholder="Email or phone (optional)"
-            aria-label="Email or phone"
-          />
-        </label>
-        <button
-          onClick={check}
-          disabled={loading}
-          className="button-primary whitespace-nowrap"
+    <div
+      className="
+      w-full max-w-md rounded-xl bg-black/25
+      p-1.5 mx-auto shadow-2xl shadow-blue-950/30 backdrop-blur-m
+    "
+    >
+      <Input
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+        className="
+          h-14 border-0 bg-white px-4 !text-lg shadow-none
+          placeholder:text-zinc-400 placeholder:text-sm tracking-wider ring-1 ring-[#d4ff00]
+          focus-visible:ring-1 focus-visible:ring-[#c1e801] font-medium
+          rounded-b-none w-full
+        "
+        placeholder="ENTER YOUR EMAIL OR PHONE NUMBER"
+        aria-label="Email or phone"
+      />
+      <Button
+        onClick={check}
+        loading={loading}
+        loadingText="Checking..."
+        disabled={loading}
+        size="lg"
+        className="
+          h-14 w-full bg-[#d4ff00] px-5 text-[#0839d8] border-0 ring-1 ring-[#d4ff00]
+          hover:bg-[#ecff78] uppercase text-base rounded-t-none
+        "
+      >
+        Register now{" "}
+        <div
+          className="
+          absolute right-2 top-3 bg-[#0839d8] text-white
+          size-8 flex items-center justify-center rounded-full
+        "
         >
-          {loading ? (
-            "Checking…"
-          ) : (
-            <>
-              Continue <ArrowRight size={16} />
-            </>
-          )}
-        </button>
-      </div>
-      {notice && <p className="px-3 pb-2 text-sm text-amber-200">{notice}</p>}
-      <p className="px-3 pb-1 text-xs text-white/55">
-        Already registered? We&apos;ll help protect your record. Or leave this
-        blank to start fresh.
-      </p>
+          <ArrowRight size={18} />
+        </div>
+      </Button>
+      {notice && (
+        <p className="px-3 pb-1 pt-3 text-left text-xs leading-5 text-[#fff2bd]">
+          {notice}
+        </p>
+      )}
     </div>
   );
 }
