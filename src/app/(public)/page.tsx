@@ -1,92 +1,82 @@
-import { ArrowDownRight, Music2, Sparkles } from "lucide-react";
+import { ArrowDown, Music2, Plus } from "lucide-react";
 import { asc, eq } from "drizzle-orm";
-import { RegistrationForm } from "@/components/forms/registration-form";
+import { RegistrationLookup } from "@/components/public/lookup";
 import { getDb } from "@/db";
 import { speakers } from "@/db/schema";
-import { publicRegistrationOptions } from "@/features/registration/service";
 
 async function getLandingData() {
   try {
     const db = getDb();
-    const [settings, people, options] = await Promise.all([
+    const [settings, people] = await Promise.all([
       db.query.conferenceSettings.findFirst(),
       db
         .select()
         .from(speakers)
         .where(eq(speakers.published, true))
         .orderBy(asc(speakers.sortOrder)),
-      publicRegistrationOptions(),
     ]);
-    return { settings, people, options };
+    return { settings, people };
   } catch {
-    return {
-      settings: null,
-      people: [],
-      options: {
-        assemblies: [],
-        categories: [],
-        positions: [],
-        institutions: [],
-        levels: [],
-      },
-    };
+    return { settings: null, people: [] };
   }
 }
 
 export default async function HomePage() {
-  const { settings, people, options } = await getLandingData();
-  const title = settings?.title ?? "All Choirs Conference '27";
+  const { settings, people } = await getLandingData();
+  const title = settings?.title ?? "All Choirs' Conference '27";
   const theme = settings?.theme ?? "THE ABLE MINISTER";
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#071b22] text-white">
-      <section className="relative isolate overflow-hidden px-5 pb-16 pt-6 sm:px-8 md:pb-24">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_23%,#159a92_0%,#0c4f55_28%,#0a2530_58%,#071b22_100%)]" />
-        <div className="pointer-events-none absolute -left-10 top-[52%] size-32 rounded-full bg-[#c3f27a] blur-[2px] opacity-90 [clip-path:polygon(50%_0%,61%_35%,86%_14%,70%_43%,100%_50%,70%_57%,86%_86%,61%_65%,50%_100%,39%_65%,14%_86%,30%_57%,0_50%,30%_43%,14%_14%,39%_35%)]" />
-        <div className="pointer-events-none absolute -right-9 top-[46%] size-28 bg-[#f5b5ef] opacity-90 [clip-path:polygon(50%_0%,61%_35%,86%_14%,70%_43%,100%_50%,70%_57%,86%_86%,61%_65%,50%_100%,39%_65%,14%_86%,30%_57%,0_50%,30%_43%,14%_14%,39%_35%)]" />
+    <main className="min-h-screen overflow-hidden bg-[#0b45ee] text-white">
+      <section className="relative isolate min-h-screen overflow-hidden px-5 py-6 sm:px-8">
+        <div className="pointer-events-none absolute inset-0 -z-10 opacity-30 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,.8)_1px,transparent_1.5px)] [background-size:35px_35px]" />
+        <div className="pointer-events-none absolute -left-14 top-[52%] size-40 rounded-full bg-[#fc63c1] sm:size-56" />
+        <div className="pointer-events-none absolute -right-7 top-20 size-20 rounded-full bg-[#fc63c1] sm:right-[12%] sm:size-28" />
+        <div className="pointer-events-none absolute -right-16 top-[-8%] h-72 w-24 rotate-45 rounded-full bg-gradient-to-b from-[#d095ff] to-[#ef75cb] opacity-80 sm:h-[30rem] sm:w-32" />
+        <div className="pointer-events-none absolute -left-24 bottom-8 h-64 w-20 rotate-45 rounded-full bg-gradient-to-b from-[#d095ff] to-[#ef75cb] opacity-75 sm:h-96 sm:w-28" />
+        <div className="pointer-events-none absolute left-[13%] top-[37%] h-4 w-52 -rotate-[14deg] rounded-full bg-[#d6f000] sm:h-7 sm:w-64" />
+        <div className="pointer-events-none absolute right-[5%] top-[54%] h-3 w-28 rotate-[24deg] rounded-full bg-[#d6f000] sm:w-44" />
 
-        <header className="mx-auto flex max-w-7xl items-center justify-between">
-          <div className="flex items-center gap-3 font-display text-lg font-bold tracking-tight sm:text-2xl">
-            <span className="grid size-10 place-items-center rounded-full bg-emerald-400 text-[#071b22]">
-              <Music2 size={21} />
+        <header className="relative mx-auto flex max-w-7xl items-center justify-between">
+          <div className="flex items-center gap-3 text-base font-semibold tracking-tight sm:text-xl">
+            <span className="grid size-9 place-items-center rounded-full bg-[#d6f000] text-[#0b45ee]">
+              <Music2 size={19} />
             </span>
             {title}
           </div>
           <a
             href="#register"
-            className="inline-flex items-center gap-2 rounded-full bg-emerald-400 px-4 py-2 text-sm font-bold text-[#071b22] hover:bg-emerald-300"
+            className="hidden items-center gap-2 rounded-full border border-white/35 px-4 py-2 text-sm font-medium sm:inline-flex"
           >
-            Register <ArrowDownRight size={17} />
+            Register now <ArrowDown size={16} />
           </a>
         </header>
 
-        <div className="mx-auto flex min-h-[470px] max-w-5xl flex-col items-center justify-center pb-12 pt-20 text-center md:min-h-[540px]">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-100/30 bg-emerald-100/10 px-4 py-2 text-[11px] font-semibold tracking-[.14em] text-emerald-50 uppercase">
-            <Sparkles size={14} /> 2027 Conference
+        <div className="relative mx-auto flex max-w-5xl flex-col items-center pt-20 text-center sm:pt-24">
+          <p className="text-base mt-1 font-bold tracking-[.52em] text-white/75 uppercase">
+            All Choirs' Conference '27
           </p>
-          <h1 className="max-w-4xl font-display text-5xl leading-[.93] tracking-[-.055em] sm:text-7xl md:text-8xl">
-            {theme}
-          </h1>
-          <p className="mt-7 max-w-lg text-sm leading-6 text-emerald-50/80 sm:text-base">
-            A global gathering for choristers called to serve with grace, skill,
-            and spiritual weight.
-          </p>
-          <a
-            href="#register"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-[#071b22] shadow-xl shadow-black/20 hover:bg-emerald-50"
-          >
-            Join the conference <ArrowDownRight size={17} />
-          </a>
+          <h1
+            className="
+              mt-7 max-w-4xl font-display text-5xl leading-[.82] tracking-[-.025em]
+              sm:text-7xl md:text-8xl
+            "
+            dangerouslySetInnerHTML={{ __html: theme }}
+          />
+
+          <div id="register" className="mt-9 w-full mx-auto">
+            <RegistrationLookup />
+          </div>
         </div>
 
-        <div className="mx-auto flex max-w-6xl items-end justify-center gap-3 px-0 sm:gap-5">
+        <div className="relative mx-auto mt-12 flex max-w-6xl items-end justify-center gap-2 sm:mt-16 sm:gap-4">
           {people.slice(0, 5).map((speaker, index) => (
             <article
               key={speaker.id}
-              className={`group relative hidden aspect-[.7] w-[18%] min-w-0 overflow-hidden rounded-t-2xl border border-white/25 bg-gradient-to-b from-[#2a625f] to-[#102a32] shadow-2xl sm:block ${index === 2 ? "mb-7 w-[24%]" : index % 2 ? "mb-3" : ""}`}
-              style={{ transform: `rotate(${(index - 2) * 3}deg)` }}
+              className={`group relative hidden aspect-[.68] overflow-hidden rounded-t-2xl border border-white/40 bg-[#063ab9] shadow-[0_16px_35px_rgba(3,17,84,.35)] sm:block ${index === 2 ? "z-10 mb-7 w-[24%]" : "w-[18%]"} ${index % 2 ? "mb-3" : ""}`}
+              style={{ transform: `rotate(${(index - 2) * 2.5}deg)` }}
             >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(255,255,255,.18),transparent_36%)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(255,255,255,.28),transparent_40%)]" />
               {speaker.imageUrl ? (
                 <img
                   src={speaker.imageUrl}
@@ -94,40 +84,29 @@ export default async function HomePage() {
                   className="size-full object-cover transition duration-500 group-hover:scale-105"
                 />
               ) : (
-                <div className="grid size-full place-items-center font-display text-5xl text-white/35">
+                <div className="grid size-full place-items-center font-display text-6xl text-white/45">
                   {speaker.fullName.charAt(0)}
                 </div>
               )}
-              <span className="absolute inset-x-2 bottom-3 rounded-full bg-white/90 px-2 py-1 text-center text-[10px] font-bold text-[#071b22] backdrop-blur">
+              <span className="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-3 py-1 text-[10px] font-bold text-[#0b45ee]">
                 {speaker.fullName}
               </span>
             </article>
           ))}
           {!people.length && (
-            <div className="rounded-2xl border border-white/15 bg-white/[.06] px-7 py-5 text-center text-sm text-emerald-50/75">
-              Speakers will be announced soon.
+            <div className="rounded-2xl border border-white/35 bg-white/10 px-6 py-4 text-sm text-white/85">
+              Speakers announced soon.
             </div>
           )}
         </div>
-      </section>
-
-      <section
-        id="register"
-        className="relative bg-[#f7f7f3] py-16 text-[#071b22] sm:py-24"
-      >
-        <div className="mx-auto max-w-3xl px-5 sm:px-8">
-          <div className="mb-9 text-center">
-            <p className="text-xs font-bold tracking-[.2em] text-[#07877c] uppercase">
-              Registration
-            </p>
-            <h2 className="mt-3 font-display text-4xl tracking-tight sm:text-5xl">
-              Save your seat.
-            </h2>
-          </div>
-          <div className="rounded-[2rem] bg-white p-5 shadow-[0_25px_80px_rgba(7,27,34,.14)] sm:p-9">
-            <RegistrationForm {...options} />
-          </div>
-        </div>
+        <Plus
+          className="pointer-events-none absolute bottom-[18%] left-[16%] text-white/50"
+          size={19}
+        />
+        <Plus
+          className="pointer-events-none absolute right-[16%] top-[32%] text-white/50"
+          size={19}
+        />
       </section>
     </main>
   );
