@@ -9,6 +9,7 @@ export async function submitRegistration(payload: unknown) {
       ok: false as const,
       error: parsed.error.issues[0]?.message ?? "Please review the form.",
     };
+
   try {
     const result = await createRegistration(parsed.data);
     return { ok: true as const, ...result };
