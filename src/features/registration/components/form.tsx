@@ -54,7 +54,7 @@ export function RegistrationForm({
       </div>
     );
 
-  if (success)
+  if (success) {
     return (
       <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
         <CheckCircle2 className="mx-auto text-emerald-600" size={42} />
@@ -74,6 +74,7 @@ export function RegistrationForm({
         )}
       </div>
     );
+  }
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

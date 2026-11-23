@@ -4,7 +4,10 @@ import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
-import { conferenceFamilies } from "@/features/family/schema";
+import {
+  conferenceFamilies,
+  conferenceFamilyAssemblies,
+} from "@/features/family/schema";
 import { registrations } from "@/features/registration/schema";
 import { tickets } from "@/features/ticket/schema";
 
@@ -31,8 +34,8 @@ export default async function TicketPage({
         .innerJoin(registrations, eq(tickets.registrationId, registrations.id))
         .leftJoin(assemblies, eq(registrations.assemblyId, assemblies.id))
         .leftJoin(
-          conferenceFamilies,
-          eq(registrations.familyId, conferenceFamilies.id),
+          conferenceFamilyAssemblies,
+          eq(assemblies.id, conferenceFamilyAssemblies.assemblyId),
         )
         .where(eq(tickets.token, token))
         .limit(1)

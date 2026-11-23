@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { CheckCircle2, Download, MessageCircle, Ticket } from "lucide-react";
-import { and, eq } from "drizzle-orm";
+import { and, eq, not } from "drizzle-orm";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
-import { conferenceFamilies } from "@/features/family/schema";
+import {
+  conferenceFamilies,
+  conferenceFamilyAssemblies,
+} from "@/features/family/schema";
 import { registrations } from "@/features/registration/schema";
 
 export default async function ConfirmationPage({
@@ -36,13 +39,13 @@ export default async function ConfirmationPage({
       .from(registrations)
       .leftJoin(assemblies, eq(registrations.assemblyId, assemblies.id))
       .leftJoin(
-        conferenceFamilies,
-        eq(registrations.familyId, conferenceFamilies.id),
+        conferenceFamilyAssemblies,
+        eq(assemblies.id, conferenceFamilyAssemblies.assemblyId),
       )
       .where(
         and(
           eq(registrations.registrationCode, code),
-          eq(registrations.status, "CONFIRMED"),
+          not(eq(registrations.status, "CANCELLED")),
         ),
       )
       .limit(1);
@@ -50,7 +53,8 @@ export default async function ConfirmationPage({
   } catch {
     /* configuration state below */
   }
-  if (!registration)
+
+  if (!registration) {
     return (
       <main className="grid min-h-screen place-items-center bg-mist p-6">
         <div className="card max-w-md p-8 text-center">
@@ -67,6 +71,8 @@ export default async function ConfirmationPage({
         </div>
       </main>
     );
+  }
+
   return (
     <main className="min-h-screen bg-mist py-16">
       <div className="mx-auto max-w-xl px-5">
