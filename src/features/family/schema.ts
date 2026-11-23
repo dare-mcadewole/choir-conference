@@ -12,6 +12,7 @@ export const conferenceFamilies = pgTable(
   {
     id: id(),
     name: varchar("name", { length: 80 }).notNull(),
+    alias: varchar("alias", { length: 140 }),
     slug: varchar("slug", { length: 80 }).notNull(),
     icon: varchar("icon", { length: 60 }).notNull(),
     description: text("description"),
