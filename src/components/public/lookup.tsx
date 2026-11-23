@@ -42,7 +42,7 @@ export function RegistrationLookup() {
         className="
           h-14 border-0 bg-white px-4 !text-lg shadow-none
           placeholder:text-zinc-400 placeholder:text-sm tracking-wider ring-1 ring-[#d4ff00]
-          focus-visible:ring-1 focus-visible:ring-[#c1e801] font-medium
+          focus-visible:ring-1 focus-visible:ring-[#c1e801] font-bold
           rounded-b-none w-full
         "
         placeholder="ENTER YOUR EMAIL OR PHONE NUMBER"
