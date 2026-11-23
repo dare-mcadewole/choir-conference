@@ -33,8 +33,8 @@ export async function lookupRegistrant(query: string) {
   if (current) return { state: "registered" as const };
   const prior = await db.query.historicalRegistrants.findFirst({
     where: or(
-      email ? eq(historicalRegistrants.normalizedEmail, email) : undefined,
-      phone ? eq(historicalRegistrants.normalizedPhone, phone) : undefined,
+      email ? eq(historicalRegistrants.email, email) : undefined,
+      phone ? eq(historicalRegistrants.phone, phone) : undefined,
     ),
   });
   return prior

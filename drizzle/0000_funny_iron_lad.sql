@@ -82,9 +82,7 @@ CREATE TABLE "historical_registrants" (
 	"batch_id" uuid,
 	"full_name" varchar(200) NOT NULL,
 	"email" varchar(255),
-	"normalized_email" varchar(255),
 	"phone" varchar(50),
-	"normalized_phone" varchar(50),
 	"data" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
@@ -143,9 +141,7 @@ CREATE TABLE "registrations" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"full_name" varchar(200) NOT NULL,
 	"email" varchar(255) NOT NULL,
-	"normalized_email" varchar(255) NOT NULL,
 	"phone" varchar(50) NOT NULL,
-	"normalized_phone" varchar(50) NOT NULL,
 	"gender" varchar(32) NOT NULL,
 	"assembly_id" uuid NOT NULL,
 	"family_id" uuid NOT NULL,
@@ -224,16 +220,16 @@ ALTER TABLE "tickets" ADD CONSTRAINT "tickets_registration_id_registrations_id_f
 CREATE UNIQUE INDEX "assembly_slug_unique" ON "assemblies" USING btree ("slug");--> statement-breakpoint
 CREATE INDEX "assembly_family_idx" ON "assemblies" USING btree ("family_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "family_slug_unique" ON "conference_families" USING btree ("slug");--> statement-breakpoint
-CREATE INDEX "historical_email_idx" ON "historical_registrants" USING btree ("normalized_email");--> statement-breakpoint
-CREATE INDEX "historical_phone_idx" ON "historical_registrants" USING btree ("normalized_phone");--> statement-breakpoint
+CREATE INDEX "historical_email_idx" ON "historical_registrants" USING btree ("email");--> statement-breakpoint
+CREATE INDEX "historical_phone_idx" ON "historical_registrants" USING btree ("phone");--> statement-breakpoint
 CREATE UNIQUE INDEX "institution_name_unique" ON "institutions" USING btree ("name");--> statement-breakpoint
 CREATE UNIQUE INDEX "payment_reference_unique" ON "payments" USING btree ("reference");--> statement-breakpoint
 CREATE INDEX "payment_registration_idx" ON "payments" USING btree ("registration_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "category_slug_unique" ON "registration_categories" USING btree ("slug");--> statement-breakpoint
 CREATE UNIQUE INDEX "registration_position_unique" ON "registration_positions" USING btree ("registration_id","position_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "registration_code_unique" ON "registrations" USING btree ("registration_code");--> statement-breakpoint
-CREATE INDEX "registration_email_idx" ON "registrations" USING btree ("normalized_email");--> statement-breakpoint
-CREATE INDEX "registration_phone_idx" ON "registrations" USING btree ("normalized_phone");--> statement-breakpoint
+CREATE INDEX "registration_email_idx" ON "registrations" USING btree ("email");--> statement-breakpoint
+CREATE INDEX "registration_phone_idx" ON "registrations" USING btree ("phone");--> statement-breakpoint
 CREATE INDEX "registration_assembly_idx" ON "registrations" USING btree ("assembly_id");--> statement-breakpoint
 CREATE INDEX "registration_status_idx" ON "registrations" USING btree ("status");--> statement-breakpoint
 CREATE UNIQUE INDEX "ticket_type_category_unique" ON "ticket_types" USING btree ("category_slug");--> statement-breakpoint

@@ -8,10 +8,10 @@ Production-oriented registration, ticketing, payment and conference-management f
 2. Install dependencies with `npm install`.
 3. Generate and apply the database migration: `npm run db:generate && npm run db:migrate`.
 4. Load the initial settings, families, pricing, categories, positions and academic levels: `npm run db:seed`.
-5. Add real assemblies and institutions from the protected administration area before opening registration.
+5. Add real assemblies from the protected administration area before opening registration.
 6. Start the app with `npm run dev`.
 
-The system deliberately does not invent event dates, venues, speakers, assemblies or institutions. These are runtime-managed records.
+The system deliberately does not invent event dates, venues, speakers or assemblies. These are runtime-managed records.
 
 ## Security notes
 

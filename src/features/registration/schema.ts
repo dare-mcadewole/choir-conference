@@ -105,14 +105,12 @@ export const historicalRegistrants = pgTable(
     batchId: uuid("batch_id"),
     fullName: varchar("full_name", { length: 200 }).notNull(),
     email: varchar("email", { length: 255 }),
-    normalizedEmail: varchar("normalized_email", { length: 255 }),
     phone: varchar("phone", { length: 50 }),
-    normalizedPhone: varchar("normalized_phone", { length: 50 }),
     data: jsonb("data").notNull().default({}),
     ...timestamps,
   },
   (table) => [
-    index("historical_email_idx").on(table.normalizedEmail),
-    index("historical_phone_idx").on(table.normalizedPhone),
+    index("historical_email_idx").on(table.email),
+    index("historical_phone_idx").on(table.phone),
   ],
 );
