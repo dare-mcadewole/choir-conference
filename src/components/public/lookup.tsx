@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, ArrowUpRight, Mail } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -41,8 +41,8 @@ export function RegistrationLookup() {
         onChange={(event) => setValue(event.target.value)}
         className="
           h-14 border-0 bg-white px-4 !text-lg shadow-none
-          placeholder:text-zinc-400 placeholder:text-sm tracking-wider ring-1 ring-[#d4ff00]
-          focus-visible:ring-1 focus-visible:ring-[#c1e801] font-bold
+          placeholder:text-zinc-400 placeholder:text-sm tracking-wider ring-1 ring-secondary
+          focus-visible:ring-1 focus-visible:ring-secondary-600 font-bold
           rounded-b-none w-full
         "
         placeholder="ENTER YOUR EMAIL OR PHONE NUMBER"
@@ -55,14 +55,14 @@ export function RegistrationLookup() {
         disabled={loading}
         size="lg"
         className="
-          h-14 w-full bg-[#d4ff00] px-5 text-[#0839d8] border-0 ring-1 ring-[#d4ff00]
-          hover:bg-[#ecff78] uppercase text-base rounded-t-none
+          relative h-14 w-full bg-secondary px-5 text-secondary-foreground border-0 ring-1 ring-secondary
+          hover:bg-secondary-300 uppercase text-base rounded-t-none
         "
       >
         Register now{" "}
         <div
           className="
-          absolute right-2 top-3 bg-[#0839d8] text-white
+          absolute right-2 top-3 bg-primary text-primary-foreground
           size-8 flex items-center justify-center rounded-full
         "
         >
@@ -70,7 +70,7 @@ export function RegistrationLookup() {
         </div>
       </Button>
       {notice && (
-        <p className="px-3 pb-1 pt-3 text-left text-xs leading-5 text-[#fff2bd]">
+        <p className="px-3 pb-1 pt-3 text-left text-xs leading-5 text-secondary-100">
           {notice}
         </p>
       )}
