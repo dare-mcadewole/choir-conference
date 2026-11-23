@@ -74,8 +74,7 @@ CREATE TABLE "conference_family_assemblies" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"conference_id" uuid NOT NULL,
 	"family_id" uuid NOT NULL,
-	"assembly_id" uuid NOT NULL,
-	CONSTRAINT "conference_family_assembly_unique" UNIQUE("id","id","id")
+	"assembly_id" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "academic_levels" (

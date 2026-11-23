@@ -43,9 +43,9 @@ export const conferenceFamilyAssemblies = pgTable(
   },
   (table) => [
     unique("conference_family_assembly_unique").on(
-      conference.id,
-      conferenceFamilies.id,
-      assemblies.id,
+      table.conferenceId,
+      table.familyId,
+      table.assemblyId,
     ),
     uniqueIndex("family_assembly_unique_index").on(
       table.familyId,
