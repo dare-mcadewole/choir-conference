@@ -30,6 +30,7 @@ export default async function RegisterPage({
       levels: [],
     };
   }
+
   return (
     <main className="min-h-screen bg-white">
       <div className="page-shell py-8">
