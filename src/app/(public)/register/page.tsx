@@ -17,9 +17,12 @@ export default async function RegisterPage({
     { fullName?: string; email?: string; phone?: string } | undefined;
   try {
     data = await publicRegistrationOptions();
-    if (params.lookup) {
-      const result = await lookupRegistrant(params.lookup);
+    const lookup = params.lookup?.trim();
+    if (lookup) {
+      const result = await lookupRegistrant(lookup);
       if (result.state === "historical") initial = result.data;
+      else if (result.state === "new")
+        initial = lookup.includes("@") ? { email: lookup } : { phone: lookup };
     }
   } catch {
     data = {
