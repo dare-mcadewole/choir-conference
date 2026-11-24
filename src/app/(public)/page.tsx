@@ -3,6 +3,8 @@ import { asc, eq } from "drizzle-orm";
 import { RegistrationLookup } from "@/features/registration/components/lookup";
 import { getDb } from "@/db";
 import { speakers } from "@/features/speaker/schema";
+import { getInitials } from "@/features/shared/utils/strings";
+import { cn } from "@/lib/utils";
 
 async function getLandingData() {
   try {
@@ -20,6 +22,15 @@ async function getLandingData() {
     return { settings: null, people: [] };
   }
 }
+
+const bottomMargins: Record<number, number> = {
+  0: 0,
+  1: 16,
+  2: 20,
+  3: 20,
+  4: 16,
+  5: 0,
+};
 
 export default async function HomePage() {
   const { settings, people } = await getLandingData();
@@ -69,12 +80,24 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="relative mx-auto mt-12 flex max-w-6xl items-end justify-center gap-2 sm:mt-16 sm:gap-4">
-          {people.slice(0, 5).map((speaker, index) => (
+        <div
+          className="
+          relative mx-auto mt-12 flex max-w-6xl items-end justify-center gap-2
+          sm:mt-24 sm:gap-4
+        "
+        >
+          {people.slice(0, 6).map((speaker, index) => (
             <article
               key={speaker.id}
-              className={`group relative hidden aspect-[.68] overflow-hidden rounded-t-2xl border border-white/40 bg-primary-700 shadow-[0_16px_35px_rgba(3,15,55,.35)] sm:block ${index === 2 ? "z-10 mb-7 w-[24%]" : "w-[18%]"} ${index % 2 ? "mb-3" : ""}`}
-              style={{ transform: `rotate(${(index - 2) * 2.5}deg)` }}
+              className={cn(
+                "group relative hidden sm:block aspect-[.68] rounded-2xl w-[18%]",
+                "border-hairline border-white/40 bg-primary-700 shadow-[0_16px_35px_rgba(3,15,55,.35)]",
+                // [index === 2 ? "z-10 mb-7 w-[24%]" : "w-[18%]"],
+              )}
+              style={{
+                transform: `rotate(${(index - 2) * 2.5}deg)`,
+                marginBottom: bottomMargins[index],
+              }}
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(255,255,255,.28),transparent_40%)]" />
               {speaker.imageUrl ? (
@@ -85,14 +108,21 @@ export default async function HomePage() {
                 />
               ) : (
                 <div className="grid size-full place-items-center font-display text-6xl text-white/45">
-                  {speaker.fullName.charAt(0)}
+                  {getInitials(speaker.fullName)}
                 </div>
               )}
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-3 py-1 text-[10px] font-bold text-primary">
+              <span
+                className="
+                  absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap
+                  rounded-full bg-white px-3 py-1 text-[10px] font-bold text-primary
+                "
+              >
                 {speaker.fullName}
+                {speaker.designation && ` (${speaker.designation})`}
               </span>
             </article>
           ))}
+
           {!people.length && (
             <div className="rounded-2xl border border-white/35 bg-white/10 px-6 py-4 text-sm text-white/85">
               Speakers announced soon.
