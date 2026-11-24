@@ -10,7 +10,7 @@ export const registrationSchema = z.object({
   assemblyId: z.uuid("Choose your assembly"),
   categoryId: z.uuid("Choose a category"),
   positionIds: z.array(z.uuid()).default([]),
-  centralChoirMember: z.boolean(),
+  centralChoirMember: z.boolean("Choose an option"),
   institutionId: z.uuid().optional(),
   academicLevelId: z.uuid().optional(),
 });
