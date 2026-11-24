@@ -1,6 +1,6 @@
 "use server";
 import { registrationSchema } from "@/features/registration/validation";
-import { createRegistration } from "@/features/registration/service";
+import * as registrationService from "@/features/registration/service";
 
 export async function submitRegistration(payload: unknown) {
   const parsed = registrationSchema.safeParse(payload);
@@ -11,7 +11,7 @@ export async function submitRegistration(payload: unknown) {
     };
 
   try {
-    const result = await createRegistration(parsed.data);
+    const result = await registrationService.createRegistration(parsed.data);
     return { ok: true as const, ...result };
   } catch (error) {
     return {

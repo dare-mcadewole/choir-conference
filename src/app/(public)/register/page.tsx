@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { RegistrationForm } from "@/features/registration/components/form";
-import {
-  publicRegistrationOptions,
-  lookupRegistrant,
-} from "@/features/registration/service";
+import * as registrationService from "@/features/registration/service";
 
 export default async function RegisterPage({
   searchParams,
@@ -16,10 +13,10 @@ export default async function RegisterPage({
   let initial:
     { fullName?: string; email?: string; phone?: string } | undefined;
   try {
-    data = await publicRegistrationOptions();
+    data = await registrationService.publicRegistrationOptions();
     const lookup = params.lookup?.trim();
     if (lookup) {
-      const result = await lookupRegistrant(lookup);
+      const result = await registrationService.lookupRegistrant(lookup);
       if (result.state === "historical") initial = result.data;
       else if (result.state === "new")
         initial = lookup.includes("@") ? { email: lookup } : { phone: lookup };

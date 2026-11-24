@@ -1,21 +1,15 @@
-import { ArrowDown, Music2, Plus } from "lucide-react";
-import { asc, eq } from "drizzle-orm";
+import { ArrowDown, EighthNotes, Music2, Plus } from "lucide-react";
 import { RegistrationLookup } from "@/features/registration/components/lookup";
-import { getDb } from "@/db";
-import { speakers } from "@/features/speaker/schema";
+import * as conferenceService from "@/features/conference/service";
+import * as speakerService from "@/features/speaker/service";
 import { getInitials } from "@/features/shared/utils/strings";
 import { cn } from "@/lib/utils";
 
 async function getLandingData() {
   try {
-    const db = getDb();
     const [settings, people] = await Promise.all([
-      db.query.conference.findFirst(),
-      db
-        .select()
-        .from(speakers)
-        .where(eq(speakers.published, true))
-        .orderBy(asc(speakers.sortOrder)),
+      conferenceService.findOne(),
+      speakerService.findPublished(),
     ]);
     return { settings, people };
   } catch {

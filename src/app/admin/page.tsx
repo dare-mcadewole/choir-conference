@@ -7,44 +7,11 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
-import { count, eq, sum } from "drizzle-orm";
-import { getDb } from "@/db";
-import { assemblies } from "@/features/assembly/schema";
-import { payments } from "@/features/payment/schema";
-import { registrations } from "@/features/registration/schema";
+import * as dashboardService from "@/features/dashboard/service";
 
 async function overview() {
   try {
-    const db = getDb();
-    const [all, confirmed, pending, paid, revenue, assemblyCount] =
-      await Promise.all([
-        db.select({ value: count() }).from(registrations),
-        db
-          .select({ value: count() })
-          .from(registrations)
-          .where(eq(registrations.status, "CONFIRMED")),
-        db
-          .select({ value: count() })
-          .from(registrations)
-          .where(eq(registrations.status, "PENDING_PAYMENT")),
-        db
-          .select({ value: count() })
-          .from(payments)
-          .where(eq(payments.status, "SUCCESSFUL")),
-        db
-          .select({ value: sum(payments.amount) })
-          .from(payments)
-          .where(eq(payments.status, "SUCCESSFUL")),
-        db.select({ value: count() }).from(assemblies),
-      ]);
-    return {
-      all: all[0]?.value ?? 0,
-      confirmed: confirmed[0]?.value ?? 0,
-      pending: pending[0]?.value ?? 0,
-      paid: paid[0]?.value ?? 0,
-      revenue: revenue[0]?.value ?? "0",
-      assemblies: assemblyCount[0]?.value ?? 0,
-    };
+    return await dashboardService.findAdminOverview();
   } catch {
     return {
       all: 0,

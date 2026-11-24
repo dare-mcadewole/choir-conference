@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { lookupRegistrant } from "@/features/registration/service";
+import * as registrationService from "@/features/registration/service";
 
 const attempts = new Map<string, { count: number; resetAt: number }>();
 
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   if (!query || query.length > 255) return NextResponse.json({ state: "new" });
 
   try {
-    const result = await lookupRegistrant(query);
+    const result = await registrationService.lookupRegistrant(query);
     return NextResponse.json(
       result.state === "historical" ? result : { state: result.state },
     );

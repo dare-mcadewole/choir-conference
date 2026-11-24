@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
-import { getDb } from "@/db";
-import { registrations } from "@/features/registration/schema";
-import { tickets } from "@/features/ticket/schema";
+import * as ticketService from "@/features/ticket/service";
 
 export async function GET(
   _: Request,
@@ -10,19 +7,7 @@ export async function GET(
 ) {
   const { token } = await params;
   try {
-    const db = getDb();
-    const ticket = (
-      await db
-        .select({
-          status: tickets.status,
-          fullName: registrations.fullName,
-          code: registrations.registrationCode,
-        })
-        .from(tickets)
-        .innerJoin(registrations, eq(tickets.registrationId, registrations.id))
-        .where(eq(tickets.token, token))
-        .limit(1)
-    )[0];
+    const ticket = await ticketService.findOneForVerification(token);
     if (!ticket || ticket.status !== "VALID")
       return NextResponse.json(
         { valid: false, status: ticket?.status ?? "NOT_FOUND" },

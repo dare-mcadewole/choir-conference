@@ -1,8 +1,11 @@
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, not, or } from "drizzle-orm";
 import { randomBytes } from "crypto";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
-import { conferenceFamilies } from "@/features/family/schema";
+import {
+  conferenceFamilies,
+  conferenceFamilyAssemblies,
+} from "@/features/family/schema";
 import { conference } from "@/features/conference/schema";
 import { academicLevels, institutions } from "@/features/institution/schema";
 import {
@@ -14,7 +17,7 @@ import {
 } from "@/features/registration/schema";
 import { ticketTypes, tickets } from "@/features/ticket/schema";
 import { normalizeEmail, normalizePhone } from "@/lib/utils";
-import { initializePaystackCheckout } from "@/features/payment/service";
+import * as paymentService from "@/features/payment/service";
 import type { RegistrationInput } from "./validation";
 import * as institutionService from "@/features/institution/service";
 
@@ -140,7 +143,7 @@ export async function createRegistration(input: RegistrationInput) {
       .insert(tickets)
       .values({ registrationId: registration.id, token: ticketToken });
   const checkoutUrl = settings.requirePayment
-    ? await initializePaystackCheckout({
+    ? await paymentService.initializePaystackCheckout({
         email: input.email,
         amount: Number(ticketType.price),
         registrationId: registration.id,
@@ -180,4 +183,36 @@ export async function publicRegistrationOptions() {
     institutions: institutionsData,
     levels,
   };
+}
+
+export async function findConfirmationByCode(code: string) {
+  const db = getDb();
+  const row = await db
+    .select({
+      fullName: registrations.fullName,
+      status: registrations.status,
+      registrationCode: registrations.registrationCode,
+      ticketToken: registrations.ticketToken,
+      assembly: assemblies.name,
+      family: conferenceFamilies.name,
+      whatsappUrl: conferenceFamilies.whatsappUrl,
+    })
+    .from(registrations)
+    .leftJoin(assemblies, eq(registrations.assemblyId, assemblies.id))
+    .leftJoin(
+      conferenceFamilyAssemblies,
+      eq(assemblies.id, conferenceFamilyAssemblies.assemblyId),
+    )
+    .leftJoin(
+      conferenceFamilies,
+      eq(conferenceFamilyAssemblies.familyId, conferenceFamilies.id),
+    )
+    .where(
+      and(
+        eq(registrations.registrationCode, code),
+        not(eq(registrations.status, "CANCELLED")),
+      ),
+    )
+    .limit(1);
+  return row[0] ?? null;
 }

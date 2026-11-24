@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  reconcileSuccessfulPayment,
-  verifyPaystackSignature,
-} from "@/features/payment/service";
+import * as paymentService from "@/features/payment/service";
 
 export async function POST(request: NextRequest) {
   const raw = await request.text();
   if (
-    !verifyPaystackSignature(raw, request.headers.get("x-paystack-signature"))
+    !paymentService.verifyPaystackSignature(
+      raw,
+      request.headers.get("x-paystack-signature"),
+    )
   )
     return new NextResponse("Unauthorized", { status: 401 });
   let event: { event?: string; data?: { reference?: string; id?: string } };
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await reconcileSuccessfulPayment(
+    await paymentService.reconcileSuccessfulPayment(
       event.data.reference,
       String(event.data.id),
       event,

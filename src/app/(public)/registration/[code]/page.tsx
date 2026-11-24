@@ -1,13 +1,6 @@
 import Link from "next/link";
 import { CheckCircle2, Download, MessageCircle, Ticket } from "lucide-react";
-import { and, eq, not } from "drizzle-orm";
-import { getDb } from "@/db";
-import { assemblies } from "@/features/assembly/schema";
-import {
-  conferenceFamilies,
-  conferenceFamilyAssemblies,
-} from "@/features/family/schema";
-import { registrations } from "@/features/registration/schema";
+import * as registrationService from "@/features/registration/service";
 
 export default async function ConfirmationPage({
   params,
@@ -25,31 +18,7 @@ export default async function ConfirmationPage({
     whatsappUrl: string | null;
   } | null = null;
   try {
-    const db = getDb();
-    const row = await db
-      .select({
-        fullName: registrations.fullName,
-        status: registrations.status,
-        registrationCode: registrations.registrationCode,
-        ticketToken: registrations.ticketToken,
-        assembly: assemblies.name,
-        family: conferenceFamilies.name,
-        whatsappUrl: conferenceFamilies.whatsappUrl,
-      })
-      .from(registrations)
-      .leftJoin(assemblies, eq(registrations.assemblyId, assemblies.id))
-      .leftJoin(
-        conferenceFamilyAssemblies,
-        eq(assemblies.id, conferenceFamilyAssemblies.assemblyId),
-      )
-      .where(
-        and(
-          eq(registrations.registrationCode, code),
-          not(eq(registrations.status, "CANCELLED")),
-        ),
-      )
-      .limit(1);
-    registration = row[0] ?? null;
+    registration = await registrationService.findConfirmationByCode(code);
   } catch {
     /* configuration state below */
   }

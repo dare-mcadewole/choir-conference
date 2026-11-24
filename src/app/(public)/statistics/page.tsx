@@ -1,57 +1,10 @@
 import Link from "next/link";
 import { BarChart3, Users } from "lucide-react";
-import { count, eq, sql } from "drizzle-orm";
-import { getDb } from "@/db";
-import { assemblies } from "@/features/assembly/schema";
-import { conferenceFamilies } from "@/features/family/schema";
-import {
-  registrationCategories,
-  registrations,
-} from "@/features/registration/schema";
+import * as dashboardService from "@/features/dashboard/service";
 
 async function stats() {
   try {
-    const db = getDb();
-    const [total] = await db
-      .select({ total: count() })
-      .from(registrations)
-      .where(eq(registrations.status, "CONFIRMED"));
-    const families = await db
-      .select({ name: conferenceFamilies.name, total: count(registrations.id) })
-      .from(conferenceFamilies)
-      .leftJoin(
-        registrations,
-        eq(conferenceFamilies.id, registrations.familyId),
-      )
-      .groupBy(conferenceFamilies.id)
-      .orderBy(conferenceFamilies.name);
-    const leaderboard = await db
-      .select({
-        id: assemblies.id,
-        name: assemblies.name,
-        family: conferenceFamilies.name,
-        total: count(registrations.id),
-      })
-      .from(assemblies)
-      .leftJoin(
-        conferenceFamilies,
-        eq(assemblies.familyId, conferenceFamilies.id),
-      )
-      .leftJoin(registrations, eq(assemblies.id, registrations.assemblyId))
-      .groupBy(assemblies.id, conferenceFamilies.name)
-      .orderBy(sql`${count(registrations.id)} desc`);
-    const categories = await db
-      .select({
-        name: registrationCategories.name,
-        total: count(registrations.id),
-      })
-      .from(registrationCategories)
-      .leftJoin(
-        registrations,
-        eq(registrationCategories.id, registrations.categoryId),
-      )
-      .groupBy(registrationCategories.id);
-    return { total: total?.total ?? 0, families, leaderboard, categories };
+    return await dashboardService.findStatistics();
   } catch {
     return { total: 0, families: [], leaderboard: [], categories: [] };
   }

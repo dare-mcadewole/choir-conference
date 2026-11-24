@@ -1,0 +1,97 @@
+import { count, eq, sql, sum } from "drizzle-orm";
+import { getDb } from "@/db";
+import { assemblies } from "@/features/assembly/schema";
+import {
+  conferenceFamilies,
+  conferenceFamilyAssemblies,
+} from "@/features/family/schema";
+import { payments } from "@/features/payment/schema";
+import {
+  registrationCategories,
+  registrations,
+} from "@/features/registration/schema";
+
+export async function findStatistics() {
+  const db = getDb();
+  const [total] = await db
+    .select({ total: count() })
+    .from(registrations)
+    .where(eq(registrations.status, "CONFIRMED"));
+  const families = await db
+    .select({ name: conferenceFamilies.name, total: count(registrations.id) })
+    .from(conferenceFamilies)
+    .leftJoin(
+      conferenceFamilyAssemblies,
+      eq(conferenceFamilies.id, conferenceFamilyAssemblies.familyId),
+    )
+    .leftJoin(
+      registrations,
+      eq(conferenceFamilyAssemblies.assemblyId, registrations.assemblyId),
+    )
+    .groupBy(conferenceFamilies.id)
+    .orderBy(conferenceFamilies.name);
+  const leaderboard = await db
+    .select({
+      id: assemblies.id,
+      name: assemblies.name,
+      family: conferenceFamilies.name,
+      total: count(registrations.id),
+    })
+    .from(assemblies)
+    .leftJoin(
+      conferenceFamilyAssemblies,
+      eq(assemblies.id, conferenceFamilyAssemblies.assemblyId),
+    )
+    .leftJoin(
+      conferenceFamilies,
+      eq(conferenceFamilyAssemblies.familyId, conferenceFamilies.id),
+    )
+    .leftJoin(registrations, eq(assemblies.id, registrations.assemblyId))
+    .groupBy(assemblies.id, conferenceFamilies.name)
+    .orderBy(sql`${count(registrations.id)} desc`);
+  const categories = await db
+    .select({
+      name: registrationCategories.name,
+      total: count(registrations.id),
+    })
+    .from(registrationCategories)
+    .leftJoin(
+      registrations,
+      eq(registrationCategories.id, registrations.categoryId),
+    )
+    .groupBy(registrationCategories.id);
+  return { total: total?.total ?? 0, families, leaderboard, categories };
+}
+
+export async function findAdminOverview() {
+  const db = getDb();
+  const [all, confirmed, pending, paid, revenue, assemblyCount] =
+    await Promise.all([
+      db.select({ value: count() }).from(registrations),
+      db
+        .select({ value: count() })
+        .from(registrations)
+        .where(eq(registrations.status, "CONFIRMED")),
+      db
+        .select({ value: count() })
+        .from(registrations)
+        .where(eq(registrations.status, "PENDING_PAYMENT")),
+      db
+        .select({ value: count() })
+        .from(payments)
+        .where(eq(payments.status, "SUCCESSFUL")),
+      db
+        .select({ value: sum(payments.amount) })
+        .from(payments)
+        .where(eq(payments.status, "SUCCESSFUL")),
+      db.select({ value: count() }).from(assemblies),
+    ]);
+  return {
+    all: all[0]?.value ?? 0,
+    confirmed: confirmed[0]?.value ?? 0,
+    pending: pending[0]?.value ?? 0,
+    paid: paid[0]?.value ?? 0,
+    revenue: revenue[0]?.value ?? "0",
+    assemblies: assemblyCount[0]?.value ?? 0,
+  };
+}
