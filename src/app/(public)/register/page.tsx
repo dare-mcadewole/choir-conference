@@ -32,7 +32,7 @@ export default async function RegisterPage({
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen">
       <div className="page-shell py-8">
         <Link
           href="/"
@@ -43,7 +43,7 @@ export default async function RegisterPage({
         <div className="mx-auto mt-12 max-w-3xl">
           <p className="eyebrow">All Choirs&apos; Conference 2027</p>
           <h1 className="mt-4 font-display text-4xl md:text-5xl uppercase">
-            Reserve your place
+            Secure your spot
           </h1>
           <p className="mt-4 max-w-xl text-slate-600">
             Complete the form below. Your conference family will be assigned
@@ -52,8 +52,8 @@ export default async function RegisterPage({
 
           <div
             className="
-            mt-10 rounded-xl border-hairline border-slate-200/75
-            shadow-lg shadow-zinc-100 p-4 md:p-9
+            mt-10 rounded-xl bg-white border-hairline border-primary-100
+            shadow-xl shadow-zinc-100 p-6 md:p-9
           "
           >
             <RegistrationForm {...data} initial={initial} />
