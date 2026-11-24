@@ -8,6 +8,7 @@ import {
   Ticket,
   UserRound,
   Users,
+  UsersRound,
 } from "lucide-react";
 
 const navigation = [
@@ -15,13 +16,13 @@ const navigation = [
   { icon: Users, name: "Registrations", href: "/admin#registrations" },
   {
     icon: Building2,
-    name: "Assemblies & families",
-    href: "/admin#workspace",
+    name: "Assemblies",
+    href: "/assemblies",
   },
   {
-    icon: UserRound,
-    name: "Speakers & institutions",
-    href: "/admin#workspace",
+    icon: UsersRound,
+    name: "Families",
+    href: "/families",
   },
   { icon: CreditCard, name: "Payments", href: "/admin#finance" },
   { icon: Ticket, name: "Tickets", href: "/admin#workspace" },
