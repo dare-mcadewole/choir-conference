@@ -20,7 +20,6 @@ export const vocalPart = pgEnum("vocal_part", [
   "TENOR",
   "BASS",
 ]);
-
 export const VOCAL_PART_OPTIONS = vocalPart.enumValues;
 export type VocalPart = (typeof vocalPart.enumValues)[number];
 
@@ -30,6 +29,8 @@ export const registrationStatus = pgEnum("registration_status", [
   "CANCELLED",
   "EXPIRED",
 ]);
+export const REGISTRATION_STATUS_OPTIONS = registrationStatus.enumValues;
+export type RegistrationStatus = (typeof REGISTRATION_STATUS_OPTIONS)[number];
 
 export const registrationCategories = pgTable(
   "registration_categories",
