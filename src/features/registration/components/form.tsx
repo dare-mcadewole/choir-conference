@@ -53,11 +53,7 @@ export function RegistrationForm({
     setError,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<
-    z.input<typeof registrationSchema>,
-    unknown,
-    RegistrationInput
-  >({
+  } = useForm<z.input<typeof registrationSchema>, unknown, RegistrationInput>({
     resolver: zodResolver(schema),
     defaultValues: {
       fullName: initial?.fullName ?? "",
@@ -133,11 +129,7 @@ export function RegistrationForm({
     >
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Full name" error={errors.fullName?.message}>
-          <input
-            {...register("fullName")}
-            className="field"
-            required
-          />
+          <input {...register("fullName")} className="field" required />
         </Field>
 
         <Field
@@ -153,17 +145,8 @@ export function RegistrationForm({
           />
         </Field>
 
-        <Field
-          label="Phone number"
-          hint="Use the number associated with your registration."
-          error={errors.phone?.message}
-        >
-          <input
-            {...register("phone")}
-            className="field"
-            type="tel"
-            required
-          />
+        <Field label="Phone number" error={errors.phone?.message}>
+          <input {...register("phone")} className="field" type="tel" required />
         </Field>
 
         <Field label="Gender" error={errors.gender?.message}>
@@ -343,7 +326,10 @@ export function RegistrationForm({
       )}
 
       {errors.root?.server?.message && (
-        <p role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-700">
+        <p
+          role="alert"
+          className="rounded-xl bg-red-50 p-4 text-sm text-red-700"
+        >
           {errors.root.server.message}
         </p>
       )}
