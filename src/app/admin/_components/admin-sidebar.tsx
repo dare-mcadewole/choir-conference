@@ -63,7 +63,7 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex shrink-0 flex-col rounded-2xl bg-white p-4 lg:min-h-[calc(100vh-2rem)] lg:w-72 lg:p-5">
+    <aside className="flex shrink-0 flex-col rounded-2xl bg-white p-4 lg:fixed lg:inset-y-4 lg:left-4 lg:z-20 lg:h-[calc(100vh-2rem)] lg:w-72 lg:overflow-y-auto lg:p-5">
       <Link href="/" className="flex items-center gap-2.5 px-2 py-2">
         <span className="grid size-8 place-items-center rounded-xl bg-[#171923] text-white">
           <CalendarDays size={17} />
