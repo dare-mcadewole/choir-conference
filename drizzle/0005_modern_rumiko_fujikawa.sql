@@ -1,0 +1,1 @@
+ALTER TABLE "speakers" ADD COLUMN "html_class_name" text;

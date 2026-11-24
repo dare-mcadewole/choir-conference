@@ -36,6 +36,13 @@
       "when": 1795526365357,
       "tag": "0004_fair_frightful_four",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795560063702,
+      "tag": "0005_modern_rumiko_fujikawa",
+      "breakpoints": true
     }
   ]
 }

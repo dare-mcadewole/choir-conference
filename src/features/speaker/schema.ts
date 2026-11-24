@@ -18,5 +18,6 @@ export const speakers = pgTable("speakers", {
   links: jsonb("links").default({}),
   published: boolean("published").notNull().default(false),
   sortOrder: integer("sort_order").notNull().default(0),
+  htmlClassName: text("html_class_name"),
   ...timestamps,
 });
