@@ -28,7 +28,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={cn(bodyFont.variable, titleFont.variable)}>
-      <body>{children}</body>
+      <body className="bg-secondary/5">{children}</body>
     </html>
   );
 }
