@@ -458,6 +458,11 @@ export function RegistrationForm({
         </p>
       )}
 
+      <p className="text-xs leading-5 text-slate-500">
+        By registering, you consent to the conference team processing your
+        details for the purposes of this event.
+      </p>
+
       <div className="flex justify-end">
         <Button
           type="submit"
@@ -470,11 +475,6 @@ export function RegistrationForm({
           Register Now
         </Button>
       </div>
-
-      <p className="text-xs leading-5 text-slate-500">
-        By registering, you consent to the conference team processing your
-        details for the purposes of this event.
-      </p>
     </form>
   );
 }
