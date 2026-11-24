@@ -446,7 +446,7 @@ export function RegistrationForm({
           type="submit"
           loading={isSubmitting}
           size="lg"
-          variant={"secondary"}
+          variant="secondary"
           className="w-full md:w-auto"
           disabled={isSubmitting}
         >
