@@ -402,7 +402,7 @@ export function RegistrationForm({
           >
             <RadioGroup
               className="flex w-fit flex-row gap-1.5"
-              value={field.value}
+              value={field.value ?? null}
               onValueChange={field.onChange}
               onBlur={field.onBlur}
               inputRef={field.ref}
