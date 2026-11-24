@@ -19,6 +19,7 @@ import {
   ComboboxValue,
 } from "@/components/ui/combobox";
 import { Picker } from "@/components/ui/picker";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   createRegistrationFormSchema,
   registrationSchema,
@@ -323,49 +324,46 @@ export function RegistrationForm({
         }}
       />
 
-      <Field
-        label="Are you a Central Choir member?"
-        error={errors.centralChoirMember?.message}
-        group
-      >
-        <div className="flex gap-3">
-          <Controller
-            control={control}
-            name="centralChoirMember"
-            render={({ field }) => (
-              <>
-                <label className="rounded-xl border px-5 py-3 text-sm">
-                  <Input
-                    ref={field.ref}
-                    className="mr-2"
-                    name={field.name}
-                    type="radio"
-                    value="true"
-                    checked={field.value === true}
-                    onBlur={field.onBlur}
-                    onChange={() => field.onChange(true)}
-                    required
-                  />
-                  Yes
-                </label>
-                <label className="rounded-xl border px-5 py-3 text-sm">
-                  <Input
-                    className="mr-2"
-                    name={field.name}
-                    type="radio"
-                    value="false"
-                    checked={field.value === false}
-                    onBlur={field.onBlur}
-                    onChange={() => field.onChange(false)}
-                    required
-                  />
-                  No
-                </label>
-              </>
-            )}
-          />
-        </div>
-      </Field>
+      <Controller
+        control={control}
+        name="centralChoirMember"
+        render={({ field }) => (
+          <Field
+            label="Are you a Central Choir member?"
+            error={errors.centralChoirMember?.message}
+            group
+          >
+            <RadioGroup
+              className="flex w-fit flex-row gap-1.5"
+              value={field.value}
+              onValueChange={field.onChange}
+              onBlur={field.onBlur}
+              inputRef={field.ref}
+              name={field.name}
+              required
+            >
+              <label
+                className="
+                  flex cursor-pointer items-center gap-2 rounded-md
+                  border-[0.5px] px-3.5 py-2 h-10 text-sm
+                "
+              >
+                <RadioGroupItem value={true} />
+                Yes
+              </label>
+              <label
+                className="
+                  flex cursor-pointer items-center gap-2 rounded-md
+                  border-[0.5px] px-5 py-2 h-10 text-sm
+                "
+              >
+                <RadioGroupItem value={false} />
+                No
+              </label>
+            </RadioGroup>
+          </Field>
+        )}
+      />
 
       {isStudent && (
         <div className="rounded-2xl bg-gold/10 p-5">
