@@ -1,4 +1,4 @@
-import { ArrowDown, EighthNotes, Music2, Plus } from "lucide-react";
+import { ArrowDown, EighthNotes, Mic, Music2, Plus } from "lucide-react";
 import { RegistrationLookup } from "@/features/registration/components/lookup";
 import * as conferenceService from "@/features/conference/service";
 import * as speakerService from "@/features/speaker/service";
@@ -16,15 +16,6 @@ async function getLandingData() {
     return { settings: null, people: [] };
   }
 }
-
-const bottomMargins: Record<number, number> = {
-  0: 0,
-  1: 16,
-  2: 20,
-  3: 20,
-  4: 16,
-  5: 0,
-};
 
 export default async function HomePage() {
   const { settings, people } = await getLandingData();
@@ -74,47 +65,64 @@ export default async function HomePage() {
           </div>
         </div>
 
+        <h4
+          className="
+            mt-16 sm:mt-28 mb-8 container text-xl text-secondary uppercase font-bold
+            flex items-center gap-2
+          "
+        >
+          <Mic size={40} strokeWidth={0.75} />
+          Our Speakers
+        </h4>
         <div
           className="
-          relative mx-auto mt-12 flex max-w-6xl items-end justify-center gap-2
-          sm:mt-24 sm:gap-4
-        "
+            relative flex container items-end justify-center gap-2
+            sm:gap-4
+          "
         >
           {people.slice(0, 6).map((speaker, index) => (
-            <article
+            <div
               key={speaker.id}
-              className={cn(
-                "group relative hidden sm:block aspect-[.68] rounded-2xl w-[18%]",
-                "border-hairline border-white/40 bg-primary-700 shadow-[0_16px_35px_rgba(3,15,55,.35)]",
-                // [index === 2 ? "z-10 mb-7 w-[24%]" : "w-[18%]"],
-              )}
-              style={{
-                transform: `rotate(${(index - 2) * 2.5}deg)`,
-                marginBottom: bottomMargins[index],
-              }}
+              className="w-[18%] flex flex-col gap-2 justify-center items-center"
             >
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(255,255,255,.28),transparent_40%)]" />
-              {speaker.imageUrl ? (
-                <img
-                  src={speaker.imageUrl}
-                  alt={speaker.fullName}
-                  className="size-full object-cover transition duration-500 group-hover:scale-105"
+              <article
+                className={cn(
+                  "group relative hidden sm:block aspect-[.68] overflow-hidden rounded-lg h-64",
+                  "bg-primary-200 shadow-[0_16px_35px_rgba(3,15,55,.35)]",
+                )}
+              >
+                <div
+                  className="
+                    absolute inset-0 bg-[sradial-gradient(circle_at_50%_22%,rgba(255,255,255,.28),transparent_40%)]
+                  "
                 />
-              ) : (
-                <div className="grid size-full place-items-center font-display text-6xl text-white/45">
-                  {getInitials(speaker.fullName)}
-                </div>
-              )}
-              <span
+
+                {speaker.imageUrl ? (
+                  <img
+                    src={speaker.imageUrl}
+                    alt={speaker.fullName}
+                    className={cn(
+                      "size-full object-cover transition duration-500 group-hover:opacity-90",
+                      [speaker.htmlClassName],
+                    )}
+                  />
+                ) : (
+                  <div className="grid size-full place-items-center font-display text-6xl text-white/45">
+                    {getInitials(speaker.fullName)}
+                  </div>
+                )}
+              </article>
+
+              <div
                 className="
-                  absolute -top-4 left-1/2 -translate-x-1/2 whitespace-nowrap
-                  rounded-full bg-white px-3 py-1 text-[10px] font-bold text-primary
+                  whitespace-nowrap px-3 py-1.5 text-center tracking-wider filter backdrop-blur-md
+                  inline-block rounded-full bg-black/15 text-[10px] font-semibold text-white
                 "
               >
                 {speaker.fullName}
                 {speaker.designation && ` (${speaker.designation})`}
-              </span>
-            </article>
+              </div>
+            </div>
           ))}
 
           {!people.length && (
