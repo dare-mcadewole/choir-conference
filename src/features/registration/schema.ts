@@ -14,6 +14,16 @@ import { id, timestamps } from "@/db/schema-helpers";
 import { assemblies } from "@/features/assembly/schema";
 import { academicLevels } from "@/features/institution/schema";
 
+export const vocalPart = pgEnum("vocal_part", [
+  "SOPRANO",
+  "ALTO",
+  "TENOR",
+  "BASS",
+]);
+
+export const VOCAL_PART_OPTIONS = vocalPart.enumValues;
+export type VocalPart = (typeof vocalPart.enumValues)[number];
+
 export const registrationStatus = pgEnum("registration_status", [
   "PENDING_PAYMENT",
   "CONFIRMED",
@@ -56,6 +66,7 @@ export const registrations = pgTable(
     categoryId: uuid("category_id")
       .notNull()
       .references(() => registrationCategories.id),
+    part: vocalPart("part").notNull(),
     centralChoirMember: boolean("central_choir_member").default(false),
     institution: varchar("institution", { length: 360 }),
     academicLevelId: uuid("academic_level_id").references(
