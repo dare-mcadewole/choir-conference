@@ -15,6 +15,20 @@
       "when": 1795467777176,
       "tag": "0001_huge_the_santerians",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795511650185,
+      "tag": "0002_youthful_the_watchers",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795514645636,
+      "tag": "0003_cooing_toad",
+      "breakpoints": true
     }
   ]
 }

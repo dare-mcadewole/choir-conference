@@ -5,7 +5,6 @@ import {
   jsonb,
   pgEnum,
   pgTable,
-  text,
   timestamp,
   uniqueIndex,
   uuid,
@@ -13,8 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { id, timestamps } from "@/db/schema-helpers";
 import { assemblies } from "@/features/assembly/schema";
-import { conferenceFamilies } from "@/features/family/schema";
-import { academicLevels, institutions } from "@/features/institution/schema";
+import { academicLevels } from "@/features/institution/schema";
 
 export const registrationStatus = pgEnum("registration_status", [
   "PENDING_PAYMENT",
@@ -59,7 +57,7 @@ export const registrations = pgTable(
       .notNull()
       .references(() => registrationCategories.id),
     centralChoirMember: boolean("central_choir_member").default(false),
-    institution: text("institution"),
+    institution: varchar("institution", { length: 360 }),
     academicLevelId: uuid("academic_level_id").references(
       () => academicLevels.id,
     ),

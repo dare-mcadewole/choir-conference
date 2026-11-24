@@ -15,7 +15,7 @@ export const speakers = pgTable("speakers", {
   organization: varchar("organization", { length: 160 }),
   biography: text("biography"),
   imageUrl: text("image_url"),
-  links: jsonb("links").notNull().default({}),
+  links: jsonb("links").default({}),
   published: boolean("published").notNull().default(false),
   sortOrder: integer("sort_order").notNull().default(0),
   ...timestamps,

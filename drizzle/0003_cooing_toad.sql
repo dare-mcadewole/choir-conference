@@ -1,0 +1,1 @@
+ALTER TABLE "registrations" ALTER COLUMN "institution" SET DATA TYPE varchar(360);
