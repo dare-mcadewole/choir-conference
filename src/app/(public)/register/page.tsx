@@ -49,11 +49,23 @@ export default async function RegisterPage({
             Complete the form below. Your conference family will be assigned
             automatically from your assembly.
           </p>
-          <div className="mt-10 rounded-3xl border border-slate-200 p-6 shadow-glow md:p-9">
+
+          <div
+            className="
+            mt-10 rounded-xl border-hairline border-slate-200/75
+            shadow-lg shadow-zinc-100 p-4 md:p-9
+          "
+          >
             <RegistrationForm {...data} initial={initial} />
           </div>
-          <p className="mt-6 flex items-center gap-2 text-xs text-slate-500">
-            <ShieldCheck size={16} className="text-wine" />
+
+          <p
+            className="
+              mt-6 flex justify-center items-center gap-2
+              text-center text-xs text-slate-500
+            "
+          >
+            <ShieldCheck size={16} strokeWidth={1.25} />
             Your information is handled securely and is never included in a
             public attendee directory.
           </p>
