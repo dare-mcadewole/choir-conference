@@ -27,6 +27,7 @@ import {
 } from "@/features/registration/validation";
 import { Field } from "./field";
 import { Input } from "@/components/ui/input";
+import { VOCAL_PART_OPTIONS } from "@/db/schema";
 
 type Option = {
   id: string;
@@ -176,27 +177,45 @@ export function RegistrationForm({
           />
         </Field>
 
-        <Controller
-          control={control}
-          name="gender"
-          render={({ field }) => (
-            <Field label="Gender" error={errors.gender?.message}>
-              <Picker
-                list={[
-                  { label: "Male", value: "MALE" },
-                  { label: "Female", value: "FEMALE" },
-                ]}
-                value={field.value ?? null}
-                onValueChange={(value) => field.onChange(value ?? "")}
-                onBlur={field.onBlur}
-                inputRef={field.ref}
-                name={field.name}
-                required
-                placeholder="Select gender"
-              />
-            </Field>
-          )}
-        />
+        <div className="grid md:grid-cols-2 gap-5">
+          <Controller
+            control={control}
+            name="gender"
+            render={({ field }) => (
+              <Field label="Gender" error={errors.gender?.message}>
+                <Picker
+                  list={["MALE", "FEMALE"]}
+                  value={field.value ?? null}
+                  onValueChange={(value) => field.onChange(value ?? "")}
+                  onBlur={field.onBlur}
+                  inputRef={field.ref}
+                  name={field.name}
+                  required
+                  placeholder="Select gender"
+                />
+              </Field>
+            )}
+          />
+
+          <Controller
+            control={control}
+            name="part"
+            render={({ field }) => (
+              <Field label="Part" error={errors.part?.message}>
+                <Picker
+                  list={VOCAL_PART_OPTIONS}
+                  value={field.value ?? null}
+                  onValueChange={(value) => field.onChange(value ?? "")}
+                  onBlur={field.onBlur}
+                  inputRef={field.ref}
+                  name={field.name}
+                  required
+                  placeholder="Select your part"
+                />
+              </Field>
+            )}
+          />
+        </div>
 
         <Controller
           control={control}

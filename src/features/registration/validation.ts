@@ -1,3 +1,4 @@
+import { VOCAL_PART_OPTIONS } from "@/db/schema";
 import { PhoneSchema } from "@/features/shared/validation";
 import { z } from "zod";
 
@@ -6,11 +7,12 @@ export const registrationSchema = z.object({
   email: z.string().trim().email("Enter a valid email address"),
   phone: PhoneSchema,
   gender: z.enum(["MALE", "FEMALE"], {
-    error: "Choose your gender",
+    error: "Choose gender",
   }),
   assemblyId: z.uuid("Choose your assembly"),
   categoryId: z.uuid("Choose a category"),
   positionIds: z.array(z.uuid()).default([]),
+  part: z.enum(VOCAL_PART_OPTIONS, "Choose part"),
   centralChoirMember: z.boolean("Choose an option"),
   institution: z.string().optional(),
   academicLevelId: z.uuid().optional(),

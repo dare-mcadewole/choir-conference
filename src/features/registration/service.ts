@@ -119,6 +119,7 @@ export async function createRegistration(input: RegistrationInput) {
       gender: input.gender,
       assemblyId: input.assemblyId,
       categoryId: input.categoryId,
+      part: input.part,
       centralChoirMember: input.centralChoirMember,
       institution: category.slug === "student" ? input.institution : null,
       academicLevelId:
