@@ -12,6 +12,7 @@ import {
   type RegistrationInput,
 } from "@/features/registration/validation";
 import { Field } from "./field";
+import { Input } from "@/components/ui/input";
 
 type Option = {
   id: string;
@@ -129,7 +130,7 @@ export function RegistrationForm({
     >
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Full name" error={errors.fullName?.message}>
-          <input {...register("fullName")} className="field" required />
+          <Input {...register("fullName")} required />
         </Field>
 
         <Field
@@ -137,25 +138,15 @@ export function RegistrationForm({
           hint="We’ll send your registration confirmation to this address."
           error={errors.email?.message}
         >
-          <input
-            {...register("email")}
-            className="field"
-            type="email"
-            required
-          />
+          <Input {...register("email")} type="email" required />
         </Field>
 
         <Field label="Phone number" error={errors.phone?.message}>
-          <input {...register("phone")} className="field" type="tel" required />
+          <Input {...register("phone")} type="tel" required />
         </Field>
 
         <Field label="Gender" error={errors.gender?.message}>
-          <select
-            {...register("gender")}
-            className="field"
-            required
-            defaultValue=""
-          >
+          <select {...register("gender")} required defaultValue="">
             <option value="" disabled>
               Select gender
             </option>
@@ -165,12 +156,7 @@ export function RegistrationForm({
         </Field>
 
         <Field label="Assembly" error={errors.assemblyId?.message}>
-          <select
-            {...register("assemblyId")}
-            className="field"
-            required
-            defaultValue=""
-          >
+          <select {...register("assemblyId")} required defaultValue="">
             <option value="" disabled>
               Select your assembly
             </option>
@@ -183,12 +169,7 @@ export function RegistrationForm({
         </Field>
 
         <Field label="Category" error={errors.categoryId?.message}>
-          <select
-            {...register("categoryId")}
-            className="field"
-            required
-            defaultValue=""
-          >
+          <select {...register("categoryId")} required defaultValue="">
             <option value="" disabled>
               Select category
             </option>
@@ -236,7 +217,7 @@ export function RegistrationForm({
             render={({ field }) => (
               <>
                 <label className="rounded-xl border px-5 py-3 text-sm">
-                  <input
+                  <Input
                     ref={field.ref}
                     className="mr-2"
                     name={field.name}
@@ -250,7 +231,7 @@ export function RegistrationForm({
                   Yes
                 </label>
                 <label className="rounded-xl border px-5 py-3 text-sm">
-                  <input
+                  <Input
                     className="mr-2"
                     name={field.name}
                     type="radio"
@@ -334,14 +315,18 @@ export function RegistrationForm({
         </p>
       )}
 
-      <Button
-        type="submit"
-        loading={isSubmitting}
-        className="w-full md:w-auto"
-        disabled={isSubmitting}
-      >
-        Complete registration
-      </Button>
+      <div className="flex justify-end">
+        <Button
+          type="submit"
+          loading={isSubmitting}
+          size="lg"
+          variant={"secondary"}
+          className="w-full md:w-auto"
+          disabled={isSubmitting}
+        >
+          Register Now
+        </Button>
+      </div>
 
       <p className="text-xs leading-5 text-slate-500">
         By registering, you consent to the conference team processing your

@@ -15,7 +15,6 @@
     @apply transition-colors;
   }
   :root {
-
     --background: oklch(1 0 0);
 
     --foreground: oklch(0.145 0 0);
@@ -78,10 +77,9 @@
 
     --sidebar-border: oklch(0.922 0 0);
 
-    --sidebar-ring: oklch(0.708 0 0)
+    --sidebar-ring: oklch(0.708 0 0);
   }
   .dark {
-
     --background: oklch(0.145 0 0);
 
     --foreground: oklch(0.985 0 0);
@@ -142,7 +140,7 @@
 
     --sidebar-border: oklch(1 0 0 / 10%);
 
-    --sidebar-ring: oklch(0.556 0 0)
+    --sidebar-ring: oklch(0.556 0 0);
   }
   html {
     @apply font-body;
@@ -164,8 +162,5 @@
   }
   .button-secondary {
     @apply inline-flex items-center justify-center rounded-full border border-ink/15 bg-white px-6 py-3 text-sm font-bold text-ink hover:border-gold hover:text-wine;
-  }
-  .field {
-    @apply mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-sm outline-none focus:border-wine focus:ring-2 focus:ring-wine/10;
   }
 }
