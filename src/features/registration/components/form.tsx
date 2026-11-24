@@ -1,8 +1,16 @@
 "use client";
-import { useMemo, useState, useTransition } from "react";
-import { CheckCircle2, ChevronLeft, Loader2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CheckCircle2 } from "lucide-react";
+import { Controller, useForm } from "react-hook-form";
+import type { z } from "zod";
 import { submitRegistration } from "@/features/registration/actions";
 import { Button } from "@/components/ui/button";
+import {
+  createRegistrationFormSchema,
+  registrationSchema,
+  type RegistrationInput,
+} from "@/features/registration/validation";
 import { Field } from "./field";
 
 type Option = {
@@ -28,14 +36,39 @@ export function RegistrationForm({
   levels,
   initial,
 }: Props) {
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<{
     code: string | null;
     requiresPayment: boolean;
   } | null>(null);
-  const [categoryId, setCategoryId] = useState("");
-  const [institutionId, setInstitutionId] = useState("");
+  const schema = useMemo(
+    () => createRegistrationFormSchema(categories),
+    [categories],
+  );
+  const {
+    control,
+    clearErrors,
+    handleSubmit,
+    register,
+    resetField,
+    setError,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<
+    z.input<typeof registrationSchema>,
+    unknown,
+    RegistrationInput
+  >({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      fullName: initial?.fullName ?? "",
+      email: initial?.email ?? "",
+      phone: initial?.phone ?? "",
+      positionIds: [],
+    },
+    shouldUnregister: true,
+  });
+  const categoryId = watch("categoryId");
+  const institutionId = watch("institutionId");
   const category = categories.find((item) => item.id === categoryId);
   const isStudent = category?.slug === "student";
   const institution = institutions.find((item) => item.id === institutionId);
@@ -77,50 +110,32 @@ export function RegistrationForm({
     );
   }
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-    const form = new FormData(event.currentTarget);
-    const central = form.get("centralChoirMember") === "true";
-    const data = {
-      fullName: form.get("fullName"),
-      email: form.get("email"),
-      phone: form.get("phone"),
-      gender: form.get("gender"),
-      assemblyId: form.get("assemblyId"),
-      categoryId: form.get("categoryId"),
-      positionIds: form.getAll("positionIds"),
-      centralChoirMember: central,
-      institutionId: isStudent
-        ? form.get("institutionId") || undefined
-        : undefined,
-      academicLevelId: isStudent
-        ? form.get("academicLevelId") || undefined
-        : undefined,
-    };
-
-    startTransition(async () => {
-      const response = await submitRegistration(data);
-      if (!response.ok) {
-        setError(response.error);
-        return;
-      }
-      if (response.checkoutUrl) {
-        window.location.assign(response.checkoutUrl);
-        return;
-      }
-      setSuccess(response);
-    });
-  }
+  const onSubmit = handleSubmit(async (data) => {
+    clearErrors("root.server");
+    const response = await submitRegistration(data);
+    if (!response.ok) {
+      setError("root.server", { type: "server", message: response.error });
+      return;
+    }
+    if (response.checkoutUrl) {
+      window.location.assign(response.checkoutUrl);
+      return;
+    }
+    setSuccess(response);
+  });
 
   return (
-    <form onSubmit={onSubmit} className="space-y-7">
+    <form
+      onSubmit={onSubmit}
+      onChange={() => clearErrors("root.server")}
+      noValidate
+      className="space-y-7"
+    >
       <div className="grid gap-5 md:grid-cols-2">
-        <Field label="Full name">
+        <Field label="Full name" error={errors.fullName?.message}>
           <input
+            {...register("fullName")}
             className="field"
-            name="fullName"
-            defaultValue={initial?.fullName}
             required
           />
         </Field>
@@ -128,12 +143,12 @@ export function RegistrationForm({
         <Field
           label="Email address"
           hint="We’ll send your registration confirmation to this address."
+          error={errors.email?.message}
         >
           <input
+            {...register("email")}
             className="field"
-            name="email"
             type="email"
-            defaultValue={initial?.email}
             required
           />
         </Field>
@@ -141,18 +156,23 @@ export function RegistrationForm({
         <Field
           label="Phone number"
           hint="Use the number associated with your registration."
+          error={errors.phone?.message}
         >
           <input
+            {...register("phone")}
             className="field"
-            name="phone"
             type="tel"
-            defaultValue={initial?.phone}
             required
           />
         </Field>
 
-        <Field label="Gender">
-          <select name="gender" className="field" required defaultValue="">
+        <Field label="Gender" error={errors.gender?.message}>
+          <select
+            {...register("gender")}
+            className="field"
+            required
+            defaultValue=""
+          >
             <option value="" disabled>
               Select gender
             </option>
@@ -161,8 +181,13 @@ export function RegistrationForm({
           </select>
         </Field>
 
-        <Field label="Assembly">
-          <select name="assemblyId" className="field" required defaultValue="">
+        <Field label="Assembly" error={errors.assemblyId?.message}>
+          <select
+            {...register("assemblyId")}
+            className="field"
+            required
+            defaultValue=""
+          >
             <option value="" disabled>
               Select your assembly
             </option>
@@ -174,16 +199,12 @@ export function RegistrationForm({
           </select>
         </Field>
 
-        <Field label="Category">
+        <Field label="Category" error={errors.categoryId?.message}>
           <select
-            name="categoryId"
+            {...register("categoryId")}
             className="field"
             required
-            value={categoryId}
-            onChange={(e) => {
-              setCategoryId(e.target.value);
-              setInstitutionId("");
-            }}
+            defaultValue=""
           >
             <option value="" disabled>
               Select category
@@ -200,6 +221,7 @@ export function RegistrationForm({
       <Field
         label="Position held (select all that apply)"
         hint="Choose all positions that apply to you."
+        error={errors.positionIds?.message}
         group
       >
         <div className="grid gap-3 sm:grid-cols-2">
@@ -208,35 +230,58 @@ export function RegistrationForm({
               key={item.id}
               className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-sm"
             >
-              <input name="positionIds" type="checkbox" value={item.id} />
+              <input
+                {...register("positionIds")}
+                type="checkbox"
+                value={item.id}
+              />
               {item.name}
             </label>
           ))}
         </div>
       </Field>
 
-      <Field label="Are you a Central Choir member?" group>
+      <Field
+        label="Are you a Central Choir member?"
+        error={errors.centralChoirMember?.message}
+        group
+      >
         <div className="flex gap-3">
-          <label className="rounded-xl border px-5 py-3 text-sm">
-            <input
-              className="mr-2"
-              name="centralChoirMember"
-              type="radio"
-              value="true"
-              required
-            />
-            Yes
-          </label>
-          <label className="rounded-xl border px-5 py-3 text-sm">
-            <input
-              className="mr-2"
-              name="centralChoirMember"
-              type="radio"
-              value="false"
-              required
-            />
-            No
-          </label>
+          <Controller
+            control={control}
+            name="centralChoirMember"
+            render={({ field }) => (
+              <>
+                <label className="rounded-xl border px-5 py-3 text-sm">
+                  <input
+                    ref={field.ref}
+                    className="mr-2"
+                    name={field.name}
+                    type="radio"
+                    value="true"
+                    checked={field.value === true}
+                    onBlur={field.onBlur}
+                    onChange={() => field.onChange(true)}
+                    required
+                  />
+                  Yes
+                </label>
+                <label className="rounded-xl border px-5 py-3 text-sm">
+                  <input
+                    className="mr-2"
+                    name={field.name}
+                    type="radio"
+                    value="false"
+                    checked={field.value === false}
+                    onBlur={field.onBlur}
+                    onChange={() => field.onChange(false)}
+                    required
+                  />
+                  No
+                </label>
+              </>
+            )}
+          />
         </div>
       </Field>
 
@@ -247,13 +292,16 @@ export function RegistrationForm({
             <Field
               label="Institution"
               hint="Choose the institution where you currently study."
+              error={errors.institutionId?.message}
             >
               <select
-                name="institutionId"
+                {...register("institutionId", {
+                  setValueAs: (value: string) => value || undefined,
+                  onChange: () => resetField("academicLevelId"),
+                })}
                 className="field"
                 required
-                value={institutionId}
-                onChange={(e) => setInstitutionId(e.target.value)}
+                defaultValue=""
               >
                 <option value="" disabled>
                   Select institution
@@ -265,9 +313,14 @@ export function RegistrationForm({
                 ))}
               </select>
             </Field>
-            <Field label="Academic class / level">
+            <Field
+              label="Academic class / level"
+              error={errors.academicLevelId?.message}
+            >
               <select
-                name="academicLevelId"
+                {...register("academicLevelId", {
+                  setValueAs: (value: string) => value || undefined,
+                })}
                 className="field"
                 required
                 disabled={!institutionId}
@@ -289,15 +342,17 @@ export function RegistrationForm({
         </div>
       )}
 
-      {error && (
-        <p className="rounded-xl bg-red-50 p-4 text-sm text-red-700">{error}</p>
+      {errors.root?.server?.message && (
+        <p role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-700">
+          {errors.root.server.message}
+        </p>
       )}
 
       <Button
         type="submit"
-        loading={isPending}
+        loading={isSubmitting}
         className="w-full md:w-auto"
-        disabled={isPending}
+        disabled={isSubmitting}
       >
         Complete registration
       </Button>
