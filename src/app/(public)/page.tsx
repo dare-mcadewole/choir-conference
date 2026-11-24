@@ -49,12 +49,12 @@ export default async function HomePage() {
         </header>
 
         <div className="relative mx-auto flex max-w-5xl flex-col items-center pt-20 text-center sm:pt-24">
-          <p className="text-base mt-1 font-bold tracking-[.52em] text-white/75 uppercase">
+          <p className="text-xs sm:text-base mt-1 font-bold tracking-[.52em] text-white/75 uppercase">
             All Choirs' Conference '27
           </p>
           <h1
             className="
-              mt-7 max-w-4xl font-display text-5xl leading-[.82] tracking-[-.025em]
+              mt-7 max-w-4xl font-display text-6xl sm:leading-[.82] tracking-[-.025em]
               sm:text-7xl md:text-8xl uppercase
             "
             dangerouslySetInnerHTML={{ __html: theme }}
@@ -68,7 +68,7 @@ export default async function HomePage() {
         <h4
           className="
             mt-16 sm:mt-28 mb-8 container text-xl text-secondary uppercase font-bold
-            flex items-center gap-2
+            flex items-center gap-2 relative
           "
         >
           <Mic size={40} strokeWidth={0.75} />
@@ -76,18 +76,18 @@ export default async function HomePage() {
         </h4>
         <div
           className="
-            relative flex container items-end justify-center gap-2
-            sm:gap-4
+            relative container gap-2 sm:gap-2 gap-y-6
+            grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6
           "
         >
-          {people.slice(0, 6).map((speaker, index) => (
+          {people.slice(0, 6).map((speaker) => (
             <div
               key={speaker.id}
-              className="w-[18%] flex flex-col gap-2 justify-center items-center"
+              className="flex flex-col gap-2 justify-center items-center mb-2 md:mb-4"
             >
               <article
                 className={cn(
-                  "group relative hidden sm:block aspect-[.68] overflow-hidden rounded-lg h-64",
+                  "group relative aspect-[.68] overflow-hidden rounded-lg h-64",
                   "bg-primary-200 shadow-[0_16px_35px_rgba(3,15,55,.35)]",
                 )}
               >
@@ -111,6 +111,12 @@ export default async function HomePage() {
                     {getInitials(speaker.fullName)}
                   </div>
                 )}
+
+                <div
+                  className="
+                    absolute left-0 inset-0 right-0 top-0 bottom-0 bg-gradient-to-b from-transparent to-primary/30
+                  "
+                />
               </article>
 
               <div
