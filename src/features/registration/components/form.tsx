@@ -3,6 +3,7 @@ import { useMemo, useState, useTransition } from "react";
 import { CheckCircle2, ChevronLeft, Loader2 } from "lucide-react";
 import { submitRegistration } from "@/features/registration/actions";
 import { Button } from "@/components/ui/button";
+import { Field } from "./field";
 
 type Option = {
   id: string;
@@ -11,7 +12,7 @@ type Option = {
   type?: "SECONDARY" | "TERTIARY";
 };
 type Props = {
-  assemblies: Array<{ id: string; name: string; familyName: string | null }>;
+  assemblies: Array<{ id: string; name: string }>;
   categories: Option[];
   positions: Option[];
   institutions: Option[];
@@ -124,7 +125,10 @@ export function RegistrationForm({
           />
         </Field>
 
-        <Field label="Email address">
+        <Field
+          label="Email address"
+          hint="We’ll send your registration confirmation to this address."
+        >
           <input
             className="field"
             name="email"
@@ -134,7 +138,10 @@ export function RegistrationForm({
           />
         </Field>
 
-        <Field label="Phone number">
+        <Field
+          label="Phone number"
+          hint="Use the number associated with your registration."
+        >
           <input
             className="field"
             name="phone"
@@ -161,7 +168,7 @@ export function RegistrationForm({
             </option>
             {assemblies.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.name} — {item.familyName}
+                {item.name}
               </option>
             ))}
           </select>
@@ -190,7 +197,11 @@ export function RegistrationForm({
         </Field>
       </div>
 
-      <Field label="Position held (select all that apply)">
+      <Field
+        label="Position held (select all that apply)"
+        hint="Choose all positions that apply to you."
+        group
+      >
         <div className="grid gap-3 sm:grid-cols-2">
           {positions.map((item) => (
             <label
@@ -204,7 +215,7 @@ export function RegistrationForm({
         </div>
       </Field>
 
-      <Field label="Are you a Central Choir member?">
+      <Field label="Are you a Central Choir member?" group>
         <div className="flex gap-3">
           <label className="rounded-xl border px-5 py-3 text-sm">
             <input
@@ -233,7 +244,10 @@ export function RegistrationForm({
         <div className="rounded-2xl bg-gold/10 p-5">
           <p className="text-sm font-bold text-ink">Student details</p>
           <div className="mt-4 grid gap-5 md:grid-cols-2">
-            <Field label="Institution">
+            <Field
+              label="Institution"
+              hint="Choose the institution where you currently study."
+            >
               <select
                 name="institutionId"
                 className="field"
@@ -293,20 +307,5 @@ export function RegistrationForm({
         details for the purposes of this event.
       </p>
     </form>
-  );
-}
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block text-sm font-semibold text-slate-700">
-      {label}
-      {children}
-    </label>
   );
 }
