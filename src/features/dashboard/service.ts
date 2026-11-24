@@ -1,4 +1,4 @@
-import { count, eq, sql, sum } from "drizzle-orm";
+import { count, desc, eq, ilike, or, sql, sum } from "drizzle-orm";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
 import {
@@ -94,4 +94,30 @@ export async function findAdminOverview() {
     revenue: revenue[0]?.value ?? "0",
     assemblies: assemblyCount[0]?.value ?? 0,
   };
+}
+
+export async function findRecentRegistrations(search?: string) {
+  const db = getDb();
+  const query = search?.trim();
+  return db
+    .select({
+      id: registrations.id,
+      fullName: registrations.fullName,
+      email: registrations.email,
+      status: registrations.status,
+      createdAt: registrations.createdAt,
+      assembly: assemblies.name,
+    })
+    .from(registrations)
+    .leftJoin(assemblies, eq(registrations.assemblyId, assemblies.id))
+    .where(
+      query
+        ? or(
+            ilike(registrations.fullName, `%${query}%`),
+            ilike(registrations.email, `%${query}%`),
+          )
+        : undefined,
+    )
+    .orderBy(desc(registrations.createdAt))
+    .limit(6);
 }
