@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { submitRegistration } from "@/features/registration/actions";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Picker } from "@/components/ui/picker";
 import {
   createRegistrationFormSchema,
@@ -213,28 +214,50 @@ export function RegistrationForm({
         />
       </div>
 
-      <Field
-        label="Position held (select all that apply)"
-        hint="Choose all positions that apply to you."
-        error={errors.positionIds?.message}
-        group
-      >
-        <div className="grid gap-3 sm:grid-cols-2">
-          {positions.map((item) => (
-            <label
-              key={item.id}
-              className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-sm"
+      <Controller
+        control={control}
+        name="positionIds"
+        render={({ field }) => {
+          const selectedPositions = field.value ?? [];
+
+          return (
+            <Field
+              label="Position held"
+              hint="Choose all positions that apply to you."
+              error={errors.positionIds?.message}
+              group
             >
-              <input
-                {...register("positionIds")}
-                type="checkbox"
-                value={item.id}
-              />
-              {item.name}
-            </label>
-          ))}
-        </div>
-      </Field>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {positions.map((item, index) => (
+                  <label
+                    key={item.id}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-sm"
+                  >
+                    <Checkbox
+                      checked={selectedPositions.includes(item.id)}
+                      onCheckedChange={(checked) =>
+                        field.onChange(
+                          checked
+                            ? [...selectedPositions, item.id]
+                            : selectedPositions.filter(
+                                (positionId) => positionId !== item.id,
+                              ),
+                        )
+                      }
+                      onBlur={field.onBlur}
+                      inputRef={index === 0 ? field.ref : undefined}
+                      name={field.name}
+                      value={item.id}
+                      aria-invalid={Boolean(errors.positionIds)}
+                    />
+                    {item.name}
+                  </label>
+                ))}
+              </div>
+            </Field>
+          );
+        }}
+      />
 
       <Field
         label="Are you a Central Choir member?"
@@ -326,7 +349,9 @@ export function RegistrationForm({
                       value: id,
                     }))}
                     value={field.value ?? null}
-                    onValueChange={(value) => field.onChange(value ?? undefined)}
+                    onValueChange={(value) =>
+                      field.onChange(value ?? undefined)
+                    }
                     onBlur={field.onBlur}
                     inputRef={field.ref}
                     name={field.name}
