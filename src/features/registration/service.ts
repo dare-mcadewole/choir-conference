@@ -1,13 +1,11 @@
 import { and, eq, not, or } from "drizzle-orm";
-import { randomBytes } from "crypto";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
 import {
   conferenceFamilies,
   conferenceFamilyAssemblies,
 } from "@/features/family/schema";
-import { conference } from "@/features/conference/schema";
-import { academicLevels, institutions } from "@/features/institution/schema";
+import { academicLevels } from "@/features/institution/schema";
 import {
   historicalRegistrants,
   positionOptions,
@@ -20,9 +18,10 @@ import { normalizeEmail, normalizePhone } from "@/lib/utils";
 import * as paymentService from "@/features/payment/service";
 import type { RegistrationInput } from "./validation";
 import * as institutionService from "@/features/institution/service";
-
-const code = () => `ACC27-${randomBytes(4).toString("hex").toUpperCase()}`;
-const token = () => randomBytes(32).toString("base64url");
+import {
+  generateRegistrationCode,
+  generateToken,
+} from "@/features/registration/utils";
 
 export async function lookupRegistrant(query: string) {
   const db = getDb();
@@ -106,8 +105,11 @@ export async function createRegistration(input: RegistrationInput) {
     throw new Error("The required ticket type is unavailable.");
 
   const confirmed = !settings.requirePayment;
-  const registrationCode = confirmed ? code() : null;
-  const ticketToken = confirmed ? token() : null;
+  const registrationCode = confirmed
+    ? generateRegistrationCode(input.fullName)
+    : null;
+  const ticketToken = confirmed ? generateToken() : null;
+
   const [registration] = await db
     .insert(registrations)
     .values({
