@@ -417,7 +417,7 @@ export function RegistrationForm({
               group
             >
               <RadioGroup
-                className="flex w-fit flex-row gap-1.5"
+                className="grid grid-cols-2 gap-1.5"
                 value={field.value ?? null}
                 onValueChange={field.onChange}
                 onBlur={field.onBlur}
@@ -428,7 +428,7 @@ export function RegistrationForm({
                 <label
                   className="
                     flex cursor-pointer items-center gap-2 rounded-md
-                    border-[0.5px] px-3.5 py-2 h-10 text-sm
+                    border-[0.5px] px-3.5 py-2 h-10 text-sm font-medium
                   "
                 >
                   <RadioGroupItem value={true} />
@@ -437,7 +437,7 @@ export function RegistrationForm({
                 <label
                   className="
                     flex cursor-pointer items-center gap-2 rounded-md
-                    border-[0.5px] px-5 py-2 h-10 text-sm
+                    border-[0.5px] px-5 py-2 h-10 text-sm font-medium
                   "
                 >
                   <RadioGroupItem value={false} />
