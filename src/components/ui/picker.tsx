@@ -75,7 +75,7 @@ export function Picker({
       >
         <SelectValue
           placeholder={placeholder}
-          className="truncate data-placeholder:text-zinc-300"
+          className="truncate data-[placeholder]:text-muted-foreground"
         />
       </SelectTrigger>
       <SelectContent
