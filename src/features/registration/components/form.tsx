@@ -202,7 +202,6 @@ export function RegistrationForm({
               <Field
                 id="assembly-picker"
                 label="Assembly"
-                hint="Search by assembly name."
                 error={errors.assemblyId?.message}
               >
                 <ComboboxInput
