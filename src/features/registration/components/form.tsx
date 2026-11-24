@@ -73,11 +73,12 @@ export function RegistrationForm({
     defaultValues: {
       fullName: initial?.fullName ?? "",
       email: initial?.email ?? "",
-      phone: initial?.phone ?? "",
+      phone: initial?.phone?.replace(/\D/g, "") ?? "",
       positionIds: [],
     },
     shouldUnregister: true,
   });
+  const phoneField = register("phone");
   const categoryId = watch("categoryId");
   const institutionId = watch("institutionId");
   const category = categories.find((item) => item.id === categoryId);
@@ -156,7 +157,20 @@ export function RegistrationForm({
         </Field>
 
         <Field label="Phone number" error={errors.phone?.message}>
-          <Input {...register("phone")} type="tel" required />
+          <Input
+            {...phoneField}
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            onChange={(event) => {
+              event.currentTarget.value = event.currentTarget.value.replace(
+                /\D/g,
+                "",
+              );
+              void phoneField.onChange(event);
+            }}
+            required
+          />
         </Field>
 
         <Controller
