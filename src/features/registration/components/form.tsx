@@ -6,6 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { submitRegistration } from "@/features/registration/actions";
 import { Button } from "@/components/ui/button";
+import { Picker } from "@/components/ui/picker";
 import {
   createRegistrationFormSchema,
   registrationSchema,
@@ -145,41 +146,71 @@ export function RegistrationForm({
           <Input {...register("phone")} type="tel" required />
         </Field>
 
-        <Field label="Gender" error={errors.gender?.message}>
-          <select {...register("gender")} required defaultValue="">
-            <option value="" disabled>
-              Select gender
-            </option>
-            <option value="MALE">Male</option>
-            <option value="FEMALE">Female</option>
-          </select>
-        </Field>
+        <Controller
+          control={control}
+          name="gender"
+          render={({ field }) => (
+            <Field label="Gender" error={errors.gender?.message}>
+              <Picker
+                list={[
+                  { label: "Male", value: "MALE" },
+                  { label: "Female", value: "FEMALE" },
+                ]}
+                value={field.value ?? null}
+                onValueChange={(value) => field.onChange(value ?? "")}
+                onBlur={field.onBlur}
+                inputRef={field.ref}
+                name={field.name}
+                required
+                placeholder="Select gender"
+              />
+            </Field>
+          )}
+        />
 
-        <Field label="Assembly" error={errors.assemblyId?.message}>
-          <select {...register("assemblyId")} required defaultValue="">
-            <option value="" disabled>
-              Select your assembly
-            </option>
-            {assemblies.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-        </Field>
+        <Controller
+          control={control}
+          name="assemblyId"
+          render={({ field }) => (
+            <Field label="Assembly" error={errors.assemblyId?.message}>
+              <Picker
+                list={assemblies.map(({ id, name }) => ({
+                  label: name,
+                  value: id,
+                }))}
+                value={field.value ?? null}
+                onValueChange={(value) => field.onChange(value ?? "")}
+                onBlur={field.onBlur}
+                inputRef={field.ref}
+                name={field.name}
+                required
+                placeholder="Select your assembly"
+              />
+            </Field>
+          )}
+        />
 
-        <Field label="Category" error={errors.categoryId?.message}>
-          <select {...register("categoryId")} required defaultValue="">
-            <option value="" disabled>
-              Select category
-            </option>
-            {categories.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-        </Field>
+        <Controller
+          control={control}
+          name="categoryId"
+          render={({ field }) => (
+            <Field label="Category" error={errors.categoryId?.message}>
+              <Picker
+                list={categories.map(({ id, name }) => ({
+                  label: name,
+                  value: id,
+                }))}
+                value={field.value || null}
+                onValueChange={(value) => field.onChange(value ?? "")}
+                onBlur={field.onBlur}
+                inputRef={field.ref}
+                name={field.name}
+                required
+                placeholder="Select category"
+              />
+            </Field>
+          )}
+        />
       </div>
 
       <Field
@@ -253,55 +284,63 @@ export function RegistrationForm({
         <div className="rounded-2xl bg-gold/10 p-5">
           <p className="text-sm font-bold text-ink">Student details</p>
           <div className="mt-4 grid gap-5 md:grid-cols-2">
-            <Field
-              label="Institution"
-              hint="Choose the institution where you currently study."
-              error={errors.institutionId?.message}
-            >
-              <select
-                {...register("institutionId", {
-                  setValueAs: (value: string) => value || undefined,
-                  onChange: () => resetField("academicLevelId"),
-                })}
-                className="field"
-                required
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Select institution
-                </option>
-                {institutions.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
-            <Field
-              label="Academic class / level"
-              error={errors.academicLevelId?.message}
-            >
-              <select
-                {...register("academicLevelId", {
-                  setValueAs: (value: string) => value || undefined,
-                })}
-                className="field"
-                required
-                disabled={!institutionId}
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  {institutionId
-                    ? "Select level"
-                    : "Select an institution first"}
-                </option>
-                {matchingLevels.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </Field>
+            <Controller
+              control={control}
+              name="institutionId"
+              render={({ field }) => (
+                <Field
+                  label="Institution"
+                  hint="Choose the institution where you currently study."
+                  error={errors.institutionId?.message}
+                >
+                  <Picker
+                    list={institutions.map(({ id, name }) => ({
+                      label: name,
+                      value: id,
+                    }))}
+                    value={field.value ?? null}
+                    onValueChange={(value) => {
+                      field.onChange(value ?? undefined);
+                      resetField("academicLevelId");
+                    }}
+                    onBlur={field.onBlur}
+                    inputRef={field.ref}
+                    name={field.name}
+                    required
+                    placeholder="Select institution"
+                  />
+                </Field>
+              )}
+            />
+            <Controller
+              control={control}
+              name="academicLevelId"
+              render={({ field }) => (
+                <Field
+                  label="Academic class / level"
+                  error={errors.academicLevelId?.message}
+                >
+                  <Picker
+                    list={matchingLevels.map(({ id, name }) => ({
+                      label: name,
+                      value: id,
+                    }))}
+                    value={field.value ?? null}
+                    onValueChange={(value) => field.onChange(value ?? undefined)}
+                    onBlur={field.onBlur}
+                    inputRef={field.ref}
+                    name={field.name}
+                    required
+                    disabled={!institutionId}
+                    placeholder={
+                      institutionId
+                        ? "Select level"
+                        : "Select an institution first"
+                    }
+                  />
+                </Field>
+              )}
+            />
           </div>
         </div>
       )}
