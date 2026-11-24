@@ -4,6 +4,13 @@ export default {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
+      container: {
+        center: true,
+        screens: {
+          xl: "1152px",
+          "2xl": "1152px",
+        },
+      },
       colors: {
         ink: "#121B2E",
         wine: "#74222C",
