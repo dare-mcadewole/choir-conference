@@ -59,7 +59,7 @@ export default async function HomePage() {
           <h1
             className="
               mt-7 max-w-4xl font-display text-5xl leading-[.82] tracking-[-.025em]
-              sm:text-7xl md:text-8xl
+              sm:text-7xl md:text-8xl uppercase
             "
             dangerouslySetInnerHTML={{ __html: theme }}
           />
