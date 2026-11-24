@@ -56,7 +56,7 @@ export function RegistrationLookup() {
         size="lg"
         className="
           relative h-14 w-full bg-secondary px-5 text-secondary-foreground border-0 ring-1 ring-secondary
-          hover:bg-secondary-300 uppercase text-base rounded-t-none
+          hover:bg-secondary-300 uppercase text-base rounded-t-none font-bold
         "
       >
         Register now{" "}
