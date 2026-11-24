@@ -253,7 +253,11 @@ export function RegistrationForm({
                   value: id,
                 }))}
                 value={field.value || null}
-                onValueChange={(value) => field.onChange(value ?? "")}
+                onValueChange={(value) => {
+                  field.onChange(value ?? "");
+                  resetField("institution");
+                  resetField("academicLevelId");
+                }}
                 onBlur={field.onBlur}
                 inputRef={field.ref}
                 name={field.name}
