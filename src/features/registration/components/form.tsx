@@ -6,7 +6,18 @@ import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { submitRegistration } from "@/features/registration/actions";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+} from "@/components/ui/combobox";
 import { Picker } from "@/components/ui/picker";
 import {
   createRegistrationFormSchema,
@@ -173,21 +184,44 @@ export function RegistrationForm({
           control={control}
           name="assemblyId"
           render={({ field }) => (
-            <Field label="Assembly" error={errors.assemblyId?.message}>
-              <Picker
-                list={assemblies.map(({ id, name }) => ({
-                  label: name,
-                  value: id,
-                }))}
-                value={field.value ?? null}
-                onValueChange={(value) => field.onChange(value ?? "")}
-                onBlur={field.onBlur}
-                inputRef={field.ref}
-                name={field.name}
-                required
-                placeholder="Select your assembly"
-              />
-            </Field>
+            <Combobox
+              items={assemblies}
+              value={
+                assemblies.find((assembly) => assembly.id === field.value) ??
+                null
+              }
+              onValueChange={(assembly) => field.onChange(assembly?.id ?? "")}
+              itemToStringLabel={(assembly) => assembly.name}
+              itemToStringValue={(assembly) => assembly.id}
+              inputRef={field.ref}
+              name={field.name}
+              required
+              autoHighlight
+            >
+              <Field
+                id="assembly-picker"
+                label="Assembly"
+                hint="Search by assembly name."
+                error={errors.assemblyId?.message}
+              >
+                <ComboboxInput
+                  placeholder="Search assemblies..."
+                  onBlur={field.onBlur}
+                  showClear
+                  className="w-full"
+                />
+              </Field>
+              <ComboboxContent>
+                <ComboboxEmpty>No assemblies found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(assembly: (typeof assemblies)[number]) => (
+                    <ComboboxItem key={assembly.id} value={assembly}>
+                      {assembly.name}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           )}
         />
 
@@ -218,42 +252,72 @@ export function RegistrationForm({
         control={control}
         name="positionIds"
         render={({ field }) => {
-          const selectedPositions = field.value ?? [];
+          const selectedPositions = positions.filter((position) =>
+            field.value?.includes(position.id),
+          );
 
           return (
             <Field
               label="Position held"
-              hint="Choose all positions that apply to you."
+              hint="Search and select all positions that apply to you."
               error={errors.positionIds?.message}
               group
             >
-              <div className="grid gap-3 sm:grid-cols-2">
-                {positions.map((item, index) => (
-                  <label
-                    key={item.id}
-                    className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-sm"
-                  >
-                    <Checkbox
-                      checked={selectedPositions.includes(item.id)}
-                      onCheckedChange={(checked) =>
-                        field.onChange(
-                          checked
-                            ? [...selectedPositions, item.id]
-                            : selectedPositions.filter(
-                                (positionId) => positionId !== item.id,
-                              ),
-                        )
-                      }
-                      onBlur={field.onBlur}
-                      inputRef={index === 0 ? field.ref : undefined}
-                      name={field.name}
-                      value={item.id}
+              <Combobox
+                items={positions}
+                multiple
+                value={selectedPositions}
+                onValueChange={(selected) =>
+                  field.onChange(selected.map((position) => position.id))
+                }
+                itemToStringLabel={(position) => position.name}
+                itemToStringValue={(position) => position.id}
+                inputRef={field.ref}
+                name={field.name}
+                autoHighlight
+                onOpenChange={(open, eventDetails) => {
+                  if (!open && eventDetails.reason === "item-press") {
+                    eventDetails.cancel();
+                  }
+                }}
+              >
+                <ComboboxValue>
+                  {(selected: (typeof positions)[number][]) => (
+                    <ComboboxChips
+                      className="w-full"
                       aria-invalid={Boolean(errors.positionIds)}
-                    />
-                    {item.name}
-                  </label>
-                ))}
-              </div>
+                    >
+                      <>
+                        {selected.map((position) => (
+                          <ComboboxChip
+                            key={position.id}
+                            aria-label={position.name}
+                          >
+                            {position.name}
+                          </ComboboxChip>
+                        ))}
+                        <ComboboxChipsInput
+                          aria-label="Search positions"
+                          onBlur={field.onBlur}
+                          placeholder={
+                            selected.length ? "" : "Search positions..."
+                          }
+                        />
+                      </>
+                    </ComboboxChips>
+                  )}
+                </ComboboxValue>
+                <ComboboxContent>
+                  <ComboboxEmpty>No positions found.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(position: (typeof positions)[number]) => (
+                      <ComboboxItem key={position.id} value={position}>
+                        {position.name}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
             </Field>
           );
         }}
