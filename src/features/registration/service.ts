@@ -172,7 +172,6 @@ export async function publicRegistrationOptions() {
         .select({
           id: assemblies.id,
           name: assemblies.name,
-          familyName: conferenceFamilies.name,
         })
         .from(assemblies)
         .where(eq(assemblies.active, true)),
