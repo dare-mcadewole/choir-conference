@@ -3,6 +3,7 @@ import { Children, cloneElement, isValidElement, useId } from "react";
 import type { HTMLAttributes, ReactNode } from "react";
 
 type FieldProps = {
+  id?: string;
   label: ReactNode;
   hint?: ReactNode;
   error?: ReactNode;
@@ -13,15 +14,17 @@ type FieldProps = {
 type ControlProps = HTMLAttributes<HTMLElement>;
 
 export function Field({
+  id,
   label,
   hint,
   error,
   group = false,
   children,
 }: FieldProps) {
-  const id = `field-${useId()}`;
-  const hintId = hint ? `${id}-hint` : undefined;
-  const errorId = error ? `${id}-error` : undefined;
+  const generatedId = useId();
+  const fieldId = id ?? `field-${generatedId}`;
+  const hintId = hint ? `${fieldId}-hint` : undefined;
+  const errorId = error ? `${fieldId}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
   const controls = Children.map(children, (child) => {
     if (!isValidElement<ControlProps>(child)) {
@@ -35,7 +38,7 @@ export function Field({
     if (!nativeControl && !customControl) return child;
 
     return cloneElement(child, {
-      id: child.props.id ?? id,
+      id: child.props.id ?? fieldId,
       "aria-describedby":
         [child.props["aria-describedby"], describedBy]
           .filter(Boolean)
@@ -82,7 +85,7 @@ export function Field({
 
   return (
     <div className="block text-sm text-slate-700">
-      <label htmlFor={id} className="inline-block mb-1 font-medium">
+      <label htmlFor={fieldId} className="inline-block mb-1 font-medium">
         {label}
       </label>
       {controls}
