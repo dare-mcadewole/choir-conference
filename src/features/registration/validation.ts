@@ -1,9 +1,10 @@
+import { PhoneSchema } from "@/features/shared/validation";
 import { z } from "zod";
 
 export const registrationSchema = z.object({
   fullName: z.string().trim().min(2, "Enter your full name").max(200),
   email: z.string().trim().email("Enter a valid email address"),
-  phone: z.string().trim().min(7, "Enter a valid phone number").max(50),
+  phone: PhoneSchema,
   gender: z.enum(["MALE", "FEMALE"], {
     error: "Choose your gender",
   }),
