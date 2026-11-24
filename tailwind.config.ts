@@ -55,8 +55,8 @@ export default {
         ring: "var(--ring)",
       },
       fontFamily: {
-        display: ["var(--font-methane)", "sans-serif"],
-        body: ["var(--font-inter)", "sans-serif"],
+        display: ["var(--font-display)", "sans-serif"],
+        body: ["var(--font-body)", "sans-serif"],
       },
       boxShadow: {
         glow: "0 20px 70px rgba(18,27,46,.14)",
