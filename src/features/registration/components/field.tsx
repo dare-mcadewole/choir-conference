@@ -14,7 +14,7 @@ type FieldProps = {
 type ControlProps = HTMLAttributes<HTMLElement>;
 
 const labelClassname =
-  "inline-block mb-1 text-xs uppercase font-semibold tracking-wider";
+  "inline-block mb-1 text-[12.5px] uppercase font-semibold tracking-wider";
 
 export function Field({
   id,
