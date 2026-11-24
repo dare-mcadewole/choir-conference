@@ -249,6 +249,73 @@ export function RegistrationForm({
         />
       </div>
 
+      {isStudent && (
+        <div className="rounded-2xl bg-gold/10 p-5">
+          <p className="text-sm font-bold text-ink">Student details</p>
+          <div className="mt-4 grid gap-5 md:grid-cols-2">
+            <Controller
+              control={control}
+              name="institutionId"
+              render={({ field }) => (
+                <Field
+                  label="Institution"
+                  hint="Choose the institution where you currently study."
+                  error={errors.institutionId?.message}
+                >
+                  <Picker
+                    list={institutions.map(({ id, name }) => ({
+                      label: name,
+                      value: id,
+                    }))}
+                    value={field.value ?? null}
+                    onValueChange={(value) => {
+                      field.onChange(value ?? undefined);
+                      resetField("academicLevelId");
+                    }}
+                    onBlur={field.onBlur}
+                    inputRef={field.ref}
+                    name={field.name}
+                    required
+                    placeholder="Select institution"
+                  />
+                </Field>
+              )}
+            />
+            <Controller
+              control={control}
+              name="academicLevelId"
+              render={({ field }) => (
+                <Field
+                  label="Academic class / level"
+                  error={errors.academicLevelId?.message}
+                >
+                  <Picker
+                    list={matchingLevels.map(({ id, name }) => ({
+                      label: name,
+                      value: id,
+                    }))}
+                    value={field.value ?? null}
+                    onValueChange={(value) =>
+                      field.onChange(value ?? undefined)
+                    }
+                    onBlur={field.onBlur}
+                    inputRef={field.ref}
+                    name={field.name}
+                    required
+                    disabled={!institutionId}
+                    placeholder={
+                      institutionId
+                        ? "Select level"
+                        : "Select an institution first"
+                    }
+                  />
+                </Field>
+              )}
+            />
+          </div>
+        </div>
+      )}
+
       <Controller
         control={control}
         name="positionIds"
@@ -364,73 +431,6 @@ export function RegistrationForm({
           </Field>
         )}
       />
-
-      {isStudent && (
-        <div className="rounded-2xl bg-gold/10 p-5">
-          <p className="text-sm font-bold text-ink">Student details</p>
-          <div className="mt-4 grid gap-5 md:grid-cols-2">
-            <Controller
-              control={control}
-              name="institutionId"
-              render={({ field }) => (
-                <Field
-                  label="Institution"
-                  hint="Choose the institution where you currently study."
-                  error={errors.institutionId?.message}
-                >
-                  <Picker
-                    list={institutions.map(({ id, name }) => ({
-                      label: name,
-                      value: id,
-                    }))}
-                    value={field.value ?? null}
-                    onValueChange={(value) => {
-                      field.onChange(value ?? undefined);
-                      resetField("academicLevelId");
-                    }}
-                    onBlur={field.onBlur}
-                    inputRef={field.ref}
-                    name={field.name}
-                    required
-                    placeholder="Select institution"
-                  />
-                </Field>
-              )}
-            />
-            <Controller
-              control={control}
-              name="academicLevelId"
-              render={({ field }) => (
-                <Field
-                  label="Academic class / level"
-                  error={errors.academicLevelId?.message}
-                >
-                  <Picker
-                    list={matchingLevels.map(({ id, name }) => ({
-                      label: name,
-                      value: id,
-                    }))}
-                    value={field.value ?? null}
-                    onValueChange={(value) =>
-                      field.onChange(value ?? undefined)
-                    }
-                    onBlur={field.onBlur}
-                    inputRef={field.ref}
-                    name={field.name}
-                    required
-                    disabled={!institutionId}
-                    placeholder={
-                      institutionId
-                        ? "Select level"
-                        : "Select an institution first"
-                    }
-                  />
-                </Field>
-              )}
-            />
-          </div>
-        </div>
-      )}
 
       {errors.root?.server?.message && (
         <p
