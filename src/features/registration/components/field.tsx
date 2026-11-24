@@ -13,6 +13,9 @@ type FieldProps = {
 
 type ControlProps = HTMLAttributes<HTMLElement>;
 
+const labelClassname =
+  "inline-block mb-1 text-xs uppercase font-semibold tracking-wider";
+
 export function Field({
   id,
   label,
@@ -62,7 +65,7 @@ export function Field({
             flex items-center gap-1 mt-1 text-[13px] font-normal text-red-600
           "
         >
-          <CircleExclamationPoint className="text-xs" />
+          <CircleExclamationPoint size={14} />
           <span>{error}</span>
         </div>
       )}
@@ -72,11 +75,11 @@ export function Field({
   if (group) {
     return (
       <fieldset
-        className="block text-sm font-semibold text-slate-700"
+        className="block text-sm text-slate-700"
         aria-describedby={describedBy}
         aria-invalid={error ? true : undefined}
       >
-        <legend>{label}</legend>
+        <legend className={labelClassname}>{label}</legend>
         {controls}
         {description}
       </fieldset>
@@ -85,7 +88,7 @@ export function Field({
 
   return (
     <div className="block text-sm text-slate-700">
-      <label htmlFor={fieldId} className="inline-block mb-1 font-medium">
+      <label htmlFor={fieldId} className={labelClassname}>
         {label}
       </label>
       {controls}
