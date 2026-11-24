@@ -12,7 +12,7 @@ export const registrationSchema = z.object({
   categoryId: z.uuid("Choose a category"),
   positionIds: z.array(z.uuid()).default([]),
   centralChoirMember: z.boolean("Choose an option"),
-  institutionId: z.uuid().optional(),
+  institution: z.string().optional(),
   academicLevelId: z.uuid().optional(),
 });
 
@@ -28,11 +28,11 @@ export function createRegistrationFormSchema(
   return registrationSchema.superRefine((data, ctx) => {
     if (!studentCategoryIds.has(data.categoryId)) return;
 
-    if (!data.institutionId) {
+    if (!data.institution) {
       ctx.addIssue({
         code: "custom",
-        message: "Choose an institution",
-        path: ["institutionId"],
+        message: "Enter your institution",
+        path: ["institution"],
       });
     }
 

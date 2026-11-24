@@ -59,7 +59,7 @@ export const registrations = pgTable(
       .notNull()
       .references(() => registrationCategories.id),
     centralChoirMember: boolean("central_choir_member").default(false),
-    institutionId: uuid("institution_id").references(() => institutions.id),
+    institution: text("institution"),
     academicLevelId: uuid("academic_level_id").references(
       () => academicLevels.id,
     ),

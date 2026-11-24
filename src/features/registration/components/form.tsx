@@ -38,7 +38,7 @@ type Props = {
   assemblies: Array<{ id: string; name: string }>;
   categories: Option[];
   positions: Option[];
-  institutions: Option[];
+  institutions: string[];
   levels: Array<Option & { institutionType: "SECONDARY" | "TERTIARY" }>;
   initial?: { fullName?: string; email?: string; phone?: string };
 };
@@ -74,20 +74,23 @@ export function RegistrationForm({
       fullName: initial?.fullName ?? "",
       email: initial?.email ?? "",
       phone: initial?.phone?.replace(/\D/g, "") ?? "",
+      institution: "",
       positionIds: [],
     },
     shouldUnregister: true,
   });
   const phoneField = register("phone");
   const categoryId = watch("categoryId");
-  const institutionId = watch("institutionId");
+  const institution = watch("institution");
   const category = categories.find((item) => item.id === categoryId);
   const isStudent = category?.slug === "student";
-  const institution = institutions.find((item) => item.id === institutionId);
-  const matchingLevels = useMemo(
-    () => levels.filter((level) => level.institutionType === institution?.type),
-    [levels, institution],
-  );
+
+  const filteredInstitutions = useMemo(() => {
+    const search = institution?.toLowerCase() ?? "";
+    return institutions
+      .filter((i) => i.toLowerCase().indexOf(search) !== -1)
+      .slice(0, 8);
+  }, [institutions, institution]);
 
   if (!assemblies.length)
     return (
@@ -267,29 +270,26 @@ export function RegistrationForm({
             <div className="mt-4 grid gap-5 md:grid-cols-2">
               <Controller
                 control={control}
-                name="institutionId"
+                name="institution"
                 render={({ field }) => (
                   <Field
                     label="Institution"
-                    hint="Choose the institution where you currently study."
-                    error={errors.institutionId?.message}
+                    hint="Enter the institution where you currently study"
+                    error={errors.institution?.message}
                   >
-                    <Picker
-                      list={institutions.map(({ id, name }) => ({
-                        label: name,
-                        value: id,
-                      }))}
-                      value={field.value ?? null}
-                      onValueChange={(value) => {
-                        field.onChange(value ?? undefined);
-                        resetField("academicLevelId");
-                      }}
+                    <Input
+                      {...register("institution")}
+                      value={field.value}
+                      onChange={field.onChange}
                       onBlur={field.onBlur}
-                      inputRef={field.ref}
-                      name={field.name}
+                      list="institutions"
                       required
-                      placeholder="Select institution"
                     />
+                    <datalist id="institutions">
+                      {filteredInstitutions.map((institution, ix) => (
+                        <option key={institution + ix} value={institution} />
+                      ))}
+                    </datalist>
                   </Field>
                 )}
               />
@@ -302,7 +302,7 @@ export function RegistrationForm({
                     error={errors.academicLevelId?.message}
                   >
                     <Picker
-                      list={matchingLevels.map(({ id, name }) => ({
+                      list={levels.map(({ id, name }) => ({
                         label: name,
                         value: id,
                       }))}
@@ -314,11 +314,11 @@ export function RegistrationForm({
                       inputRef={field.ref}
                       name={field.name}
                       required
-                      disabled={!institutionId}
+                      disabled={!institution}
                       placeholder={
-                        institutionId
+                        institution
                           ? "Select level"
-                          : "Select an institution first"
+                          : "Enter an institution first"
                       }
                     />
                   </Field>

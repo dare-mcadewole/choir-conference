@@ -16,6 +16,7 @@ import { ticketTypes, tickets } from "@/features/ticket/schema";
 import { normalizeEmail, normalizePhone } from "@/lib/utils";
 import { initializePaystackCheckout } from "@/features/payment/service";
 import type { RegistrationInput } from "./validation";
+import * as institutionService from "@/features/institution/service";
 
 const code = () => `ACC27-${randomBytes(4).toString("hex").toUpperCase()}`;
 const token = () => randomBytes(32).toString("base64url");
@@ -52,14 +53,9 @@ export async function lookupRegistrant(query: string) {
 export async function createRegistration(input: RegistrationInput) {
   const db = getDb();
   const settings = await db.query.conference.findFirst();
-  if (!settings?.registrationOpen)
+  if (!settings?.registrationOpen) {
     throw new Error("Registration is currently closed.");
-  const assembly = await db.query.assemblies.findFirst({
-    where: and(
-      eq(assemblies.id, input.assemblyId),
-      eq(assemblies.active, true),
-    ),
-  });
+  }
 
   const category = await db.query.registrationCategories.findFirst({
     where: and(
@@ -68,27 +64,19 @@ export async function createRegistration(input: RegistrationInput) {
     ),
   });
   if (!category) throw new Error("The selected category is unavailable.");
+
   if (
     category.slug === "student" &&
-    (!input.institutionId || !input.academicLevelId)
+    (!input.institution || !input.academicLevelId)
   )
     throw new Error(
       "Institution and academic level are required for student registrations.",
     );
   if (category.slug === "student") {
-    const institution = await db.query.institutions.findFirst({
-      where: and(
-        eq(institutions.id, input.institutionId!),
-        eq(institutions.active, true),
-      ),
-    });
     const level = await db.query.academicLevels.findFirst({
       where: eq(academicLevels.id, input.academicLevelId!),
     });
-    if (!institution || !level || institution.type !== level.institutionType)
-      throw new Error(
-        "Choose an academic level that matches your institution.",
-      );
+    if (!level) throw new Error("Choose an academic level");
   }
   const normalizedEmail = normalizeEmail(input.email),
     normalizedPhone = normalizePhone(input.phone);
@@ -104,6 +92,7 @@ export async function createRegistration(input: RegistrationInput) {
         "An existing registration was found. Please use your confirmation link or contact support.",
       );
   }
+
   const ticketType = await db.query.ticketTypes.findFirst({
     where: eq(
       ticketTypes.slug,
@@ -112,6 +101,7 @@ export async function createRegistration(input: RegistrationInput) {
   });
   if (!ticketType?.active)
     throw new Error("The required ticket type is unavailable.");
+
   const confirmed = !settings.requirePayment;
   const registrationCode = confirmed ? code() : null;
   const ticketToken = confirmed ? token() : null;
@@ -125,7 +115,7 @@ export async function createRegistration(input: RegistrationInput) {
       assemblyId: input.assemblyId,
       categoryId: input.categoryId,
       centralChoirMember: input.centralChoirMember,
-      institutionId: category.slug === "student" ? input.institutionId : null,
+      institution: category.slug === "student" ? input.institution : null,
       academicLevelId:
         category.slug === "student" ? input.academicLevelId : null,
       status: confirmed ? "CONFIRMED" : "PENDING_PAYMENT",
@@ -180,7 +170,7 @@ export async function publicRegistrationOptions() {
         .from(registrationCategories)
         .where(eq(registrationCategories.active, true)),
       db.select().from(positionOptions).where(eq(positionOptions.active, true)),
-      db.select().from(institutions).where(eq(institutions.active, true)),
+      institutionService.find(),
       db.select().from(academicLevels).where(eq(academicLevels.active, true)),
     ]);
   return {
