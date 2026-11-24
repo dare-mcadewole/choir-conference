@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Building2,
   CalendarDays,
@@ -12,24 +15,53 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { icon: LayoutDashboard, name: "Overview", href: "/admin#overview" },
-  { icon: Users, name: "Registrations", href: "/admin#registrations" },
+  {
+    icon: LayoutDashboard,
+    name: "Overview",
+    href: "/admin#overview",
+    activePath: "/admin",
+  },
+  {
+    icon: Users,
+    name: "Registrations",
+    href: "/admin#registrations",
+    activePath: "/admin/registrations",
+  },
   {
     icon: Building2,
     name: "Assemblies",
-    href: "/assemblies",
+    href: "/admin/assemblies",
+    activePath: "/admin/assemblies",
   },
   {
     icon: UsersRound,
     name: "Families",
-    href: "/families",
+    href: "/admin/families",
+    activePath: "/admin/families",
   },
-  { icon: CreditCard, name: "Payments", href: "/admin#finance" },
-  { icon: Ticket, name: "Tickets", href: "/admin#workspace" },
-  { icon: Settings, name: "Settings", href: "/admin#workspace" },
+  {
+    icon: CreditCard,
+    name: "Payments",
+    href: "/admin#finance",
+    activePath: "/admin/payments",
+  },
+  {
+    icon: Ticket,
+    name: "Tickets",
+    href: "/admin#workspace",
+    activePath: "/admin/tickets",
+  },
+  {
+    icon: Settings,
+    name: "Settings",
+    href: "/admin#workspace",
+    activePath: "/admin/settings",
+  },
 ];
 
 export function AdminSidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="flex shrink-0 flex-col rounded-2xl bg-white p-4 lg:min-h-[calc(100vh-2rem)] lg:w-72 lg:p-5">
       <Link href="/" className="flex items-center gap-2.5 px-2 py-2">
@@ -48,21 +80,24 @@ export function AdminSidebar() {
         aria-label="Admin navigation"
         className="mt-3 flex gap-1 overflow-x-auto lg:mt-0 lg:flex-col lg:overflow-visible"
       >
-        {navigation.map(({ icon: Icon, name, href }, index) => (
-          <a
-            key={name}
-            href={href}
-            aria-current={index === 0 ? "page" : undefined}
-            className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-              index === 0
-                ? "bg-[#f0f0ff] text-[#5556c8]"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
-            }`}
-          >
-            <Icon size={17} strokeWidth={1.8} />
-            <span>{name}</span>
-          </a>
-        ))}
+        {navigation.map(({ icon: Icon, name, href, activePath }) => {
+          const active = pathname === activePath;
+          return (
+            <a
+              key={name}
+              href={href}
+              aria-current={active ? "page" : undefined}
+              className={`flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                active
+                  ? "bg-[#f0f0ff] text-[#5556c8]"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+              }`}
+            >
+              <Icon size={17} strokeWidth={1.8} />
+              <span>{name}</span>
+            </a>
+          );
+        })}
       </nav>
 
       <div className="mt-4 hidden rounded-2xl bg-[#f6f7fb] p-4 lg:mt-auto lg:block">
