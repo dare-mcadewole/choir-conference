@@ -24,12 +24,15 @@ export function Field({
   const errorId = error ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
   const controls = Children.map(children, (child) => {
-    if (
-      !isValidElement<ControlProps>(child) ||
-      !["input", "select", "textarea"].includes(String(child.type))
-    ) {
+    if (!isValidElement<ControlProps>(child)) {
       return child;
     }
+
+    const nativeControl =
+      typeof child.type === "string" &&
+      ["input", "select", "textarea"].includes(child.type);
+    const customControl = typeof child.type === "function";
+    if (!nativeControl && !customControl) return child;
 
     return cloneElement(child, {
       id: child.props.id ?? id,
@@ -78,8 +81,8 @@ export function Field({
   }
 
   return (
-    <div className="block text-sm font-semibold text-slate-700">
-      <label htmlFor={id} className="inline-block mb-1">
+    <div className="block text-sm text-slate-700">
+      <label htmlFor={id} className="inline-block mb-1 font-medium">
         {label}
       </label>
       {controls}
