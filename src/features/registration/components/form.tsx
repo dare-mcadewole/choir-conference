@@ -247,190 +247,190 @@ export function RegistrationForm({
             </Field>
           )}
         />
-      </div>
 
-      {isStudent && (
-        <div className="rounded-2xl bg-gold/10 p-5">
-          <p className="text-sm font-bold text-ink">Student details</p>
-          <div className="mt-4 grid gap-5 md:grid-cols-2">
-            <Controller
-              control={control}
-              name="institutionId"
-              render={({ field }) => (
-                <Field
-                  label="Institution"
-                  hint="Choose the institution where you currently study."
-                  error={errors.institutionId?.message}
-                >
-                  <Picker
-                    list={institutions.map(({ id, name }) => ({
-                      label: name,
-                      value: id,
-                    }))}
-                    value={field.value ?? null}
-                    onValueChange={(value) => {
-                      field.onChange(value ?? undefined);
-                      resetField("academicLevelId");
-                    }}
-                    onBlur={field.onBlur}
-                    inputRef={field.ref}
-                    name={field.name}
-                    required
-                    placeholder="Select institution"
-                  />
-                </Field>
-              )}
-            />
-            <Controller
-              control={control}
-              name="academicLevelId"
-              render={({ field }) => (
-                <Field
-                  label="Academic class / level"
-                  error={errors.academicLevelId?.message}
-                >
-                  <Picker
-                    list={matchingLevels.map(({ id, name }) => ({
-                      label: name,
-                      value: id,
-                    }))}
-                    value={field.value ?? null}
-                    onValueChange={(value) =>
-                      field.onChange(value ?? undefined)
-                    }
-                    onBlur={field.onBlur}
-                    inputRef={field.ref}
-                    name={field.name}
-                    required
-                    disabled={!institutionId}
-                    placeholder={
-                      institutionId
-                        ? "Select level"
-                        : "Select an institution first"
-                    }
-                  />
-                </Field>
-              )}
-            />
+        {isStudent && (
+          <div className="col-span-full rounded-2xl bg-gold/10 p-5">
+            <p className="text-sm font-bold text-ink">Student details</p>
+            <div className="mt-4 grid gap-5 md:grid-cols-2">
+              <Controller
+                control={control}
+                name="institutionId"
+                render={({ field }) => (
+                  <Field
+                    label="Institution"
+                    hint="Choose the institution where you currently study."
+                    error={errors.institutionId?.message}
+                  >
+                    <Picker
+                      list={institutions.map(({ id, name }) => ({
+                        label: name,
+                        value: id,
+                      }))}
+                      value={field.value ?? null}
+                      onValueChange={(value) => {
+                        field.onChange(value ?? undefined);
+                        resetField("academicLevelId");
+                      }}
+                      onBlur={field.onBlur}
+                      inputRef={field.ref}
+                      name={field.name}
+                      required
+                      placeholder="Select institution"
+                    />
+                  </Field>
+                )}
+              />
+              <Controller
+                control={control}
+                name="academicLevelId"
+                render={({ field }) => (
+                  <Field
+                    label="Academic class / level"
+                    error={errors.academicLevelId?.message}
+                  >
+                    <Picker
+                      list={matchingLevels.map(({ id, name }) => ({
+                        label: name,
+                        value: id,
+                      }))}
+                      value={field.value ?? null}
+                      onValueChange={(value) =>
+                        field.onChange(value ?? undefined)
+                      }
+                      onBlur={field.onBlur}
+                      inputRef={field.ref}
+                      name={field.name}
+                      required
+                      disabled={!institutionId}
+                      placeholder={
+                        institutionId
+                          ? "Select level"
+                          : "Select an institution first"
+                      }
+                    />
+                  </Field>
+                )}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <Controller
-        control={control}
-        name="positionIds"
-        render={({ field }) => {
-          const selectedPositions = positions.filter((position) =>
-            field.value?.includes(position.id),
-          );
+        <Controller
+          control={control}
+          name="positionIds"
+          render={({ field }) => {
+            const selectedPositions = positions.filter((position) =>
+              field.value?.includes(position.id),
+            );
 
-          return (
+            return (
+              <Field
+                label="Position held"
+                hint="Search and select all positions that apply to you."
+                error={errors.positionIds?.message}
+                group
+              >
+                <Combobox
+                  items={positions}
+                  multiple
+                  value={selectedPositions}
+                  onValueChange={(selected) =>
+                    field.onChange(selected.map((position) => position.id))
+                  }
+                  itemToStringLabel={(position) => position.name}
+                  itemToStringValue={(position) => position.id}
+                  inputRef={field.ref}
+                  name={field.name}
+                  autoHighlight
+                  onOpenChange={(open, eventDetails) => {
+                    if (!open && eventDetails.reason === "item-press") {
+                      eventDetails.cancel();
+                    }
+                  }}
+                >
+                  <ComboboxValue>
+                    {(selected: (typeof positions)[number][]) => (
+                      <ComboboxChips
+                        className="w-full"
+                        aria-invalid={Boolean(errors.positionIds)}
+                      >
+                        <>
+                          {selected.map((position) => (
+                            <ComboboxChip
+                              key={position.id}
+                              aria-label={position.name}
+                            >
+                              {position.name}
+                            </ComboboxChip>
+                          ))}
+                          <ComboboxChipsInput
+                            aria-label="Search positions"
+                            onBlur={field.onBlur}
+                            placeholder={
+                              selected.length ? "" : "Search positions..."
+                            }
+                          />
+                        </>
+                      </ComboboxChips>
+                    )}
+                  </ComboboxValue>
+                  <ComboboxContent>
+                    <ComboboxEmpty>No positions found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(position: (typeof positions)[number]) => (
+                        <ComboboxItem key={position.id} value={position}>
+                          {position.name}
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </Field>
+            );
+          }}
+        />
+
+        <Controller
+          control={control}
+          name="centralChoirMember"
+          render={({ field }) => (
             <Field
-              label="Position held"
-              hint="Search and select all positions that apply to you."
-              error={errors.positionIds?.message}
+              label="Are you a Central Choir member?"
+              error={errors.centralChoirMember?.message}
               group
             >
-              <Combobox
-                items={positions}
-                multiple
-                value={selectedPositions}
-                onValueChange={(selected) =>
-                  field.onChange(selected.map((position) => position.id))
-                }
-                itemToStringLabel={(position) => position.name}
-                itemToStringValue={(position) => position.id}
+              <RadioGroup
+                className="flex w-fit flex-row gap-1.5"
+                value={field.value ?? null}
+                onValueChange={field.onChange}
+                onBlur={field.onBlur}
                 inputRef={field.ref}
                 name={field.name}
-                autoHighlight
-                onOpenChange={(open, eventDetails) => {
-                  if (!open && eventDetails.reason === "item-press") {
-                    eventDetails.cancel();
-                  }
-                }}
+                required
               >
-                <ComboboxValue>
-                  {(selected: (typeof positions)[number][]) => (
-                    <ComboboxChips
-                      className="w-full"
-                      aria-invalid={Boolean(errors.positionIds)}
-                    >
-                      <>
-                        {selected.map((position) => (
-                          <ComboboxChip
-                            key={position.id}
-                            aria-label={position.name}
-                          >
-                            {position.name}
-                          </ComboboxChip>
-                        ))}
-                        <ComboboxChipsInput
-                          aria-label="Search positions"
-                          onBlur={field.onBlur}
-                          placeholder={
-                            selected.length ? "" : "Search positions..."
-                          }
-                        />
-                      </>
-                    </ComboboxChips>
-                  )}
-                </ComboboxValue>
-                <ComboboxContent>
-                  <ComboboxEmpty>No positions found.</ComboboxEmpty>
-                  <ComboboxList>
-                    {(position: (typeof positions)[number]) => (
-                      <ComboboxItem key={position.id} value={position}>
-                        {position.name}
-                      </ComboboxItem>
-                    )}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
+                <label
+                  className="
+                    flex cursor-pointer items-center gap-2 rounded-md
+                    border-[0.5px] px-3.5 py-2 h-10 text-sm
+                  "
+                >
+                  <RadioGroupItem value={true} />
+                  Yes
+                </label>
+                <label
+                  className="
+                    flex cursor-pointer items-center gap-2 rounded-md
+                    border-[0.5px] px-5 py-2 h-10 text-sm
+                  "
+                >
+                  <RadioGroupItem value={false} />
+                  No
+                </label>
+              </RadioGroup>
             </Field>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="centralChoirMember"
-        render={({ field }) => (
-          <Field
-            label="Are you a Central Choir member?"
-            error={errors.centralChoirMember?.message}
-            group
-          >
-            <RadioGroup
-              className="flex w-fit flex-row gap-1.5"
-              value={field.value ?? null}
-              onValueChange={field.onChange}
-              onBlur={field.onBlur}
-              inputRef={field.ref}
-              name={field.name}
-              required
-            >
-              <label
-                className="
-                  flex cursor-pointer items-center gap-2 rounded-md
-                  border-[0.5px] px-3.5 py-2 h-10 text-sm
-                "
-              >
-                <RadioGroupItem value={true} />
-                Yes
-              </label>
-              <label
-                className="
-                  flex cursor-pointer items-center gap-2 rounded-md
-                  border-[0.5px] px-5 py-2 h-10 text-sm
-                "
-              >
-                <RadioGroupItem value={false} />
-                No
-              </label>
-            </RadioGroup>
-          </Field>
-        )}
-      />
+          )}
+        />
+      </div>
 
       {errors.root?.server?.message && (
         <p
