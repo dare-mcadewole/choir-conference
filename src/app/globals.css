@@ -11,6 +11,9 @@
   body {
     @apply font-body antialiased bg-background text-foreground;
   }
+  body:has([data-admin-layout]) {
+    @apply bg-primary-50;
+  }
   a {
     @apply transition-colors;
   }
