@@ -65,15 +65,10 @@ export function AdminSidebar() {
       </nav>
 
       <div className="mt-4 hidden rounded-2xl bg-[#f6f7fb] p-4 lg:mt-auto lg:block">
-        <span className="grid size-9 place-items-center rounded-xl bg-white text-[#7778e8] shadow-sm">
-          <CalendarDays size={18} />
-        </span>
-        <p className="mt-4 text-sm font-semibold text-slate-800">
+        <p className="text-sm font-semibold text-slate-800">
           All Choirs&apos; Conference
         </p>
-        <p className="mt-1 text-xs leading-5 text-slate-500">
-          January 8–9, 2027
-        </p>
+        <p className="text-xs leading-5 text-slate-500">January 8–9, 2027</p>
       </div>
     </aside>
   );
