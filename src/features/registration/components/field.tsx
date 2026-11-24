@@ -1,3 +1,4 @@
+import { CircleExclamationPoint } from "lucide-react";
 import { Children, cloneElement, isValidElement, useId } from "react";
 import type { HTMLAttributes, ReactNode } from "react";
 
@@ -32,9 +33,10 @@ export function Field({
 
     return cloneElement(child, {
       id: child.props.id ?? id,
-      "aria-describedby": [child.props["aria-describedby"], describedBy]
-        .filter(Boolean)
-        .join(" ") || undefined,
+      "aria-describedby":
+        [child.props["aria-describedby"], describedBy]
+          .filter(Boolean)
+          .join(" ") || undefined,
       "aria-invalid": error ? true : child.props["aria-invalid"],
     });
   });
@@ -47,13 +49,16 @@ export function Field({
         </p>
       )}
       {error && (
-        <p
+        <div
           id={errorId}
           role="alert"
-          className="mt-1 text-sm font-normal text-red-700"
+          className="
+            flex items-center gap-1 mt-1 text-[13px] font-normal text-red-600
+          "
         >
-          {error}
-        </p>
+          <CircleExclamationPoint className="text-xs" />
+          <span>{error}</span>
+        </div>
       )}
     </>
   );
@@ -74,7 +79,9 @@ export function Field({
 
   return (
     <div className="block text-sm font-semibold text-slate-700">
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id} className="inline-block mb-1">
+        {label}
+      </label>
       {controls}
       {description}
     </div>
