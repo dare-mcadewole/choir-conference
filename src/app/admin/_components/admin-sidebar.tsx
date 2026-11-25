@@ -49,13 +49,13 @@ const navigation = [
   {
     icon: CreditCard,
     name: "Payments",
-    href: "/admin#finance",
+    href: "/admin/payments",
     activePath: "/admin/payments",
   },
   {
     icon: Ticket,
     name: "Tickets",
-    href: "/admin#workspace",
+    href: "/admin/tickets",
     activePath: "/admin/tickets",
   },
   {
