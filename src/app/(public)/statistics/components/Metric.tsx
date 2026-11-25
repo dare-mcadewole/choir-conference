@@ -1,10 +1,11 @@
+import { LucideIcon } from "lucide-react";
+
 export default function Metric({
-  icon,
+  icon: Icon,
   label,
   value,
-  iconClassName,
 }: {
-  icon: React.ReactNode;
+  icon: LucideIcon;
   label: string;
   value: string;
   iconClassName: string;
@@ -16,15 +17,8 @@ export default function Metric({
         shadow-2xl shadow-primary/5 sm:p-6
       "
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-5 -top-8 size-24 rounded-full bg-slate-50"
-      />
-
-      <div
-        className={`relative grid size-11 place-items-center rounded-2xl ${iconClassName}`}
-      >
-        {icon}
+      <div className="flex justify-end text-slate-300">
+        <Icon size={36} strokeWidth={1} />
       </div>
       <h3 className="relative mt-6 font-display text-4xl text-slate-900">
         {value}
