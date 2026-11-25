@@ -1,15 +1,12 @@
+import { Badge } from "@/components/ui/badge";
+import { StatisticalBreakdown } from "@/features/dashboard/service";
 import { UserRoundGroup, Users, UsersRound } from "lucide-react";
-
-type FamilyStatistic = {
-  name: string;
-  total: number | string;
-};
 
 export function FamilyBreakdown({
   families,
   total,
 }: {
-  families: FamilyStatistic[];
+  families: StatisticalBreakdown["families"];
   total: number | string;
 }) {
   const confirmedTotal = Number(total);
@@ -21,7 +18,7 @@ export function FamilyBreakdown({
         <h2 className="text-lg font-medium">By Family / Group</h2>
       </div>
 
-      <div className="mt-5 space-y-4">
+      <div className="mt-5 space-y-3">
         {families.map((family) => {
           const familyTotal = Number(family.total);
           const percentage = confirmedTotal
@@ -30,13 +27,24 @@ export function FamilyBreakdown({
 
           return (
             <div key={family.name}>
-              <div className="flex justify-between gap-3 text-sm">
-                <span className="font-medium text-slate-700">
-                  {family.name}
-                </span>
-                <strong className="text-slate-800">{family.total}</strong>
+              <div className="flex items-end justify-between gap-3 text-sm">
+                <div className="flex items-center gap-1.5">
+                  <h4 className="font-semibold text-slate-700 text-base">
+                    {family.name}
+                  </h4>
+                  {family.alias && (
+                    <Badge variant="outline" className="rounded-full">
+                      {family.alias}
+                    </Badge>
+                  )}
+                </div>
+
+                <h2 className="font-display text-slate-800 text-2xl">
+                  {family.total}
+                </h2>
               </div>
-              <div className="mt-2.5 h-2.5 overflow-hidden rounded-full bg-slate-100">
+
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
                 <div
                   className="h-full rounded-full bg-slate-300 transition-[width]"
                   style={{ width: `${percentage}%` }}

@@ -24,7 +24,7 @@ export default async function StatisticsPage() {
   const data = await stats();
 
   return (
-    <main className="min-h-screen overflow-hidden bg-slate-50">
+    <main className="min-h-screen overflow-hidden bg-zinc-50">
       <section className="relative isolate overflow-hidden bg-primary text-white">
         <div
           aria-hidden="true"

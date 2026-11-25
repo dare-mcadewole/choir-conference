@@ -18,7 +18,11 @@ export async function findStatistics() {
     .from(registrations)
     .where(eq(registrations.status, "CONFIRMED"));
   const families = await db
-    .select({ name: conferenceFamilies.name, total: count(registrations.id) })
+    .select({
+      name: conferenceFamilies.name,
+      alias: conferenceFamilies.alias,
+      total: count(registrations.id),
+    })
     .from(conferenceFamilies)
     .leftJoin(
       conferenceFamilyAssemblies,
@@ -63,6 +67,7 @@ export async function findStatistics() {
     .groupBy(registrationCategories.id);
   return { total: total?.total ?? 0, families, leaderboard, categories };
 }
+export type StatisticalBreakdown = Awaited<ReturnType<typeof findStatistics>>;
 
 export async function findAdminOverview() {
   const db = getDb();
