@@ -39,6 +39,7 @@ const updateSpeakerSchema = z.object({
   organization: nullableText(160),
   biography: nullableText(10000),
   imageUrl: imageUrlSchema,
+  htmlClassName: nullableText(2000),
   published: z.boolean(),
   sortOrder: z
     .string()
@@ -58,6 +59,7 @@ export async function updateSpeakerAction(
     organization: formData.get("organization"),
     biography: formData.get("biography"),
     imageUrl: formData.get("imageUrl"),
+    htmlClassName: formData.get("htmlClassName"),
     published: formData.get("published") === "true",
     sortOrder: formData.get("sortOrder"),
   });

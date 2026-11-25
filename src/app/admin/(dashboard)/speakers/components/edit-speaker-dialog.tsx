@@ -42,7 +42,7 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
           Edit speaker
         </DialogTrigger>
         <DialogContent
-          className="max-w-xl gap-0 overflow-hidden p-0"
+          className="md:min-w-[640px] max-w-4xl gap-0 overflow-hidden p-0"
           aria-describedby={`edit-speaker-description-${speaker.id}`}
         >
           <form action={action}>
@@ -60,7 +60,7 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
             </DialogHeader>
 
             <div className="max-h-[65vh] space-y-4 overflow-y-auto px-5 pb-5">
-              <div className="grid gap-4 sm:grid-cols-1">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block">
                   <span className="mb-1.5 block text-xs font-medium text-slate-700">
                     Full name
@@ -74,6 +74,7 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
                     className="h-9 rounded-lg text-xs"
                   />
                 </label>
+
                 <label className="block">
                   <span className="mb-1.5 block text-xs font-medium text-slate-700">
                     Designation
@@ -86,6 +87,7 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
                     className="h-9 rounded-lg text-xs"
                   />
                 </label>
+
                 <label className="block">
                   <span className="mb-1.5 block text-xs font-medium text-slate-700">
                     Organization
@@ -98,6 +100,7 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
                     className="h-9 rounded-lg text-xs"
                   />
                 </label>
+
                 <label className="block">
                   <span className="mb-1.5 block text-xs font-medium text-slate-700">
                     Image URL
@@ -112,7 +115,8 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
                     className="h-9 rounded-lg text-xs"
                   />
                 </label>
-                <label className="block">
+
+                <label className="block md:col-span-2">
                   <span className="mb-1.5 block text-xs font-medium text-slate-700">
                     Biography
                   </span>
@@ -120,11 +124,26 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
                     name="biography"
                     defaultValue={speaker.biography ?? ""}
                     maxLength={10000}
-                    rows={5}
+                    rows={4}
                     disabled={pending}
                     className="min-h-28 rounded-lg text-xs"
                   />
                 </label>
+
+                <label className="block md:col-span-2">
+                  <span className="mb-1.5 block text-xs font-medium text-slate-700">
+                    Public image CSS classes
+                  </span>
+                  <Textarea
+                    name="htmlClassName"
+                    defaultValue={speaker.htmlClassName ?? ""}
+                    maxLength={2000}
+                    rows={2}
+                    disabled={pending}
+                    className="min-h-20 rounded-lg text-xs"
+                  />
+                </label>
+
                 <label className="block">
                   <span className="mb-1.5 block text-xs font-medium text-slate-700">
                     Display order
@@ -141,6 +160,7 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
                     className="h-9 rounded-lg text-xs"
                   />
                 </label>
+
                 <label className="flex items-center gap-2 self-end pb-2 text-xs font-medium text-slate-700">
                   <input
                     type="checkbox"

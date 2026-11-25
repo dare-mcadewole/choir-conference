@@ -20,6 +20,7 @@ export type AdminSpeakerUpdate = {
   organization: string | null;
   biography: string | null;
   imageUrl: string | null;
+  htmlClassName: string | null;
   published: boolean;
   sortOrder: number;
 };
