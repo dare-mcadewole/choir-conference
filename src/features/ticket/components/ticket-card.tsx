@@ -71,7 +71,8 @@ export function TicketCard({ ticket }: Props) {
       canvas.width = width * scale;
       canvas.height = height * scale;
       const context = canvas.getContext("2d");
-      if (!context) throw new Error("Your browser could not prepare the image.");
+      if (!context)
+        throw new Error("Your browser could not prepare the image.");
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
       const png = await new Promise<Blob>((resolve, reject) => {
@@ -125,16 +126,8 @@ export function TicketCard({ ticket }: Props) {
         <circle cx="500" cy="75" r="2" fill="white" opacity=".6" />
         <circle cx="548" cy="75" r="2" fill="white" opacity=".6" />
         <circle cx="596" cy="75" r="2" fill="white" opacity=".6" />
-        <path
-          d="M682 0h24L540 560h-24z"
-          fill="#d4ff00"
-          opacity=".08"
-        />
-        <path
-          d="M710 0h10L568 560h-10z"
-          fill="#fc63c1"
-          opacity=".18"
-        />
+        <path d="M682 0h24L540 560h-24z" fill="#d4ff00" opacity=".08" />
+        <path d="M710 0h10L568 560h-10z" fill="#fc63c1" opacity=".18" />
 
         <g fontFamily="Arial, sans-serif" fill="#fff">
           <text x="64" y="74" fontSize="18" fontWeight="700" letterSpacing="3">
@@ -152,13 +145,7 @@ export function TicketCard({ ticket }: Props) {
           >
             ACC 2027
           </text>
-          <text
-            x="64"
-            y="181"
-            fontSize="38"
-            fontWeight="800"
-            letterSpacing="1"
-          >
+          <text x="64" y="181" fontSize="38" fontWeight="800" letterSpacing="1">
             THE ABLE MINISTER
           </text>
           <text
@@ -182,12 +169,7 @@ export function TicketCard({ ticket }: Props) {
           >
             ISSUED TO
           </text>
-          <text
-            x="64"
-            y="340"
-            fontSize={nameFontSize}
-            fontWeight="700"
-          >
+          <text x="64" y="340" fontSize={nameFontSize} fontWeight="700">
             {ticket.fullName}
           </text>
           <text
@@ -244,14 +226,7 @@ export function TicketCard({ ticket }: Props) {
           </text>
         </g>
 
-        <rect
-          x="744"
-          y="122"
-          width="208"
-          height="260"
-          rx="24"
-          fill="#ffffff"
-        />
+        <rect x="744" y="122" width="208" height="260" rx="24" fill="#ffffff" />
         {qrCode ? (
           <image
             href={qrCode}
@@ -310,7 +285,7 @@ export function TicketCard({ ticket }: Props) {
           type="button"
           onClick={downloadTicket}
           disabled={!qrCode || downloading}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90 disabled:cursor-wait disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90 disabled:cursor-wait disabled:opacity-60"
         >
           <Download size={17} />
           {qrError
