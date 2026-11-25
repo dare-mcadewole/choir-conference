@@ -36,11 +36,12 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
       >
         <DialogTrigger
           disabled={pending}
-          className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[10px] font-semibold tracking-wide text-slate-700 transition hover:border-[#c5c6ff] hover:text-[#5556c8] disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-[10px] font-semibold tracking-wide text-slate-700 transition hover:border-[#c5c6ff] hover:text-[#5556c8] disabled:cursor-not-allowed disabled:opacity-60 uppercase"
         >
           <Pencil size={12} />
           Edit speaker
         </DialogTrigger>
+
         <DialogContent
           className="md:min-w-[640px] max-w-4xl gap-0 overflow-hidden p-0"
           aria-describedby={`edit-speaker-description-${speaker.id}`}
