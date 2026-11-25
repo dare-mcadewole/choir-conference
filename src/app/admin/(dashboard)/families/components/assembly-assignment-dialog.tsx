@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useState } from "react";
-import { Check, ListChecks, Search } from "lucide-react";
+import { ListChecks, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -145,31 +145,22 @@ export function AssemblyAssignmentDialog({
                     return (
                       <label
                         key={assembly.id}
-                        className={`flex cursor-pointer items-center gap-3 border-b border-slate-100 px-3 py-2.5 last:border-b-0 hover:bg-slate-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-[#7778e8]/40 ${
+                        className={`grid min-h-10 grid-cols-[1rem_minmax(0,1fr)_5.5rem] cursor-pointer items-center gap-3 border-b border-slate-100 px-3 py-2 last:border-b-0 hover:bg-slate-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-[#7778e8]/40 ${
                           selected ? "bg-[#f5f5ff]" : "bg-white"
                         }`}
                       >
                         <input
                           type="checkbox"
                           checked={selected}
+                          aria-label={`${selected ? "Remove" : "Assign"} ${assembly.name}`}
                           onChange={() => toggleAssembly(assembly.id)}
                           disabled={pending}
-                          className="sr-only"
+                          className="size-4 shrink-0 accent-[#7778e8]"
                         />
-                        <span
-                          aria-hidden="true"
-                          className={`grid size-4 shrink-0 place-items-center rounded border ${
-                            selected
-                              ? "border-[#7778e8] bg-[#7778e8] text-white"
-                              : "border-slate-300 bg-white"
-                          }`}
-                        >
-                          {selected && <Check size={12} strokeWidth={3} />}
-                        </span>
-                        <span className="min-w-0 flex-1 truncate text-xs font-medium text-slate-700">
+                        <span className="min-w-0 truncate text-xs font-medium text-slate-700">
                           {assembly.name}
                         </span>
-                        <span className="shrink-0 text-[10px] text-slate-400">
+                        <span className="whitespace-nowrap text-right text-[10px] text-slate-400">
                           {selected
                             ? assignedIds.has(assembly.id)
                               ? "Assigned"
