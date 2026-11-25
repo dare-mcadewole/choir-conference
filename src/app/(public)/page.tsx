@@ -104,7 +104,7 @@ export default async function HomePage() {
                     src={speaker.imageUrl}
                     alt={speaker.fullName}
                     className={cn(
-                      "size-full object-cover transition duration-500 group-hover:opacity-90",
+                      "size-full object-cover transform transition duration-500 group-hover:opacity-90",
                       [speaker.htmlClassName],
                     )}
                   />
