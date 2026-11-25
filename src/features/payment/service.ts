@@ -1,9 +1,43 @@
 import crypto from "crypto";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq, ilike, or } from "drizzle-orm";
 import { getDb } from "@/db";
 import { payments, webhookEvents } from "@/features/payment/schema";
 import { registrations } from "@/features/registration/schema";
 import { tickets } from "@/features/ticket/schema";
+
+export async function findAdminPayments(search?: string) {
+  const db = getDb();
+  const query = search?.trim();
+  return db
+    .select({
+      id: payments.id,
+      reference: payments.reference,
+      provider: payments.provider,
+      amount: payments.amount,
+      currency: payments.currency,
+      status: payments.status,
+      verifiedAt: payments.verifiedAt,
+      createdAt: payments.createdAt,
+      fullName: registrations.fullName,
+      email: registrations.email,
+      phone: registrations.phone,
+      registrationCode: registrations.registrationCode,
+    })
+    .from(payments)
+    .innerJoin(registrations, eq(payments.registrationId, registrations.id))
+    .where(
+      query
+        ? or(
+            ilike(payments.reference, `%${query}%`),
+            ilike(registrations.fullName, `%${query}%`),
+            ilike(registrations.email, `%${query}%`),
+            ilike(registrations.phone, `%${query}%`),
+            ilike(registrations.registrationCode, `%${query}%`),
+          )
+        : undefined,
+    )
+    .orderBy(desc(payments.createdAt));
+}
 
 export type PaymentProvider = {
   verify(reference: string): Promise<{
