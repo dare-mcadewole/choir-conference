@@ -1,17 +1,11 @@
+import { StatisticalBreakdown } from "@/features/dashboard/service";
 import { Trophy } from "lucide-react";
-
-type AssemblyStatistic = {
-  id: string;
-  name: string;
-  family: string | null;
-  total: number | string;
-};
 
 export function AssemblyLeaderboard({
   leaderboard,
   total,
 }: {
-  leaderboard: AssemblyStatistic[];
+  leaderboard: StatisticalBreakdown["leaderboard"];
   total: number | string;
 }) {
   const confirmedTotal = Number(total);
