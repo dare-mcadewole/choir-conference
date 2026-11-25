@@ -1,9 +1,10 @@
-import { ArrowDown, EighthNotes, Mic, Music2, Plus } from "lucide-react";
+import { ArrowDown, Mic, Plus } from "lucide-react";
 import { RegistrationLookup } from "@/features/registration/components/lookup";
 import * as conferenceService from "@/features/conference/service";
 import * as speakerService from "@/features/speaker/service";
 import { getInitials } from "@/features/shared/utils/strings";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/logo";
 
 async function getLandingData() {
   try {
@@ -35,8 +36,8 @@ export default async function HomePage() {
 
         <header className="relative mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-3 text-base font-semibold tracking-tight sm:text-xl">
-            <span className="grid size-9 place-items-center rounded-full bg-secondary text-primary">
-              <Music2 size={19} />
+            <span className="grid size-9 place-items-center rounded-full bg-primary">
+              <Logo className="size-7" />
             </span>
             {title}
           </div>

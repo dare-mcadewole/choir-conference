@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Music2 } from "lucide-react";
+import { Logo } from "@/components/logo";
 
 export function SiteHeader() {
   return (
@@ -10,7 +10,7 @@ export function SiteHeader() {
           className="flex items-center gap-2 font-display text-lg font-bold"
         >
           <span className="grid size-9 place-items-center rounded-full border border-white/25 bg-white/10">
-            <Music2 size={18} />
+            <Logo className="size-7" />
           </span>{" "}
           ACC 2027
         </Link>

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Building2,
-  CalendarDays,
   CreditCard,
   LayoutDashboard,
   Mic,
@@ -14,6 +13,7 @@ import {
   Users,
   UsersRound,
 } from "lucide-react";
+import { Logo } from "@/components/logo";
 
 const navigation = [
   {
@@ -73,7 +73,7 @@ export function AdminSidebar() {
     <aside className="flex shrink-0 flex-col rounded-2xl bg-white p-4 lg:fixed lg:inset-y-4 lg:left-4 lg:z-20 lg:h-[calc(100vh-2rem)] lg:w-72 lg:overflow-y-auto lg:p-5">
       <Link href="/" className="flex items-center gap-2.5 px-2 py-2">
         <span className="grid size-8 place-items-center rounded-xl bg-[#171923] text-white">
-          <CalendarDays size={17} />
+          <Logo className="size-6" />
         </span>
         <span className="text-lg font-bold tracking-tight text-slate-900">
           ACC <span className="text-secondary-700">Admin</span>

@@ -2,10 +2,10 @@ import Link from "next/link";
 import {
   ArrowRight,
   Building2,
-  Music2,
   UserRoundGroup,
   UsersRound,
 } from "lucide-react";
+import { Logo } from "@/components/logo";
 import * as dashboardService from "@/features/dashboard/service";
 import Metric from "@/app/(public)/statistics/components/Metric";
 import { AssemblyLeaderboard } from "./components/assembly-leaderboard";
@@ -45,8 +45,8 @@ export default async function StatisticsPage() {
 
         <header className="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-6 md:px-8">
           <Link href="/" className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-full bg-secondary text-primary">
-              <Music2 size={20} />
+            <span className="grid size-10 place-items-center rounded-full bg-primary">
+              <Logo className="size-8" />
             </span>
             <span className="font-display text-xl sm:text-2xl">
               ACC <span className="text-secondary">2027</span>

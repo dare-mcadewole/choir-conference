@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowLeft, Music2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { AdminLoginForm } from "./components/login-form";
+import { Logo } from "@/components/logo";
 
 const authErrors: Record<string, string> = {
   admin_allowlist_not_configured:
@@ -41,7 +42,7 @@ export default async function AdminLoginPage({
           <div className="pointer-events-none absolute -bottom-24 -left-20 size-80 rounded-full bg-[#d4ff00]/15 blur-3xl" />
           <Link href="/" className="relative flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-xl bg-white/10">
-              <Music2 size={20} />
+              <Logo className="size-8" />
             </span>
             <span className="text-sm font-bold tracking-wide">
               ALL CHOIRS&apos; CONFERENCE
@@ -68,8 +69,8 @@ export default async function AdminLoginPage({
           </Link>
 
           <div className="mt-12 max-w-md">
-            <span className="grid size-11 place-items-center rounded-2xl bg-[#eeeefe] text-[#6566d8] lg:hidden">
-              <Music2 size={20} />
+            <span className="grid size-11 place-items-center rounded-2xl bg-[#171923] lg:hidden">
+              <Logo className="size-8" />
             </span>
 
             <h2 className="mt-1 font-display text-3xl uppercase text-slate-900">
