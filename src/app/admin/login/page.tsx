@@ -1,21 +1,38 @@
-"use client";
-
 import Link from "next/link";
-import { useState, type FormEvent } from "react";
-import { ArrowLeft, ArrowRight, Music2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ArrowLeft, Music2 } from "lucide-react";
+import { AdminLoginForm } from "./components/login-form";
 
-export default function AdminLoginPage() {
-  const [message, setMessage] = useState<string | null>(null);
+const authErrors: Record<string, string> = {
+  admin_allowlist_not_configured:
+    "Admin access is not configured. Add trusted addresses to ADMIN_EMAILS.",
+  not_authorized:
+    "This account does not have administrator access. Use an approved admin email.",
+  sign_in_required:
+    "Sign in with an approved administrator account to continue.",
+  supabase_not_configured:
+    "Supabase Auth is not configured. Set its URL and anon key in the server environment.",
+};
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setMessage(
-      "Sign-in is unavailable because an authentication provider has not been configured. Your credentials were not sent.",
-    );
-  }
-
+export default async function AdminLoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
+  const supabaseConfigured = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_API_KEY,
+  );
+  const adminAllowlistConfigured = Boolean(
+    process.env.ADMIN_EMAILS?.split(",").some((email) => email.trim()),
+  );
+  const initialMessage =
+    authErrors[error ?? ""] ??
+    (!supabaseConfigured
+      ? authErrors.supabase_not_configured
+      : !adminAllowlistConfigured
+        ? authErrors.admin_allowlist_not_configured
+        : null);
   return (
     <main className="grid min-h-screen place-items-center p-4 sm:p-8">
       <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white shadow-2xl shadow-indigo-950/15 lg:min-h-[620px] lg:grid-cols-2">
@@ -62,48 +79,10 @@ export default function AdminLoginPage() {
               Sign in to continue to the conference dashboard.
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-              <label className="block">
-                <span className="mb-2 block text-xs font-semibold text-slate-700">
-                  Email address
-                </span>
-                <Input
-                  type="email"
-                  name="email"
-                  autoComplete="username"
-                  placeholder="you@conference.org"
-                  required
-                  className="h-12 rounded-xl border-slate-200 bg-white px-4"
-                />
-              </label>
-              <label className="block">
-                <span className="mb-2 block text-xs font-semibold text-slate-700">
-                  Password
-                </span>
-                <Input
-                  type="password"
-                  name="password"
-                  autoComplete="current-password"
-                  placeholder="Enter your password"
-                  required
-                  className="h-12 rounded-xl border-slate-200 bg-white px-4"
-                />
-              </label>
-              <Button
-                type="submit"
-                className="w-full bg-slate-900 hover:bg-slate-800"
-              >
-                Sign in <ArrowRight size={16} />
-              </Button>
-              {message && (
-                <p
-                  role="alert"
-                  className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900"
-                >
-                  {message}
-                </p>
-              )}
-            </form>
+            <AdminLoginForm
+              authConfigured={supabaseConfigured && adminAllowlistConfigured}
+              initialMessage={initialMessage}
+            />
 
             <p className="mt-8 border-t border-slate-100 pt-5 text-xs leading-5 text-slate-500">
               Need administrator access? Contact the conference team.
