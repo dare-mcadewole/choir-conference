@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { ListChecks, Search } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -60,8 +61,11 @@ export function AssemblyAssignmentDialog({
 
   useEffect(() => {
     if (state?.success) {
+      toast.success(state.success);
       setSearch("");
       setOpen(false);
+    } else if (state?.error) {
+      toast.error(state.error);
     }
   }, [state]);
 
@@ -182,11 +186,6 @@ export function AssemblyAssignmentDialog({
               <p className="mt-2 text-[11px] text-slate-500" aria-live="polite">
                 {selectedIds.length} assigned after saving
               </p>
-              {state?.error && (
-                <p role="alert" className="mt-2 text-xs text-rose-600">
-                  {state.error}
-                </p>
-              )}
             </div>
 
             <DialogFooter className="mx-0 mb-0 rounded-b-xl px-5 py-4 sm:flex-row">
@@ -216,11 +215,6 @@ export function AssemblyAssignmentDialog({
           </form>
         </DialogContent>
       </Dialog>
-      {state?.success && (
-        <p role="status" className="mt-2 text-[11px] text-emerald-700">
-          {state.success}
-        </p>
-      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ConferenceSettings } from "@/features/conference/service";
@@ -50,6 +51,11 @@ export function SettingsForm({ settings }: { settings: ConferenceSettings }) {
     updateConferenceSettingsAction,
     null,
   );
+
+  useEffect(() => {
+    if (state?.success) toast.success(state.success);
+    else if (state?.error) toast.error(state.error);
+  }, [state]);
 
   return (
     <form action={action} className="space-y-5 max-w-3xl">
@@ -227,18 +233,6 @@ export function SettingsForm({ settings }: { settings: ConferenceSettings }) {
       </section>
 
       <div className="flex flex-col-reverse items-start justify-between gap-3 sm:flex-row sm:items-center">
-        <div aria-live="polite">
-          {state?.error && (
-            <p role="alert" className="text-sm text-rose-600">
-              {state.error}
-            </p>
-          )}
-          {state?.success && (
-            <p role="status" className="text-sm text-emerald-700">
-              {state.success}
-            </p>
-          )}
-        </div>
         <Button
           type="submit"
           disabled={pending}

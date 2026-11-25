@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -15,7 +16,6 @@ export function AdminLoginForm({
   initialMessage: string | null;
 }) {
   const router = useRouter();
-  const [message, setMessage] = useState(initialMessage);
   const [pending, setPending] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -23,7 +23,6 @@ export function AdminLoginForm({
     if (!authConfigured) return;
 
     setPending(true);
-    setMessage(null);
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get("email") ?? "");
     const password = String(formData.get("password") ?? "");
@@ -36,14 +35,14 @@ export function AdminLoginForm({
       });
 
       if (error) {
-        setMessage(error.message);
+        toast.error(error.message);
         return;
       }
 
       router.replace("/admin");
       router.refresh();
     } catch (error) {
-      setMessage(
+      toast.error(
         error instanceof Error ? error.message : "Unable to sign in right now.",
       );
     } finally {
@@ -90,12 +89,12 @@ export function AdminLoginForm({
       >
         Sign in <ArrowRight size={16} />
       </Button>
-      {message && (
+      {initialMessage && (
         <p
           role="alert"
           className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900"
         >
-          {message}
+          {initialMessage}
         </p>
       )}
     </form>

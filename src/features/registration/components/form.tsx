@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { submitRegistration } from "@/features/registration/actions";
@@ -65,11 +66,9 @@ export function RegistrationForm({
   );
   const {
     control,
-    clearErrors,
     handleSubmit,
     register,
     resetField,
-    setError,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<z.input<typeof registrationSchema>, unknown, RegistrationInput>({
@@ -135,10 +134,9 @@ export function RegistrationForm({
   }
 
   const onSubmit = handleSubmit(async (data) => {
-    clearErrors("root.server");
     const response = await submitRegistration(data);
     if (!response.ok) {
-      setError("root.server", { type: "server", message: response.error });
+      toast.error(response.error);
       return;
     }
     if (response.checkoutUrl) {
@@ -151,7 +149,6 @@ export function RegistrationForm({
   return (
     <form
       onSubmit={onSubmit}
-      onChange={() => clearErrors("root.server")}
       noValidate
       className="space-y-7"
     >
@@ -475,15 +472,6 @@ export function RegistrationForm({
           )}
         />
       </div>
-
-      {errors.root?.server?.message && (
-        <p
-          role="alert"
-          className="rounded-xl bg-red-50 p-4 text-sm text-red-700"
-        >
-          {errors.root.server.message}
-        </p>
-      )}
 
       <p className="text-xs leading-5 text-slate-500">
         By registering, you consent to the conference team processing your

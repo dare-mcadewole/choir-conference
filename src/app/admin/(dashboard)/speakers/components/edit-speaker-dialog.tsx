@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { Pencil } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,7 +24,12 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (state?.success) setOpen(false);
+    if (state?.success) {
+      toast.success(state.success);
+      setOpen(false);
+    } else if (state?.error) {
+      toast.error(state.error);
+    }
   }, [state]);
 
   return (
@@ -170,11 +176,6 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
                 </label>
               </div>
 
-              {state?.error && (
-                <p role="alert" className="text-xs text-rose-600">
-                  {state.error}
-                </p>
-              )}
             </div>
 
             <DialogFooter className="mx-0 mb-0 rounded-b-xl px-5 py-4 sm:flex-row">
@@ -204,11 +205,6 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
           </form>
         </DialogContent>
       </Dialog>
-      {state?.success && (
-        <p role="status" className="mt-2 text-[11px] text-emerald-700">
-          {state.success}
-        </p>
-      )}
     </div>
   );
 }

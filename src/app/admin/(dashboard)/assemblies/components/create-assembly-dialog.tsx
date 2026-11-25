@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { Plus } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,8 +26,11 @@ export function CreateAssemblyDialog() {
 
   useEffect(() => {
     if (state?.success) {
+      toast.success(state.success);
       setName("");
       setOpen(false);
+    } else if (state?.error) {
+      toast.error(state.error);
     }
   }, [state]);
 
@@ -79,11 +83,6 @@ export function CreateAssemblyDialog() {
                   {slug || "Generated from the assembly name"}
                 </span>
               </p>
-              {state?.error && (
-                <p role="alert" className="pt-1 text-xs text-rose-600">
-                  {state.error}
-                </p>
-              )}
             </div>
 
             <DialogFooter className="mx-0 mb-0 rounded-b-xl px-5 py-4 sm:flex-row">
@@ -113,11 +112,6 @@ export function CreateAssemblyDialog() {
           </form>
         </DialogContent>
       </Dialog>
-      {state?.success && (
-        <p role="status" className="mt-2 text-xs text-emerald-700">
-          {state.success}
-        </p>
-      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,12 +27,10 @@ export function EditRegistrationDialog({
   registration,
   options,
   onClose,
-  onSuccess,
 }: {
   registration: AdminRegistrationSummary;
   options: AdminRegistrationOptions;
   onClose: () => void;
-  onSuccess: (message: string) => void;
 }) {
   const [state, action, pending] = useActionState(
     updateRegistrationAction,
@@ -45,10 +44,12 @@ export function EditRegistrationDialog({
 
   useEffect(() => {
     if (state?.success) {
-      onSuccess(state.success);
+      toast.success(state.success);
       onClose();
+    } else if (state?.error) {
+      toast.error(state.error);
     }
-  }, [onClose, onSuccess, state]);
+  }, [onClose, state]);
 
   return (
     <Dialog
@@ -297,11 +298,6 @@ export function EditRegistrationDialog({
               )}
             </fieldset>
 
-            {state?.error && (
-              <p role="alert" className="text-xs text-rose-600">
-                {state.error}
-              </p>
-            )}
           </div>
 
           <DialogFooter className="mx-0 mb-0 rounded-b-xl px-5 py-4 sm:flex-row">

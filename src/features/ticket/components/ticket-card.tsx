@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Download } from "lucide-react";
 import QRCode from "qrcode";
+import { toast } from "sonner";
 import type { TicketDetails } from "@/features/ticket/types";
 
 type Props = {
@@ -12,7 +13,6 @@ type Props = {
 export function TicketCard({ ticket }: Props) {
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [qrError, setQrError] = useState<string | null>(null);
-  const [downloadError, setDownloadError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
   const ticketRef = useRef<SVGSVGElement>(null);
 
@@ -34,11 +34,12 @@ export function TicketCard({ ticket }: Props) {
       })
       .catch((error: unknown) => {
         if (!cancelled) {
-          setQrError(
+          const message =
             error instanceof Error
               ? error.message
-              : "Could not generate the ticket verification code.",
-          );
+              : "Could not generate the ticket verification code.";
+          setQrError(message);
+          toast.error(`Could not prepare the ticket: ${message}`);
         }
       });
 
@@ -52,7 +53,6 @@ export function TicketCard({ ticket }: Props) {
     if (!svg || !qrCode) return;
 
     setDownloading(true);
-    setDownloadError(null);
     let svgUrl: string | undefined;
 
     try {
@@ -93,9 +93,9 @@ export function TicketCard({ ticket }: Props) {
       anchor.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error) {
-      setDownloadError(
+      toast.error(
         error instanceof Error
-          ? error.message
+          ? `Could not download the ticket: ${error.message}`
           : "The ticket image could not be downloaded.",
       );
     } finally {
@@ -302,16 +302,6 @@ export function TicketCard({ ticket }: Props) {
         <circle cx="939" cy="497" r="8" fill="#fc63c1" />
         <circle cx="963" cy="497" r="8" fill="#d095ff" />
       </svg>
-      {qrError && (
-        <p className="text-sm text-red-700" role="alert">
-          Could not prepare the downloadable ticket: {qrError}
-        </p>
-      )}
-      {downloadError && (
-        <p className="text-sm text-red-700" role="alert">
-          Could not download the ticket: {downloadError}
-        </p>
-      )}
       <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
         <p className="text-sm text-slate-600">
           Save this ticket and present its QR code at conference check-in.

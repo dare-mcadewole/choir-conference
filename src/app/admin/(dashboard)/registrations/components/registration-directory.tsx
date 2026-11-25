@@ -19,19 +19,10 @@ export function RegistrationDirectory({
 }) {
   const [selectedRegistration, setSelectedRegistration] =
     useState<AdminRegistrationSummary | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const closeDialog = useCallback(() => setSelectedRegistration(null), []);
 
   return (
     <div>
-      {successMessage && (
-        <p
-          role="status"
-          className="mb-3 rounded-xl bg-emerald-50 px-3 py-2 text-xs text-emerald-700"
-        >
-          {successMessage}
-        </p>
-      )}
       <div className="divide-y divide-slate-100">
         {registrations.map((registration) => (
           <article
@@ -73,10 +64,7 @@ export function RegistrationDirectory({
             </div>
             <button
               type="button"
-              onClick={() => {
-                setSuccessMessage(null);
-                setSelectedRegistration(registration);
-              }}
+              onClick={() => setSelectedRegistration(registration)}
               className="inline-flex h-8 shrink-0 items-center justify-center gap-1.5 self-start rounded-lg border border-slate-200 bg-white px-2.5 text-[10px] font-semibold tracking-wide text-slate-700 transition hover:border-[#c5c6ff] hover:text-[#5556c8] sm:self-auto"
             >
               <Pencil size={12} />
@@ -91,7 +79,6 @@ export function RegistrationDirectory({
           registration={selectedRegistration}
           options={options}
           onClose={closeDialog}
-          onSuccess={setSuccessMessage}
         />
       )}
     </div>
