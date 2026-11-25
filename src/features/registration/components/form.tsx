@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
@@ -74,6 +74,44 @@ export function RegistrationForm({
     [categories],
   );
 
+  const historicalAssemblyId = useMemo(() => {
+    const assembly = initial?.data?.assembly;
+    if (!assembly) return "";
+
+    const assemblyLocation = assembly.trim().split(" ").pop()?.toLowerCase();
+    if (!assemblyLocation) return "";
+
+    return (
+      assemblies.find((a) => a.name.toLowerCase().includes(assemblyLocation))
+        ?.id ?? ""
+    );
+  }, [assemblies, initial?.data]);
+
+  const historicalChoirPositionId = useMemo(() => {
+    const position = initial?.data?.choir_position?.toLowerCase();
+    if (!position || position === "Choir Member") return "";
+
+    const key = ["choirmaster", "choirmistress"].includes(position)
+      ? "choir master"
+      : position;
+
+    return positions.find((p) => p.name.toLowerCase().includes(key))?.id ?? "";
+  }, [positions, initial?.data]);
+
+  const historicalCategoryId = useMemo(() => {
+    const category = initial?.data?.category?.toLowerCase();
+    if (!category) return "";
+
+    let key = "";
+    if (["secondary school student", "undergraduate"].includes(category)) {
+      key = "student";
+    } else if (category === "worker") {
+      key = "employed";
+    }
+
+    return categories.find((c) => c.name.toLowerCase().includes(key))?.id ?? "";
+  }, [categories, initial?.data]);
+
   const {
     control,
     handleSubmit,
@@ -90,8 +128,10 @@ export function RegistrationForm({
       institution: initial?.data?.institution ?? "",
       gender: (initial?.data?.gender?.toUpperCase() ?? "") as Gender,
       ageRange: initial?.data?.ageRange || initial?.data?.age,
+      assemblyId: historicalAssemblyId,
       part: (initial?.data?.part?.toUpperCase() ?? "") as VocalPart,
-      positionIds: [],
+      positionIds: [historicalChoirPositionId],
+      categoryId: historicalCategoryId,
     },
     shouldUnregister: true,
   });
