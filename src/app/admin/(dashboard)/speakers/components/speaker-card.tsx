@@ -5,13 +5,13 @@ import { EditSpeakerDialog } from "./edit-speaker-dialog";
 export function SpeakerCard({ speaker }: { speaker: AdminSpeaker }) {
   return (
     <article className="flex min-w-0 flex-col rounded-xl border border-slate-100 bg-[#fbfcff] p-4">
-      <div className="flex min-w-0 items-start gap-3">
+      <div className="flex min-w-0 items-center gap-3">
         {speaker.imageUrl ? (
           <img
             src={speaker.imageUrl}
             alt=""
             loading="lazy"
-            className="size-14 shrink-0 rounded-xl bg-slate-100 object-cover"
+            className="size-12 shrink-0 rounded-xl bg-slate-100 object-cover border-hairline"
           />
         ) : (
           <span className="grid size-14 shrink-0 place-items-center rounded-xl bg-[#eeeefe] text-sm font-semibold text-[#7778e8]">
@@ -34,7 +34,7 @@ export function SpeakerCard({ speaker }: { speaker: AdminSpeaker }) {
             </span>
           </div>
           {(speaker.designation || speaker.organization) && (
-            <p className="mt-1 truncate text-xs text-slate-500">
+            <p className="truncate text-xs text-slate-500">
               {[speaker.designation, speaker.organization]
                 .filter(Boolean)
                 .join(" · ")}
