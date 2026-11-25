@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
+import { conference } from "@/features/conference/schema";
 import {
   conferenceFamilies,
   conferenceFamilyAssemblies,
@@ -401,28 +402,38 @@ export async function createRegistration(input: RegistrationInput) {
     ? generateRegistrationCode(input.fullName)
     : null;
   const ticketToken = confirmed ? generateToken() : null;
-  const ticketDetails = confirmed
-    ? (
-        await db
-          .select({
-            assembly: assemblies.name,
-            family: conferenceFamilies.name,
-          })
-          .from(assemblies)
-          .leftJoin(
-            conferenceFamilyAssemblies,
-            eq(assemblies.id, conferenceFamilyAssemblies.assemblyId),
-          )
-          .leftJoin(
-            conferenceFamilies,
-            eq(conferenceFamilyAssemblies.familyId, conferenceFamilies.id),
-          )
-          .where(eq(assemblies.id, input.assemblyId))
-          .limit(1)
-      )[0]
-    : null;
-  if (confirmed && !ticketDetails) {
-    throw new Error("The selected assembly is unavailable.");
+  const [ticketDetails] = await db
+    .select({
+      assembly: assemblies.name,
+      family: conferenceFamilies.name,
+    })
+    .from(assemblies)
+    .innerJoin(
+      conferenceFamilyAssemblies,
+      eq(assemblies.id, conferenceFamilyAssemblies.assemblyId),
+    )
+    .innerJoin(
+      conference,
+      and(
+        eq(conference.id, conferenceFamilyAssemblies.conferenceId),
+        eq(conference.isActive, true),
+      ),
+    )
+    .leftJoin(
+      conferenceFamilies,
+      eq(conferenceFamilyAssemblies.familyId, conferenceFamilies.id),
+    )
+    .where(
+      and(
+        eq(assemblies.id, input.assemblyId),
+        eq(assemblies.active, true),
+      ),
+    )
+    .limit(1);
+  if (!ticketDetails) {
+    throw new Error(
+      "The selected assembly is not assigned to a family for the active conference.",
+    );
   }
 
   const [registration] = await db
@@ -490,12 +501,24 @@ export async function publicRegistrationOptions() {
   const [assembliesData, categories, positions, institutionsData, levels] =
     await Promise.all([
       db
-        .select({
+        .selectDistinct({
           id: assemblies.id,
           name: assemblies.name,
         })
         .from(assemblies)
-        .where(eq(assemblies.active, true)),
+        .innerJoin(
+          conferenceFamilyAssemblies,
+          eq(assemblies.id, conferenceFamilyAssemblies.assemblyId),
+        )
+        .innerJoin(
+          conference,
+          and(
+            eq(conference.id, conferenceFamilyAssemblies.conferenceId),
+            eq(conference.isActive, true),
+          ),
+        )
+        .where(eq(assemblies.active, true))
+        .orderBy(asc(assemblies.name)),
       db
         .select()
         .from(registrationCategories)

@@ -101,8 +101,8 @@ export function RegistrationForm({
       <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-900">
         <strong>Registration setup is in progress.</strong>
         <p className="mt-2 text-sm">
-          The conference team has not published any active assemblies yet.
-          Please check back shortly.
+          No active assemblies are currently assigned to a family for this
+          conference. Please check back shortly.
         </p>
       </div>
     );
@@ -112,7 +112,9 @@ export function RegistrationForm({
       <div className="space-y-8">
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
           <CheckCircle2 className="mx-auto text-emerald-600" size={42} />
-          <h2 className="mt-4 font-display text-3xl">You&apos;re registered.</h2>
+          <h2 className="mt-4 font-display text-3xl">
+            You&apos;re registered.
+          </h2>
           <p className="mt-3 text-slate-600">
             {success.requiresPayment
               ? "Your registration is awaiting payment. We’ll take you to secure checkout next."
