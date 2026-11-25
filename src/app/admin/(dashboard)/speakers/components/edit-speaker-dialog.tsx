@@ -196,6 +196,7 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
               </DialogClose>
               <Button
                 type="submit"
+                variant="secondary"
                 disabled={pending}
                 loading={pending}
                 loadingText="Saving..."

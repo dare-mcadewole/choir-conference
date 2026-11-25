@@ -157,6 +157,7 @@ export function EditFamilyDialog({ family }: { family: FamilySummary }) {
               </DialogClose>
               <Button
                 type="submit"
+                variant="secondary"
                 disabled={pending}
                 loading={pending}
                 loadingText="Saving..."

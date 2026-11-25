@@ -106,6 +106,7 @@ export function CreateAssemblyDialog() {
               </DialogClose>
               <Button
                 type="submit"
+                variant="secondary"
                 disabled={pending}
                 loading={pending}
                 loadingText="Creating..."

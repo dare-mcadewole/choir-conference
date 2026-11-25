@@ -98,7 +98,7 @@ export function AssemblyAssignmentDialog({
           EDIT ASSEMBLY LIST
         </DialogTrigger>
         <DialogContent
-          className="max-w-lg gap-0 overflow-hidden p-0"
+          className="md:min-w-[480px] max-w-3xl gap-0 overflow-hidden p-0"
           aria-describedby={`assembly-dialog-description-${familyId}`}
         >
           <form action={action}>
@@ -120,8 +120,8 @@ export function AssemblyAssignmentDialog({
                 id={`assembly-dialog-description-${familyId}`}
                 className="text-xs leading-5"
               >
-                Select assemblies to keep assigned. Clear selected assemblies
-                to remove them.
+                Select assemblies to keep assigned. Clear selected assemblies to
+                remove them.
               </DialogDescription>
             </DialogHeader>
 
@@ -218,6 +218,7 @@ export function AssemblyAssignmentDialog({
               </DialogClose>
               <Button
                 type="submit"
+                variant="secondary"
                 disabled={pending || !hasChanges}
                 loading={pending}
                 loadingText="Saving..."

@@ -198,7 +198,9 @@ export function EditRegistrationDialog({
                 </span>
                 <select
                   name="centralChoirMember"
-                  defaultValue={String(registration.centralChoirMember ?? false)}
+                  defaultValue={String(
+                    registration.centralChoirMember ?? false,
+                  )}
                   required
                   disabled={pending}
                   className={selectClassName}
@@ -320,6 +322,7 @@ export function EditRegistrationDialog({
             </DialogClose>
             <Button
               type="submit"
+              variant="secondary"
               disabled={pending}
               loading={pending}
               loadingText="Saving..."
