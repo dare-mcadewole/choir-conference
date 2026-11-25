@@ -16,6 +16,9 @@ export default async function FamiliesPage({
 }) {
   const { q } = await searchParams;
   const families = await familyService.find(q);
+  const assignmentOptions = await familyService.findAssignmentOptions(
+    families.map((family) => family.id),
+  );
   const activeFamilies = families.filter((family) => family.active).length;
   const assignedAssemblies = families.reduce(
     (total, family) => total + Number(family.assemblyCount),
@@ -120,7 +123,15 @@ export default async function FamiliesPage({
         {families.length ? (
           <div className="mt-5 grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
             {families.map((family) => (
-              <FamilyCard key={family.id} family={family} />
+              <FamilyCard
+                key={family.id}
+                family={family}
+                availableAssemblies={
+                  assignmentOptions.availableByFamily[family.id] ?? []
+                }
+                conferenceAvailable={assignmentOptions.conferenceAvailable}
+                activeAssemblyCount={assignmentOptions.activeAssemblyCount}
+              />
             ))}
           </div>
         ) : (

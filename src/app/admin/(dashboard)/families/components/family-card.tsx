@@ -8,7 +8,11 @@ import {
   UsersRound,
   type LucideIcon,
 } from "lucide-react";
-import type { FamilySummary } from "@/features/family/service";
+import type {
+  AssemblyOption,
+  FamilySummary,
+} from "@/features/family/service";
+import { AssignmentForm } from "./assignment-form";
 
 const familyIcons: Record<string, LucideIcon> = {
   AudioLines,
@@ -17,7 +21,17 @@ const familyIcons: Record<string, LucideIcon> = {
   Users,
 };
 
-export function FamilyCard({ family }: { family: FamilySummary }) {
+export function FamilyCard({
+  family,
+  availableAssemblies,
+  conferenceAvailable,
+  activeAssemblyCount,
+}: {
+  family: FamilySummary;
+  availableAssemblies: AssemblyOption[];
+  conferenceAvailable: boolean;
+  activeAssemblyCount: number;
+}) {
   const Icon = familyIcons[family.icon] ?? UsersRound;
   const visibleAssemblies = family.assemblyNames.slice(0, 3);
   const remainingAssemblies =
@@ -104,6 +118,13 @@ export function FamilyCard({ family }: { family: FamilySummary }) {
           <span className="text-[10px] text-slate-400">No group link</span>
         )}
       </div>
+
+      <AssignmentForm
+        familyId={family.id}
+        assemblies={availableAssemblies}
+        conferenceAvailable={conferenceAvailable}
+        activeAssemblyCount={activeAssemblyCount}
+      />
     </article>
   );
 }
