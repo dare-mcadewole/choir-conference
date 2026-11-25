@@ -24,7 +24,7 @@ const navigation = [
   {
     icon: Users,
     name: "Registrations",
-    href: "/admin#registrations",
+    href: "/admin/registrations",
     activePath: "/admin/registrations",
   },
   {
