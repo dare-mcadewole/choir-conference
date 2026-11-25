@@ -61,6 +61,7 @@ export const registrations = pgTable(
     email: varchar("email", { length: 255 }).notNull(),
     phone: varchar("phone", { length: 50 }).notNull(),
     gender: varchar("gender", { length: 32 }).notNull(),
+    ageRange: varchar("age_range", { length: 64 }).notNull(),
     assemblyId: uuid("assembly_id")
       .notNull()
       .references(() => assemblies.id),
