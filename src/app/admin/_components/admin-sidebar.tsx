@@ -57,7 +57,7 @@ const navigation = [
     href: "/admin#workspace",
     activePath: "/admin/settings",
   },
-];
+] as const;
 
 export function AdminSidebar() {
   const pathname = usePathname();
@@ -69,7 +69,7 @@ export function AdminSidebar() {
           <CalendarDays size={17} />
         </span>
         <span className="text-lg font-bold tracking-tight text-slate-900">
-          ACC <span className="text-[#7778e8]">Admin</span>
+          ACC <span className="text-secondary-700">Admin</span>
         </span>
       </Link>
 
@@ -83,7 +83,7 @@ export function AdminSidebar() {
         {navigation.map(({ icon: Icon, name, href, activePath }) => {
           const active = pathname === activePath;
           return (
-            <a
+            <Link
               key={name}
               href={href}
               aria-current={active ? "page" : undefined}
@@ -95,7 +95,7 @@ export function AdminSidebar() {
             >
               <Icon size={17} strokeWidth={1.8} />
               <span>{name}</span>
-            </a>
+            </Link>
           );
         })}
       </nav>
