@@ -89,7 +89,7 @@ export function RegistrationForm({
 
   const historicalChoirPositionId = useMemo(() => {
     const position = initial?.data?.choir_position?.toLowerCase();
-    if (!position || position === "Choir Member") return "";
+    if (!position || position === "choir member") return "";
 
     const key = ["choirmaster", "choirmistress"].includes(position)
       ? "choir master"
@@ -130,7 +130,7 @@ export function RegistrationForm({
       ageRange: initial?.data?.ageRange || initial?.data?.age,
       assemblyId: historicalAssemblyId,
       part: (initial?.data?.part?.toUpperCase() ?? "") as VocalPart,
-      positionIds: [historicalChoirPositionId],
+      positionIds: historicalChoirPositionId ? [historicalChoirPositionId] : [],
       categoryId: historicalCategoryId,
     },
     shouldUnregister: true,
