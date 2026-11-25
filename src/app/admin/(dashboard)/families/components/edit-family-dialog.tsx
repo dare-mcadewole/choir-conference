@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { slugifyFamilyName } from "@/features/family/slug";
+import { slugifyName } from "@/features/shared/utils/slug";
 import type { FamilySummary } from "@/features/family/service";
 import { updateFamilyDetailsAction } from "../actions";
 
@@ -26,7 +26,7 @@ export function EditFamilyDialog({ family }: { family: FamilySummary }) {
   );
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(family.name);
-  const slug = slugifyFamilyName(name);
+  const slug = slugifyName(name, 80);
 
   useEffect(() => {
     if (state?.success) setOpen(false);
