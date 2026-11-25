@@ -1,4 +1,4 @@
-export function slugifyFamilyName(name: string) {
+export function slugifyName(name: string, maxLength: number) {
   return name
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -6,6 +6,6 @@ export function slugifyFamilyName(name: string) {
     .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 80)
+    .slice(0, maxLength)
     .replace(/-+$/g, "");
 }

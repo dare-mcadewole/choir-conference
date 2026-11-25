@@ -6,7 +6,7 @@ import {
   FamilyAssignmentError,
   FamilyDetailsError,
 } from "@/features/family/service";
-import { slugifyFamilyName } from "@/features/family/slug";
+import { slugifyName } from "@/features/shared/utils/slug";
 import * as familyService from "@/features/family/service";
 import { getAdminUser } from "@/lib/supabase/server";
 
@@ -33,7 +33,7 @@ const familyDetailsSchema = z.object({
     .min(1, "Enter a family name.")
     .max(80)
     .refine(
-      (name) => Boolean(slugifyFamilyName(name)),
+      (name) => Boolean(slugifyName(name, 80)),
       "Use a family name containing letters or numbers to generate its slug.",
     ),
   alias: z
@@ -95,7 +95,7 @@ export async function updateFamilyDetailsAction(
   try {
     await familyService.updateDetails(familyId, {
       ...details,
-      slug: slugifyFamilyName(details.name),
+      slug: slugifyName(details.name, 80),
     });
   } catch (error) {
     if (error instanceof FamilyDetailsError) {
