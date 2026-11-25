@@ -1,4 +1,4 @@
-import { Users, UsersRound } from "lucide-react";
+import { UserRoundGroup, Users, UsersRound } from "lucide-react";
 
 type FamilyStatistic = {
   name: string;
@@ -16,11 +16,9 @@ export function FamilyBreakdown({
 
   return (
     <section className="rounded-lg border-hairline shadow-slate-200 bg-white p-5 shadow-2xl sm:p-6">
-      <div className="flex items-center gap-2">
-        <UsersRound size={20} strokeWidth={1.5} />
-        <h2 className="text-xl text-slate-900 uppercase font-bold">
-          By family/group
-        </h2>
+      <div className="flex items-center gap-2 text-secondary-700">
+        <UserRoundGroup size={20} strokeWidth={1.95} />
+        <h2 className="text-lg font-medium">By Family / Group</h2>
       </div>
 
       <div className="mt-5 space-y-4">

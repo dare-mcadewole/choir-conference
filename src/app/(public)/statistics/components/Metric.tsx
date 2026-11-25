@@ -20,6 +20,7 @@ export default function Metric({
         aria-hidden="true"
         className="pointer-events-none absolute -right-5 -top-8 size-24 rounded-full bg-slate-50"
       />
+
       <div
         className={`relative grid size-11 place-items-center rounded-2xl ${iconClassName}`}
       >
@@ -28,7 +29,7 @@ export default function Metric({
       <h3 className="relative mt-6 font-display text-4xl text-slate-900">
         {value}
       </h3>
-      <p className="relative uppercase text-sm text-slate-400 tracking-wider">
+      <p className="relative uppercase text-sm text-slate-400 font-medium tracking-wider">
         {label}
       </p>
     </div>

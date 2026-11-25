@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, BarChart3, Music2, Users } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  Music2,
+  UserRoundGroup,
+  UsersRound,
+} from "lucide-react";
 import * as dashboardService from "@/features/dashboard/service";
 import Metric from "@/app/(public)/statistics/components/Metric";
 import { AssemblyLeaderboard } from "./components/assembly-leaderboard";
@@ -67,14 +73,14 @@ export default async function StatisticsPage() {
       <div className="page-shell relative z-10 -mt-10 pb-16 sm:-mt-12">
         <div className="grid gap-4 md:grid-cols-3">
           <Metric
-            icon={<Users size={20} />}
+            icon={<UsersRound size={20} />}
             label="Confirmed registrations"
             value={String(data.total)}
             iconClassName="bg-slate-100 text-slate-600"
           />
 
           <Metric
-            icon={<BarChart3 size={20} />}
+            icon={<Building2 size={20} />}
             label="Assemblies represented"
             value={String(
               data.leaderboard.filter((item) => Number(item.total) > 0).length,
@@ -83,7 +89,7 @@ export default async function StatisticsPage() {
           />
 
           <Metric
-            icon={<Users size={20} />}
+            icon={<UserRoundGroup size={20} />}
             label="Conference families"
             value={String(data.families.length)}
             iconClassName="bg-slate-100 text-slate-600"

@@ -1,4 +1,4 @@
-import { GraduationCap, UsersRound } from "lucide-react";
+import { GraduationCap, Grid2X2, LayoutGrid, UsersRound } from "lucide-react";
 
 type CategoryStatistic = {
   slug: string;
@@ -34,14 +34,11 @@ export function RegistrationCategoryBreakdown({
 
   return (
     <section className="rounded-lg border-hairline shadow-slate-200 bg-white p-5 shadow-2xl sm:p-6">
-      <div>
-        <h2 className="font-display text-2xl text-slate-900">
-          Registration categories
-        </h2>
-        <p className="mt-1 text-xs text-slate-500">
-          Attendee breakdown by student status
-        </p>
+      <div className="flex items-center gap-2 text-secondary-700">
+        <LayoutGrid size={20} strokeWidth={1.75} />
+        <h2 className="text-lg font-medium">By Category</h2>
       </div>
+
       <div className="mt-5 grid gap-3">
         {groups.map(({ label, total, icon: Icon, barColor }) => {
           const percentage = categorizedTotal
