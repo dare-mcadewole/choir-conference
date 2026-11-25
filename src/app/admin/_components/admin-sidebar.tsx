@@ -7,6 +7,7 @@ import {
   CalendarDays,
   CreditCard,
   LayoutDashboard,
+  Mic,
   Settings,
   Ticket,
   UserRound,
@@ -38,6 +39,12 @@ const navigation = [
     name: "Families",
     href: "/admin/families",
     activePath: "/admin/families",
+  },
+  {
+    icon: Mic,
+    name: "Speakers",
+    href: "/admin/speakers",
+    activePath: "/admin/speakers",
   },
   {
     icon: CreditCard,
