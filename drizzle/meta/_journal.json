@@ -50,6 +50,13 @@
       "when": 1795613106063,
       "tag": "0006_unknown_toad_men",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1795613715553,
+      "tag": "0007_fresh_the_hood",
+      "breakpoints": true
     }
   ]
 }

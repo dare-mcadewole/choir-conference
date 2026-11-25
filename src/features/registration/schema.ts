@@ -14,6 +14,10 @@ import { id, timestamps } from "@/db/schema-helpers";
 import { assemblies } from "@/features/assembly/schema";
 import { academicLevels } from "@/features/institution/schema";
 
+export const gender = pgEnum("gender", ["MALE", "FEMALE"]);
+export const GENDER_OPTIONS = gender.enumValues;
+export type Gender = (typeof GENDER_OPTIONS)[number];
+
 export const vocalPart = pgEnum("vocal_part", [
   "SOPRANO",
   "ALTO",
@@ -60,7 +64,7 @@ export const registrations = pgTable(
     fullName: varchar("full_name", { length: 200 }).notNull(),
     email: varchar("email", { length: 255 }).notNull(),
     phone: varchar("phone", { length: 50 }).notNull(),
-    gender: varchar("gender", { length: 32 }).notNull(),
+    gender: gender("gender").notNull(),
     ageRange: varchar("age_range", { length: 64 }).notNull(),
     assemblyId: uuid("assembly_id")
       .notNull()
