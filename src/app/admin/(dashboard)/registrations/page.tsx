@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search, Users } from "lucide-react";
 import * as registrationService from "@/features/registration/service";
+import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import { RegistrationDirectory } from "./components/registration-directory";
 
 export default async function RegistrationsPage({
@@ -16,25 +17,17 @@ export default async function RegistrationsPage({
 
   return (
     <>
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[.16em] text-[#7778e8]">
-            Conference operations
-          </p>
-          <h1 className="mt-2 font-display text-3xl text-slate-900 sm:text-4xl">
-            Registrations
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-500">
-            Search attendee records and update registration details.
-          </p>
-        </div>
+      <AdminPageHeader
+        title="Registrations"
+        description="Search attendee records and update registration details."
+      >
         <Link
           href="/admin"
           className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 transition hover:border-[#c5c6ff] hover:text-[#5556c8]"
         >
           Back to overview
         </Link>
-      </header>
+      </AdminPageHeader>
 
       <section className="mt-6 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

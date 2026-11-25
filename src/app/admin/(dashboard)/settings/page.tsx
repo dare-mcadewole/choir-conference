@@ -1,4 +1,5 @@
 import * as conferenceService from "@/features/conference/service";
+import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import { SettingsForm } from "./components/settings-form";
 
 export default async function SettingsPage() {
@@ -6,15 +7,11 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <header className="mb-6">
-        <h1 className="mt-2 font-display text-3xl text-slate-900 sm:text-4xl">
-          Settings
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-slate-500">
-          Manage event information, attendee contact details, and registration
-          behavior.
-        </p>
-      </header>
+      <AdminPageHeader
+        title="Settings"
+        description="Manage event information, attendee contact details, and registration behavior."
+        className="mb-6"
+      />
 
       {settings ? (
         <SettingsForm settings={settings} />

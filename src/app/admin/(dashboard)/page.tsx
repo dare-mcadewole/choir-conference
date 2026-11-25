@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import * as dashboardService from "@/features/dashboard/service";
 import { getInitials } from "@/features/shared/utils/strings";
+import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import { MetricCard } from "@/app/admin/_components/metric-card";
 import { RegistrationStatus } from "@/app/admin/_components/registration-status";
 import { StatusSummary } from "@/app/admin/_components/status-summary";
@@ -80,25 +81,18 @@ export default async function AdminPage({
 
   return (
     <>
-      <div id="overview" className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[.16em] text-[#7778e8]">
-            Command centre
-          </p>
-          <h1 className="mt-2 font-display text-3xl text-slate-900 sm:text-4xl">
-            Conference overview
-          </h1>
-          <p className="mt-2 text-sm text-slate-500">
-            A live look at registrations and conference operations.
-          </p>
-        </div>
+      <AdminPageHeader
+        id="overview"
+        title="Conference overview"
+        description="A live look at registrations and conference operations."
+      >
         <Link
           href="/statistics"
           className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 transition hover:border-[#c5c6ff] hover:text-[#5556c8]"
         >
           Public statistics <ArrowUpRight size={14} />
         </Link>
-      </div>
+      </AdminPageHeader>
 
       <section
         aria-label="Conference metrics"
