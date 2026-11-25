@@ -8,11 +8,9 @@ import {
   UsersRound,
   type LucideIcon,
 } from "lucide-react";
-import type {
-  AssemblyOption,
-  FamilySummary,
-} from "@/features/family/service";
+import type { AssemblyOption, FamilySummary } from "@/features/family/service";
 import { AssignmentForm } from "./assignment-form";
+import { EditFamilyDialog } from "./edit-family-dialog";
 
 const familyIcons: Record<string, LucideIcon> = {
   AudioLines,
@@ -121,13 +119,17 @@ export function FamilyCard({
         )}
       </div>
 
-      <AssignmentForm
-        familyId={family.id}
-        availableAssemblies={availableAssemblies}
-        assignedAssemblies={assignedAssemblies}
-        conferenceAvailable={conferenceAvailable}
-        activeAssemblyCount={activeAssemblyCount}
-      />
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
+        <EditFamilyDialog family={family} />
+
+        <AssignmentForm
+          familyId={family.id}
+          availableAssemblies={availableAssemblies}
+          assignedAssemblies={assignedAssemblies}
+          conferenceAvailable={conferenceAvailable}
+          activeAssemblyCount={activeAssemblyCount}
+        />
+      </div>
     </article>
   );
 }

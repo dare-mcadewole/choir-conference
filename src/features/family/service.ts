@@ -5,6 +5,7 @@ import {
   eq,
   ilike,
   inArray,
+  ne,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db";
@@ -62,6 +63,10 @@ export async function find(search?: string) {
 }
 
 export type FamilySummary = Awaited<ReturnType<typeof find>>[number];
+export type FamilyDetails = Pick<
+  FamilySummary,
+  "name" | "alias" | "slug" | "description" | "whatsappUrl"
+>;
 
 export type AssemblyOption = {
   id: string;
@@ -153,6 +158,43 @@ export class FamilyAssignmentError extends Error {
     super(message);
     this.name = "FamilyAssignmentError";
   }
+}
+
+export class FamilyDetailsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "FamilyDetailsError";
+  }
+}
+
+export async function updateDetails(
+  familyId: string,
+  details: FamilyDetails,
+) {
+  const db = getDb();
+  return db.transaction(async (tx) => {
+    const family = await tx.query.conferenceFamilies.findFirst({
+      where: eq(conferenceFamilies.id, familyId),
+      columns: { id: true },
+    });
+    if (!family) throw new FamilyDetailsError("The selected family was not found.");
+
+    const duplicateSlug = await tx.query.conferenceFamilies.findFirst({
+      where: and(
+        eq(conferenceFamilies.slug, details.slug),
+        ne(conferenceFamilies.id, familyId),
+      ),
+      columns: { id: true },
+    });
+    if (duplicateSlug) {
+      throw new FamilyDetailsError("That slug is already used by another family.");
+    }
+
+    await tx
+      .update(conferenceFamilies)
+      .set({ ...details, updatedAt: new Date() })
+      .where(eq(conferenceFamilies.id, familyId));
+  });
 }
 
 export async function setAssembliesForFamily(

@@ -15,22 +15,20 @@ export function AssignmentForm({
   activeAssemblyCount: number;
 }) {
   return (
-    <div className="mt-3 border-t border-slate-100 pt-3">
-      {!conferenceAvailable ? (
-        <p className="text-[11px] text-slate-500">
-          Set an active conference before assigning assemblies.
-        </p>
-      ) : activeAssemblyCount === 0 && assignedAssemblies.length === 0 ? (
-        <p className="text-[11px] text-slate-500">
-          Add active assemblies before assigning them to families.
-        </p>
-      ) : (
-        <AssemblyAssignmentDialog
-          familyId={familyId}
-          availableAssemblies={availableAssemblies}
-          assignedAssemblies={assignedAssemblies}
-        />
-      )}
-    </div>
+    !conferenceAvailable ? (
+      <p className="text-[11px] text-slate-500">
+        Set an active conference before assigning assemblies.
+      </p>
+    ) : activeAssemblyCount === 0 && assignedAssemblies.length === 0 ? (
+      <p className="text-[11px] text-slate-500">
+        Add active assemblies before assigning them to families.
+      </p>
+    ) : (
+      <AssemblyAssignmentDialog
+        familyId={familyId}
+        availableAssemblies={availableAssemblies}
+        assignedAssemblies={assignedAssemblies}
+      />
+    )
   );
 }
