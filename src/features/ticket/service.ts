@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { desc, eq, ilike, or } from "drizzle-orm";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
 import {
@@ -7,6 +7,37 @@ import {
 } from "@/features/family/schema";
 import { registrations } from "@/features/registration/schema";
 import { tickets } from "@/features/ticket/schema";
+
+export async function findAdminTickets(search?: string) {
+  const db = getDb();
+  const query = search?.trim();
+  return db
+    .select({
+      id: tickets.id,
+      status: tickets.status,
+      issuedAt: tickets.issuedAt,
+      usedAt: tickets.usedAt,
+      fullName: registrations.fullName,
+      email: registrations.email,
+      phone: registrations.phone,
+      registrationCode: registrations.registrationCode,
+      assembly: assemblies.name,
+    })
+    .from(tickets)
+    .innerJoin(registrations, eq(tickets.registrationId, registrations.id))
+    .leftJoin(assemblies, eq(registrations.assemblyId, assemblies.id))
+    .where(
+      query
+        ? or(
+            ilike(registrations.fullName, `%${query}%`),
+            ilike(registrations.email, `%${query}%`),
+            ilike(registrations.phone, `%${query}%`),
+            ilike(registrations.registrationCode, `%${query}%`),
+          )
+        : undefined,
+    )
+    .orderBy(desc(tickets.issuedAt));
+}
 
 export async function findOneByToken(token: string) {
   const db = getDb();
