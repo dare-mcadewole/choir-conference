@@ -64,12 +64,9 @@ export function EditRegistrationDialog({
         <form action={action}>
           <input type="hidden" name="registrationId" value={registration.id} />
           <DialogHeader className="px-5 pb-4 pt-5 pr-12">
-            <DialogTitle className="text-base font-semibold text-slate-900">
-              Edit registration
-            </DialogTitle>
+            <DialogTitle>Edit registration</DialogTitle>
             <DialogDescription
               id={`edit-registration-description-${registration.id}`}
-              className="text-xs leading-5"
             >
               Update attendee and registration details. Payment, ticket, and
               registration status are not changed.

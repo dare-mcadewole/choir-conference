@@ -113,13 +113,8 @@ export function AssemblyAssignmentDialog({
             ))}
 
             <DialogHeader className="px-5 pb-4 pt-5 pr-12">
-              <DialogTitle className="text-base font-semibold text-slate-900">
-                Edit family assemblies
-              </DialogTitle>
-              <DialogDescription
-                id={`assembly-dialog-description-${familyId}`}
-                className="text-xs leading-5"
-              >
+              <DialogTitle>Edit family assemblies</DialogTitle>
+              <DialogDescription id={`assembly-dialog-description-${familyId}`}>
                 Select assemblies to keep assigned. Clear selected assemblies to
                 remove them.
               </DialogDescription>

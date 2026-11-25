@@ -56,13 +56,8 @@ export function EditFamilyDialog({ family }: { family: FamilySummary }) {
           <form action={action}>
             <input type="hidden" name="familyId" value={family.id} />
             <DialogHeader className="px-5 pb-4 pt-5 pr-12">
-              <DialogTitle className="text-base font-semibold text-slate-900">
-                Edit family details
-              </DialogTitle>
-              <DialogDescription
-                id={`edit-family-description-${family.id}`}
-                className="text-xs leading-5"
-              >
+              <DialogTitle>Edit family details</DialogTitle>
+              <DialogDescription id={`edit-family-description-${family.id}`}>
                 Update the family name and public details.
               </DialogDescription>
             </DialogHeader>

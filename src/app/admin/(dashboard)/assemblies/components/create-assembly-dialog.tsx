@@ -50,13 +50,8 @@ export function CreateAssemblyDialog() {
         >
           <form action={action}>
             <DialogHeader className="px-5 pb-4 pt-5 pr-12">
-              <DialogTitle className="text-base font-semibold text-slate-900">
-                Add an assembly
-              </DialogTitle>
-              <DialogDescription
-                id="create-assembly-description"
-                className="text-xs leading-5"
-              >
+              <DialogTitle>Add an assembly</DialogTitle>
+              <DialogDescription id="create-assembly-description">
                 Create an active assembly for conference registrations and
                 family assignments.
               </DialogDescription>

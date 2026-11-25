@@ -49,13 +49,8 @@ export function EditSpeakerDialog({ speaker }: { speaker: AdminSpeaker }) {
           <form action={action}>
             <input type="hidden" name="id" value={speaker.id} />
             <DialogHeader className="px-5 pb-4 pt-5 pr-12">
-              <DialogTitle className="text-base font-semibold text-slate-900">
-                Edit speaker
-              </DialogTitle>
-              <DialogDescription
-                id={`edit-speaker-description-${speaker.id}`}
-                className="text-xs leading-5"
-              >
+              <DialogTitle>Edit speaker</DialogTitle>
+              <DialogDescription id={`edit-speaker-description-${speaker.id}`}>
                 Update profile details, publication status, and display order.
               </DialogDescription>
             </DialogHeader>
