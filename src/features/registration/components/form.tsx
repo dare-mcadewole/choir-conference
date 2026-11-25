@@ -276,6 +276,7 @@ export function RegistrationForm({
               <Field
                 id="assembly-picker"
                 label="Assembly"
+                hint="Make sure to double-check selected assembly"
                 error={errors.assemblyId?.message}
               >
                 <ComboboxInput
