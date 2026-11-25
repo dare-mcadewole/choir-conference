@@ -83,7 +83,7 @@ export default async function AdminPage({
     <>
       <AdminPageHeader
         id="overview"
-        title="Conference overview"
+        title="Overview"
         description="A live look at registrations and conference operations."
       >
         <Link
@@ -114,9 +114,7 @@ export default async function AdminPage({
                 {q ? "Registration search" : "Recent registrations"}
               </h2>
               <p className="mt-1 text-xs text-slate-500">
-                {q
-                  ? `Showing matches for “${q}”`
-                  : "Latest attendee activity"}
+                {q ? `Showing matches for “${q}”` : "Latest attendee activity"}
               </p>
             </div>
             <MoreHorizontal size={19} className="text-slate-400" />
