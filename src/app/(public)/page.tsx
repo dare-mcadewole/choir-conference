@@ -57,8 +57,9 @@ export default async function HomePage() {
               mt-7 max-w-4xl font-display text-6xl sm:leading-[.82] tracking-[-.025em]
               sm:text-7xl md:text-8xl uppercase
             "
-            dangerouslySetInnerHTML={{ __html: theme }}
-          />
+          >
+            {theme}
+          </h1>
 
           <div id="register" className="mt-9 w-full mx-auto">
             <RegistrationLookup />

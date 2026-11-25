@@ -54,7 +54,7 @@ const navigation = [
   {
     icon: Settings,
     name: "Settings",
-    href: "/admin#workspace",
+    href: "/admin/settings",
     activePath: "/admin/settings",
   },
 ] as const;
