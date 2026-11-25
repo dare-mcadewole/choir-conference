@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, BarChart3, Music2, Trophy, Users } from "lucide-react";
+import { ArrowRight, BarChart3, Music2, Users } from "lucide-react";
 import * as dashboardService from "@/features/dashboard/service";
 import Metric from "@/app/(public)/statistics/components/Metric";
+import { AssemblyLeaderboard } from "./components/assembly-leaderboard";
+import { FamilyBreakdown } from "./components/family-breakdown";
+import { RegistrationCategoryBreakdown } from "./components/registration-category-breakdown";
 
 async function stats() {
   try {
@@ -87,141 +90,18 @@ export default async function StatisticsPage() {
           />
         </div>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-[.85fr_1.15fr]">
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-            <div className="flex items-center gap-3">
-              <span className="grid size-9 place-items-center rounded-xl bg-slate-100 text-slate-600">
-                <Users size={17} />
-              </span>
-              <div>
-                <h2 className="font-display text-2xl text-slate-900">
-                  By family
-                </h2>
-                <p className="mt-0.5 text-xs text-slate-500">
-                  Confirmed attendees across families
-                </p>
-              </div>
-            </div>
-            <div className="mt-7 space-y-6">
-              {data.families.map((item) => (
-                <div key={item.name}>
-                  <div className="flex justify-between gap-3 text-sm">
-                    <span className="font-medium text-slate-700">
-                      {item.name}
-                    </span>
-                    <strong className="text-slate-800">{item.total}</strong>
-                  </div>
-                  <div className="mt-2.5 h-2.5 overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className="h-full rounded-full bg-slate-300 transition-[width]"
-                      style={{
-                        width: `${data.total ? Math.round((Number(item.total) / Number(data.total)) * 100) : 0}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-              {!data.families.length && <Empty />}
-            </div>
-          </section>
-
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-            <div className="flex items-center gap-3">
-              <span className="grid size-20 place-items-center rounded-xl bg-secondary-100/50 text-secondary-700">
-                <Trophy size={64} strokeWidth={1} />
-              </span>
-              <div>
-                <h2 className="font-display text-2xl text-slate-900 uppercase">
-                  Leaderboard
-                </h2>
-                <p className="text-xs text-slate-500 uppercase">
-                  Registrations by assembly
-                </p>
-              </div>
-            </div>
-            <div className="mt-5 divide-y divide-slate-100">
-              {data.leaderboard.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between gap-4 py-3.5"
-                >
-                  <div className="flex min-w-0 items-center gap-4">
-                    <span className="grid size-9 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">
-                      {index + 1}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="truncate font-semibold text-slate-800">
-                        {item.name}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {item.family ?? "Family not assigned"}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className="font-bold text-slate-800">{item.total}</p>
-                    <p className="text-xs text-slate-500">
-                      {data.total
-                        ? Math.round(
-                            (Number(item.total) / Number(data.total)) * 100,
-                          )
-                        : 0}
-                      %
-                    </p>
-                  </div>
-                </div>
-              ))}
-              {!data.leaderboard.length && <Empty />}
-            </div>
-          </section>
+        <div className="mt-5 grid lg:grid-cols-2 gap-5">
+          <FamilyBreakdown families={data.families} total={data.total} />
+          <RegistrationCategoryBreakdown categories={data.categories} />
         </div>
 
-        <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-          <div className="flex items-center gap-3">
-            <span className="grid size-9 place-items-center rounded-xl bg-slate-100 text-slate-600">
-              <Users size={17} />
-            </span>
-            <div>
-              <h2 className="font-display text-2xl text-slate-900">
-                Registration categories
-              </h2>
-              <p className="mt-0.5 text-xs text-slate-500">
-                Confirmed attendees by registration type
-              </p>
-            </div>
-          </div>
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {data.categories.map((item, index) => {
-              const accents = [
-                "border-slate-200",
-                "border-slate-300",
-                "border-slate-200",
-                "border-slate-300",
-              ];
-              return (
-                <div
-                  key={item.name}
-                  className={`rounded-xl border-l-4 bg-slate-50 p-4 ${accents[index % accents.length]}`}
-                >
-                  <p className="text-sm text-slate-500">{item.name}</p>
-                  <p className="mt-2 font-display text-3xl text-slate-900">
-                    {item.total}
-                  </p>
-                </div>
-              );
-            })}
-            {!data.categories.length && <Empty />}
-          </div>
-        </section>
+        <div className="mt-8">
+          <AssemblyLeaderboard
+            leaderboard={data.leaderboard}
+            total={data.total}
+          />
+        </div>
       </div>
     </main>
-  );
-}
-
-function Empty() {
-  return (
-    <p className="py-8 text-center text-sm text-slate-500">
-      Statistics will appear as registrations are confirmed.
-    </p>
   );
 }

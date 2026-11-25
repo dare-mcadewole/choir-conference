@@ -51,6 +51,7 @@ export async function findStatistics() {
     .orderBy(sql`${count(registrations.id)} desc`);
   const categories = await db
     .select({
+      slug: registrationCategories.slug,
       name: registrationCategories.name,
       total: count(registrations.id),
     })
