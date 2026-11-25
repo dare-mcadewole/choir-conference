@@ -3,6 +3,7 @@ import "./globals.css";
 import localFont from "next/font/local";
 import { IBM_Plex_Sans } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { Providers } from "./providers";
 
 const bodyFont = IBM_Plex_Sans({
   subsets: ["latin", "latin-ext"],
@@ -28,7 +29,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={cn(bodyFont.variable, titleFont.variable)}>
-      <body className="bg-secondary/5">{children}</body>
+      <body className="bg-secondary/5">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
