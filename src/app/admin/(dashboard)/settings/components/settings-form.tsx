@@ -52,7 +52,7 @@ export function SettingsForm({ settings }: { settings: ConferenceSettings }) {
   );
 
   return (
-    <form action={action} className="space-y-5">
+    <form action={action} className="space-y-5 max-w-3xl">
       <input type="hidden" name="id" value={settings.id} />
 
       <section className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6">
