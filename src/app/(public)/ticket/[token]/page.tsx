@@ -20,11 +20,11 @@ export default async function TicketPage({
   if (!ticket || ticket.status !== "VALID") notFound();
 
   return (
-    <main className="min-h-screen bg-mist px-5 py-12 sm:py-16">
+    <main className="min-h-screen px-5 py-12 sm:py-16">
       <div className="mx-auto max-w-5xl">
         <div className="mb-6 text-center">
           <p className="eyebrow">All Choirs&apos; Conference 2027</p>
-          <h1 className="mt-3 font-display text-4xl text-ink">
+          <h1 className="mt-3 font-display uppercase text-4xl sm:text-5xl text-ink">
             Your conference pass
           </h1>
         </div>
