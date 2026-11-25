@@ -401,6 +401,29 @@ export async function createRegistration(input: RegistrationInput) {
     ? generateRegistrationCode(input.fullName)
     : null;
   const ticketToken = confirmed ? generateToken() : null;
+  const ticketDetails = confirmed
+    ? (
+        await db
+          .select({
+            assembly: assemblies.name,
+            family: conferenceFamilies.name,
+          })
+          .from(assemblies)
+          .leftJoin(
+            conferenceFamilyAssemblies,
+            eq(assemblies.id, conferenceFamilyAssemblies.assemblyId),
+          )
+          .leftJoin(
+            conferenceFamilies,
+            eq(conferenceFamilyAssemblies.familyId, conferenceFamilies.id),
+          )
+          .where(eq(assemblies.id, input.assemblyId))
+          .limit(1)
+      )[0]
+    : null;
+  if (confirmed && !ticketDetails) {
+    throw new Error("The selected assembly is unavailable.");
+  }
 
   const [registration] = await db
     .insert(registrations)
@@ -449,6 +472,16 @@ export async function createRegistration(input: RegistrationInput) {
     requiresPayment: settings.requirePayment,
     ticketPrice: ticketType.price,
     checkoutUrl,
+    ticket:
+      ticketToken && registrationCode && ticketDetails
+        ? {
+            fullName: registration.fullName,
+            code: registrationCode,
+            assembly: ticketDetails.assembly,
+            family: ticketDetails.family,
+            token: ticketToken,
+          }
+        : null,
   };
 }
 
@@ -488,11 +521,13 @@ export async function findConfirmationByCode(code: string) {
       status: registrations.status,
       registrationCode: registrations.registrationCode,
       ticketToken: registrations.ticketToken,
+      ticketStatus: tickets.status,
       assembly: assemblies.name,
       family: conferenceFamilies.name,
       whatsappUrl: conferenceFamilies.whatsappUrl,
     })
     .from(registrations)
+    .leftJoin(tickets, eq(tickets.registrationId, registrations.id))
     .leftJoin(assemblies, eq(registrations.assemblyId, assemblies.id))
     .leftJoin(
       conferenceFamilyAssemblies,

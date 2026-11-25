@@ -28,6 +28,8 @@ import {
 import { Field } from "./field";
 import { Input } from "@/components/ui/input";
 import { VOCAL_PART_OPTIONS } from "@/db/schema";
+import { TicketCard } from "@/features/ticket/components/ticket-card";
+import type { TicketDetails } from "@/features/ticket/types";
 
 type Option = {
   id: string;
@@ -55,6 +57,7 @@ export function RegistrationForm({
   const [success, setSuccess] = useState<{
     code: string | null;
     requiresPayment: boolean;
+    ticket: TicketDetails | null;
   } | null>(null);
   const schema = useMemo(
     () => createRegistrationFormSchema(categories),
@@ -106,22 +109,25 @@ export function RegistrationForm({
 
   if (success) {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
-        <CheckCircle2 className="mx-auto text-emerald-600" size={42} />
-        <h2 className="mt-4 font-display text-3xl">You&apos;re registered.</h2>
-        <p className="mt-3 text-slate-600">
-          {success.requiresPayment
-            ? "Your registration is awaiting payment. We’ll take you to secure checkout next."
-            : "Your confirmation and digital ticket are ready."}
-        </p>
-        {success.code && (
-          <a
-            className="button-primary mt-6"
-            href={`/registration/${success.code}`}
-          >
-            View confirmation
-          </a>
-        )}
+      <div className="space-y-8">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
+          <CheckCircle2 className="mx-auto text-emerald-600" size={42} />
+          <h2 className="mt-4 font-display text-3xl">You&apos;re registered.</h2>
+          <p className="mt-3 text-slate-600">
+            {success.requiresPayment
+              ? "Your registration is awaiting payment. We’ll take you to secure checkout next."
+              : "Your confirmation and digital ticket are ready."}
+          </p>
+          {success.code && (
+            <a
+              className="button-primary mt-6"
+              href={`/registration/${success.code}`}
+            >
+              View confirmation
+            </a>
+          )}
+        </div>
+        {success.ticket && <TicketCard ticket={success.ticket} />}
       </div>
     );
   }

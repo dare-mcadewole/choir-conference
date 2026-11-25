@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { CheckCircle2, Download, MessageCircle, Ticket } from "lucide-react";
+import { CheckCircle2, MessageCircle, Ticket } from "lucide-react";
 import * as registrationService from "@/features/registration/service";
+import { TicketCard } from "@/features/ticket/components/ticket-card";
 
 export default async function ConfirmationPage({
   params,
@@ -13,6 +14,7 @@ export default async function ConfirmationPage({
     status: string;
     registrationCode: string | null;
     ticketToken: string | null;
+    ticketStatus: string | null;
     assembly: string | null;
     family: string | null;
     whatsappUrl: string | null;
@@ -44,8 +46,8 @@ export default async function ConfirmationPage({
 
   return (
     <main className="min-h-screen bg-mist py-16">
-      <div className="mx-auto max-w-xl px-5">
-        <div className="card overflow-hidden">
+      <div className="mx-auto max-w-5xl space-y-8 px-5">
+        <div className="card mx-auto w-full max-w-xl overflow-hidden">
           <div className="bg-ink px-8 py-9 text-center text-white">
             <CheckCircle2 className="mx-auto text-gold" size={42} />
             <p className="mt-5 text-sm text-gold">REGISTRATION CONFIRMED</p>
@@ -63,13 +65,12 @@ export default async function ConfirmationPage({
               <Row label="Conference family" value={registration.family} />
               <Row label="Status" value="Confirmed" />
             </dl>
-            {registration.ticketToken && (
+            {registration.ticketToken && registration.ticketStatus === "VALID" && (
               <Link
-                className="button-primary mt-7 w-full"
+                className="button-secondary mt-7 w-full"
                 href={`/ticket/${registration.ticketToken}`}
               >
-                <Download size={17} className="mr-2" />
-                View digital ticket
+                Open full ticket page
               </Link>
             )}
             {registration.whatsappUrl ? (
@@ -77,6 +78,7 @@ export default async function ConfirmationPage({
                 className="button-secondary mt-3 w-full"
                 href={registration.whatsappUrl}
                 target="_blank"
+                rel="noreferrer"
               >
                 <MessageCircle size={17} className="mr-2" />
                 Join {registration.family} WhatsApp group
@@ -88,6 +90,19 @@ export default async function ConfirmationPage({
             )}
           </div>
         </div>
+        {registration.ticketToken &&
+          registration.ticketStatus === "VALID" &&
+          registration.registrationCode && (
+          <TicketCard
+            ticket={{
+              fullName: registration.fullName,
+              code: registration.registrationCode,
+              assembly: registration.assembly,
+              family: registration.family,
+              token: registration.ticketToken,
+            }}
+          />
+        )}
       </div>
     </main>
   );
