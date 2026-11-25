@@ -24,11 +24,13 @@ const familyIcons: Record<string, LucideIcon> = {
 export function FamilyCard({
   family,
   availableAssemblies,
+  assignedAssemblies,
   conferenceAvailable,
   activeAssemblyCount,
 }: {
   family: FamilySummary;
   availableAssemblies: AssemblyOption[];
+  assignedAssemblies: AssemblyOption[];
   conferenceAvailable: boolean;
   activeAssemblyCount: number;
 }) {
@@ -121,7 +123,8 @@ export function FamilyCard({
 
       <AssignmentForm
         familyId={family.id}
-        assemblies={availableAssemblies}
+        availableAssemblies={availableAssemblies}
+        assignedAssemblies={assignedAssemblies}
         conferenceAvailable={conferenceAvailable}
         activeAssemblyCount={activeAssemblyCount}
       />

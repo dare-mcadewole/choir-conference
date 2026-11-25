@@ -79,6 +79,7 @@ export async function findAssignmentOptions(familyIds: string[]) {
       conferenceAvailable: false,
       activeAssemblyCount: 0,
       availableByFamily: {} as Record<string, AssemblyOption[]>,
+      assignedByFamily: {} as Record<string, AssemblyOption[]>,
     };
   }
 
@@ -87,14 +88,20 @@ export async function findAssignmentOptions(familyIds: string[]) {
         .select({
           familyId: conferenceFamilyAssemblies.familyId,
           assemblyId: conferenceFamilyAssemblies.assemblyId,
+          name: assemblies.name,
         })
         .from(conferenceFamilyAssemblies)
+        .innerJoin(
+          assemblies,
+          eq(conferenceFamilyAssemblies.assemblyId, assemblies.id),
+        )
         .where(
           and(
             eq(conferenceFamilyAssemblies.conferenceId, activeConference.id),
             inArray(conferenceFamilyAssemblies.familyId, familyIds),
           ),
         )
+        .orderBy(asc(assemblies.name))
     : [];
   const activeAssemblies = await db
     .select({ id: assemblies.id, name: assemblies.name })
@@ -102,11 +109,20 @@ export async function findAssignmentOptions(familyIds: string[]) {
     .where(eq(assemblies.active, true))
     .orderBy(asc(assemblies.name));
   const assignedByFamily = new Map<string, Set<string>>();
+  const assignedAssembliesByFamily = new Map<string, AssemblyOption[]>();
 
   for (const assignment of assignments) {
     const assigned = assignedByFamily.get(assignment.familyId) ?? new Set();
     assigned.add(assignment.assemblyId);
     assignedByFamily.set(assignment.familyId, assigned);
+
+    const assignedAssemblies =
+      assignedAssembliesByFamily.get(assignment.familyId) ?? [];
+    assignedAssemblies.push({
+      id: assignment.assemblyId,
+      name: assignment.name,
+    });
+    assignedAssembliesByFamily.set(assignment.familyId, assignedAssemblies);
   }
 
   const availableByFamily = Object.fromEntries(
@@ -117,11 +133,18 @@ export async function findAssignmentOptions(familyIds: string[]) {
       ),
     ]),
   );
+  const assignedOptionsByFamily = Object.fromEntries(
+    familyIds.map((familyId) => [
+      familyId,
+      assignedAssembliesByFamily.get(familyId) ?? [],
+    ]),
+  );
 
   return {
     conferenceAvailable: true,
     activeAssemblyCount: activeAssemblies.length,
     availableByFamily,
+    assignedByFamily: assignedOptionsByFamily,
   };
 }
 
@@ -132,12 +155,16 @@ export class FamilyAssignmentError extends Error {
   }
 }
 
-export async function addAssemblyToFamily(
+export async function setAssembliesForFamily(
   familyId: string,
-  assemblyId: string,
+  assemblyIds: string[],
 ) {
+  if (new Set(assemblyIds).size !== assemblyIds.length) {
+    throw new FamilyAssignmentError("Remove duplicate assemblies.");
+  }
+
   const db = getDb();
-  await db.transaction(async (tx) => {
+  return db.transaction(async (tx) => {
     const activeConference = await tx.query.conference.findFirst({
       where: eq(conference.isActive, true),
       columns: { id: true },
@@ -154,32 +181,72 @@ export async function addAssemblyToFamily(
       throw new FamilyAssignmentError("The selected family was not found.");
     }
 
-    const assembly = await tx.query.assemblies.findFirst({
-      where: and(
-        eq(assemblies.id, assemblyId),
-        eq(assemblies.active, true),
-      ),
-      columns: { id: true },
-    });
-    if (!assembly) {
-      throw new FamilyAssignmentError(
-        "The selected assembly is unavailable.",
+    const currentAssignments = await tx
+      .select({ assemblyId: conferenceFamilyAssemblies.assemblyId })
+      .from(conferenceFamilyAssemblies)
+      .where(
+        and(
+          eq(conferenceFamilyAssemblies.conferenceId, activeConference.id),
+          eq(conferenceFamilyAssemblies.familyId, familyId),
+        ),
       );
+    const currentIds = new Set(
+      currentAssignments.map((assignment) => assignment.assemblyId),
+    );
+    const desiredIds = new Set(assemblyIds);
+    const additions = assemblyIds.filter(
+      (assemblyId) => !currentIds.has(assemblyId),
+    );
+    const removals = [...currentIds].filter(
+      (assemblyId) => !desiredIds.has(assemblyId),
+    );
+
+    if (additions.length) {
+      const activeAssemblies = await tx
+        .select({ id: assemblies.id })
+        .from(assemblies)
+        .where(
+          and(
+            inArray(assemblies.id, additions),
+            eq(assemblies.active, true),
+          ),
+        );
+      if (activeAssemblies.length !== additions.length) {
+        throw new FamilyAssignmentError(
+          "One or more selected assemblies are unavailable.",
+        );
+      }
+
+      const insertedAssignments = await tx
+        .insert(conferenceFamilyAssemblies)
+        .values(
+          additions.map((assemblyId) => ({
+            conferenceId: activeConference.id,
+            familyId,
+            assemblyId,
+          })),
+        )
+        .onConflictDoNothing()
+        .returning({ id: conferenceFamilyAssemblies.id });
+      if (insertedAssignments.length !== additions.length) {
+        throw new FamilyAssignmentError(
+          "One or more selected assemblies are already assigned to this family.",
+        );
+      }
     }
 
-    const [assignment] = await tx
-      .insert(conferenceFamilyAssemblies)
-      .values({
-        conferenceId: activeConference.id,
-        familyId,
-        assemblyId,
-      })
-      .onConflictDoNothing()
-      .returning({ id: conferenceFamilyAssemblies.id });
-    if (!assignment) {
-      throw new FamilyAssignmentError(
-        "This assembly is already assigned to this family.",
-      );
+    if (removals.length) {
+      await tx
+        .delete(conferenceFamilyAssemblies)
+        .where(
+          and(
+            eq(conferenceFamilyAssemblies.conferenceId, activeConference.id),
+            eq(conferenceFamilyAssemblies.familyId, familyId),
+            inArray(conferenceFamilyAssemblies.assemblyId, removals),
+          ),
+        );
     }
+
+    return { added: additions.length, removed: removals.length };
   });
 }

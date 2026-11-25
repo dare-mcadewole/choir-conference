@@ -129,6 +129,9 @@ export default async function FamiliesPage({
                 availableAssemblies={
                   assignmentOptions.availableByFamily[family.id] ?? []
                 }
+                assignedAssemblies={
+                  assignmentOptions.assignedByFamily[family.id] ?? []
+                }
                 conferenceAvailable={assignmentOptions.conferenceAvailable}
                 activeAssemblyCount={assignmentOptions.activeAssemblyCount}
               />

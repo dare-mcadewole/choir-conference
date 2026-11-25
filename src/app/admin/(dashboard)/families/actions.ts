@@ -13,16 +13,21 @@ type AssignmentState = {
 
 const assignmentSchema = z.object({
   familyId: z.uuid("Choose a family."),
-  assemblyId: z.uuid("Choose an assembly."),
+  assemblyIds: z
+    .array(z.uuid("Choose valid assemblies."))
+    .refine(
+      (assemblyIds) => new Set(assemblyIds).size === assemblyIds.length,
+      "Remove duplicate assemblies from your selection.",
+    ),
 });
 
-export async function addAssemblyToFamilyAction(
+export async function updateFamilyAssembliesAction(
   _previousState: AssignmentState,
   formData: FormData,
 ): Promise<AssignmentState> {
   const parsed = assignmentSchema.safeParse({
     familyId: formData.get("familyId"),
-    assemblyId: formData.get("assemblyId"),
+    assemblyIds: formData.getAll("assemblyIds"),
   });
   if (!parsed.success) {
     return {
@@ -41,19 +46,37 @@ export async function addAssemblyToFamilyAction(
     return { error: "Sign in with an approved administrator account." };
   }
 
+  let changes: { added: number; removed: number };
   try {
-    await familyService.addAssemblyToFamily(
+    changes = await familyService.setAssembliesForFamily(
       parsed.data.familyId,
-      parsed.data.assemblyId,
+      parsed.data.assemblyIds,
     );
   } catch (error) {
     if (error instanceof FamilyAssignmentError) {
       return { error: error.message };
     }
-    console.error("Could not add assembly to family.", error);
-    return { error: "Could not add this assembly. Please try again." };
+    console.error("Could not update family assemblies.", error);
+    return { error: "Could not update this family's assemblies. Please try again." };
   }
 
   revalidatePath("/admin/families");
-  return { success: "Assembly added to this family." };
+  const messages = [];
+  if (changes.added) {
+    messages.push(
+      `${changes.added} ${changes.added === 1 ? "assembly" : "assemblies"} added`,
+    );
+  }
+  if (changes.removed) {
+    messages.push(
+      `${changes.removed} ${
+        changes.removed === 1 ? "assembly" : "assemblies"
+      } removed`,
+    );
+  }
+  return {
+    success: messages.length
+      ? `${messages.join(" and ")}.`
+      : "The assembly list is unchanged.",
+  };
 }
