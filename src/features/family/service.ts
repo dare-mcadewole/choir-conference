@@ -44,3 +44,5 @@ export async function find(search?: string) {
     .groupBy(conferenceFamilies.id)
     .orderBy(asc(conferenceFamilies.name));
 }
+
+export type FamilySummary = Awaited<ReturnType<typeof find>>[number];
