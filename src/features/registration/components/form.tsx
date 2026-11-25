@@ -102,7 +102,7 @@ export function RegistrationForm({
     const category = initial?.data?.category?.toLowerCase();
     if (!category) return "";
 
-    let key = "";
+    let key = category;
     if (["secondary school student", "undergraduate"].includes(category)) {
       key = "student";
     } else if (category === "worker") {
