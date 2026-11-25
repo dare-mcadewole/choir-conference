@@ -1,10 +1,5 @@
 import Link from "next/link";
-import {
-  Building2,
-  Search,
-  Users,
-  UsersRound,
-} from "lucide-react";
+import { Building2, Search, Users, UsersRound } from "lucide-react";
 import * as familyService from "@/features/family/service";
 import { MetricCard } from "@/app/admin/_components/metric-card";
 import { FamilyCard } from "./components/family-card";
@@ -57,9 +52,6 @@ export default async function FamiliesPage({
     <>
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[.16em] text-[#7778e8]">
-            Conference setup
-          </p>
           <h1 className="mt-2 font-display text-3xl text-slate-900 sm:text-4xl">
             Families
           </h1>
