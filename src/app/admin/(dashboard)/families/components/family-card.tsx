@@ -73,10 +73,13 @@ export function FamilyCard({
       )}
 
       <div className="mt-3 flex min-w-0 items-start gap-2 border-t border-slate-100 pt-3">
-        <Building2 size={14} className="mt-0.5 shrink-0 text-slate-400" />
-        <span className="shrink-0 text-[10px] font-semibold text-slate-500">
-          {family.assemblyCount}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <Building2 size={14} className="mt-0.5 shrink-0 text-slate-400" />
+          <div className="shrink-0 text-[10px] font-semibold text-slate-500">
+            {family.assemblyCount}
+          </div>
+        </div>
+
         {family.assemblyNames.length ? (
           <div className="flex min-w-0 flex-wrap gap-1.5">
             {visibleAssemblies.map((name) => (
@@ -119,7 +122,7 @@ export function FamilyCard({
         )}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
+      <div className="mt-3 flex flex-wrap items-start justify-between gap-2 border-t border-slate-100 pt-3">
         <EditFamilyDialog family={family} />
 
         <AssignmentForm
