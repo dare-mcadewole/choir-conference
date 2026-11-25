@@ -1,4 +1,4 @@
-import { REGISTRATION_STATUS_OPTIONS, VOCAL_PART_OPTIONS } from "@/db/schema";
+import { GENDER_OPTIONS, VOCAL_PART_OPTIONS } from "@/db/schema";
 import { PhoneSchema } from "@/features/shared/validation";
 import { z } from "zod";
 
@@ -6,9 +6,10 @@ export const registrationSchema = z.object({
   fullName: z.string().trim().min(2, "Enter your full name").max(200),
   email: z.string().trim().email("Enter a valid email address"),
   phone: PhoneSchema,
-  gender: z.enum(REGISTRATION_STATUS_OPTIONS, {
+  gender: z.enum(GENDER_OPTIONS, {
     error: "Choose gender",
   }),
+  ageRange: z.string("Choose gender"),
   assemblyId: z.uuid("Choose your assembly"),
   categoryId: z.uuid("Choose a category"),
   positionIds: z.array(z.uuid()).default([]),

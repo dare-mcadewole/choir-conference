@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { RegistrationForm } from "@/features/registration/components/form";
 import * as registrationService from "@/features/registration/service";
+import { HistoricalJsonData } from "@/features/ticket/types";
 
 export default async function RegisterPage({
   searchParams,
@@ -11,15 +12,24 @@ export default async function RegisterPage({
   const params = await searchParams;
   let data;
   let initial:
-    { fullName?: string; email?: string; phone?: string } | undefined;
+    | {
+        fullName?: string;
+        email?: string;
+        phone?: string;
+        data?: HistoricalJsonData;
+      }
+    | undefined;
+
   try {
     data = await registrationService.publicRegistrationOptions();
     const lookup = params.lookup?.trim();
     if (lookup) {
       const result = await registrationService.lookupRegistrant(lookup);
-      if (result.state === "historical") initial = result.data;
-      else if (result.state === "new")
+      if (result.state === "historical") {
+        initial = result.data;
+      } else if (result.state === "new") {
         initial = lookup.includes("@") ? { email: lookup } : { phone: lookup };
+      }
     }
   } catch {
     data = {

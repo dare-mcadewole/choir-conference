@@ -1,13 +1,4 @@
-import {
-  and,
-  asc,
-  desc,
-  eq,
-  ilike,
-  inArray,
-  not,
-  or,
-} from "drizzle-orm";
+import { and, asc, desc, eq, ilike, inArray, not, or } from "drizzle-orm";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
 import { conference } from "@/features/conference/schema";
@@ -17,6 +8,7 @@ import {
 } from "@/features/family/schema";
 import { academicLevels } from "@/features/institution/schema";
 import {
+  Gender,
   historicalRegistrants,
   positionOptions,
   registrationCategories,
@@ -33,6 +25,7 @@ import {
   generateRegistrationCode,
   generateToken,
 } from "@/features/registration/utils";
+import { HistoricalJsonData } from "@/features/ticket/types";
 
 export async function lookupRegistrant(query: string) {
   const db = getDb();
@@ -51,6 +44,7 @@ export async function lookupRegistrant(query: string) {
       phone ? eq(historicalRegistrants.phone, phone) : undefined,
     ),
   });
+
   return prior
     ? {
         state: "historical" as const,
@@ -58,6 +52,7 @@ export async function lookupRegistrant(query: string) {
           fullName: prior.fullName,
           email: prior.email ?? "",
           phone: prior.phone ?? "",
+          data: (prior.data ?? {}) as HistoricalJsonData,
         },
       }
     : { state: "new" as const };
@@ -248,7 +243,9 @@ export async function updateAdminRegistration(
       columns: { slug: true },
     });
     if (!category) {
-      throw new RegistrationUpdateError("The selected category is unavailable.");
+      throw new RegistrationUpdateError(
+        "The selected category is unavailable.",
+      );
     }
 
     const assembly = await tx.query.assemblies.findFirst({
@@ -256,7 +253,9 @@ export async function updateAdminRegistration(
       columns: { id: true },
     });
     if (!assembly) {
-      throw new RegistrationUpdateError("The selected assembly is unavailable.");
+      throw new RegistrationUpdateError(
+        "The selected assembly is unavailable.",
+      );
     }
 
     const isStudent = category.slug === "student";
@@ -424,10 +423,7 @@ export async function createRegistration(input: RegistrationInput) {
       eq(conferenceFamilyAssemblies.familyId, conferenceFamilies.id),
     )
     .where(
-      and(
-        eq(assemblies.id, input.assemblyId),
-        eq(assemblies.active, true),
-      ),
+      and(eq(assemblies.id, input.assemblyId), eq(assemblies.active, true)),
     )
     .limit(1);
   if (!ticketDetails) {
@@ -442,7 +438,8 @@ export async function createRegistration(input: RegistrationInput) {
       fullName: input.fullName,
       email: normalizedEmail,
       phone: normalizedPhone,
-      gender: input.gender,
+      gender: input.gender as Gender,
+      ageRange: input.ageRange,
       assemblyId: input.assemblyId,
       categoryId: input.categoryId,
       part: input.part,

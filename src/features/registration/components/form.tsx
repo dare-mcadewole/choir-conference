@@ -28,9 +28,12 @@ import {
 } from "@/features/registration/validation";
 import { Field } from "./field";
 import { Input } from "@/components/ui/input";
-import { VOCAL_PART_OPTIONS } from "@/db/schema";
+import { Gender, VOCAL_PART_OPTIONS, VocalPart } from "@/db/schema";
 import { TicketCard } from "@/features/ticket/components/ticket-card";
-import type { TicketDetails } from "@/features/ticket/types";
+import type {
+  HistoricalJsonData,
+  TicketDetails,
+} from "@/features/ticket/types";
 
 type Option = {
   id: string;
@@ -44,7 +47,12 @@ type Props = {
   positions: Option[];
   institutions: string[];
   levels: Array<Option & { institutionType: "SECONDARY" | "TERTIARY" }>;
-  initial?: { fullName?: string; email?: string; phone?: string };
+  initial?: {
+    fullName?: string;
+    email?: string;
+    phone?: string;
+    data?: HistoricalJsonData;
+  };
 };
 
 export function RegistrationForm({
@@ -60,10 +68,12 @@ export function RegistrationForm({
     requiresPayment: boolean;
     ticket: TicketDetails | null;
   } | null>(null);
+
   const schema = useMemo(
     () => createRegistrationFormSchema(categories),
     [categories],
   );
+
   const {
     control,
     handleSubmit,
@@ -77,11 +87,15 @@ export function RegistrationForm({
       fullName: initial?.fullName ?? "",
       email: initial?.email ?? "",
       phone: initial?.phone?.replace(/\D/g, "") ?? "",
-      institution: "",
+      institution: initial?.data?.institution ?? "",
+      gender: (initial?.data?.gender?.toUpperCase() ?? "") as Gender,
+      ageRange: initial?.data?.ageRange || initial?.data?.age,
+      part: (initial?.data?.part?.toUpperCase() ?? "") as VocalPart,
       positionIds: [],
     },
     shouldUnregister: true,
   });
+
   const phoneField = register("phone");
   const categoryId = watch("categoryId");
   const institution = watch("institution");
@@ -147,11 +161,7 @@ export function RegistrationForm({
   });
 
   return (
-    <form
-      onSubmit={onSubmit}
-      noValidate
-      className="space-y-7"
-    >
+    <form onSubmit={onSubmit} noValidate className="space-y-7">
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Full name" error={errors.fullName?.message}>
           <Input {...register("fullName")} required />
@@ -182,45 +192,68 @@ export function RegistrationForm({
           />
         </Field>
 
-        <div className="grid md:grid-cols-2 gap-5">
-          <Controller
-            control={control}
-            name="gender"
-            render={({ field }) => (
-              <Field label="Gender" error={errors.gender?.message}>
-                <Picker
-                  list={["MALE", "FEMALE"]}
-                  value={field.value ?? null}
-                  onValueChange={(value) => field.onChange(value ?? "")}
-                  onBlur={field.onBlur}
-                  inputRef={field.ref}
-                  name={field.name}
-                  required
-                  placeholder="Select gender"
-                />
-              </Field>
-            )}
-          />
+        <Controller
+          control={control}
+          name="gender"
+          render={({ field }) => (
+            <Field label="Gender" error={errors.gender?.message}>
+              <Picker
+                list={["MALE", "FEMALE"]}
+                value={field.value ?? null}
+                onValueChange={(value) => field.onChange(value ?? "")}
+                onBlur={field.onBlur}
+                inputRef={field.ref}
+                name={field.name}
+                required
+                placeholder="Select gender"
+              />
+            </Field>
+          )}
+        />
 
-          <Controller
-            control={control}
-            name="part"
-            render={({ field }) => (
-              <Field label="Part" error={errors.part?.message}>
-                <Picker
-                  list={VOCAL_PART_OPTIONS}
-                  value={field.value ?? null}
-                  onValueChange={(value) => field.onChange(value ?? "")}
-                  onBlur={field.onBlur}
-                  inputRef={field.ref}
-                  name={field.name}
-                  required
-                  placeholder="Select your part"
-                />
-              </Field>
-            )}
-          />
-        </div>
+        <Controller
+          control={control}
+          name="ageRange"
+          render={({ field }) => (
+            <Field label="Age Range" error={errors.ageRange?.message}>
+              <Picker
+                list={[
+                  "15 - 20",
+                  "21 - 29",
+                  "30 - 39",
+                  "40 - 49",
+                  "50 and above",
+                ]}
+                value={field.value ?? null}
+                onValueChange={(value) => field.onChange(value ?? "")}
+                onBlur={field.onBlur}
+                inputRef={field.ref}
+                name={field.name}
+                required
+                placeholder="Select age range"
+              />
+            </Field>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="part"
+          render={({ field }) => (
+            <Field label="Part" error={errors.part?.message}>
+              <Picker
+                list={VOCAL_PART_OPTIONS}
+                value={field.value ?? null}
+                onValueChange={(value) => field.onChange(value ?? "")}
+                onBlur={field.onBlur}
+                inputRef={field.ref}
+                name={field.name}
+                required
+                placeholder="Select your part"
+              />
+            </Field>
+          )}
+        />
 
         <Controller
           control={control}
