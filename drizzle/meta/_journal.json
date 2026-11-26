@@ -57,6 +57,13 @@
       "when": 1795613715553,
       "tag": "0007_fresh_the_hood",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795663604182,
+      "tag": "0008_mixed_bromley",
+      "breakpoints": true
     }
   ]
 }

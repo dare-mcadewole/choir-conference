@@ -1,0 +1,1 @@
+ALTER TABLE "conference" ADD COLUMN "show_countdown_timer" boolean DEFAULT true;

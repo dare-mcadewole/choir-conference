@@ -32,6 +32,7 @@ export const conference = pgTable("conference", {
   opensAt: timestamp("opens_at", { withTimezone: true }),
   closesAt: timestamp("closes_at", { withTimezone: true }),
   isActive: boolean("is_active").default(true),
+  showCountdownTimer: boolean("show_countdown_timer").default(true),
   ...timestamps,
 });
 
