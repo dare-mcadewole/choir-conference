@@ -19,7 +19,7 @@ export function FamilyBreakdown({
       subtitle="Registration breakdown by music game groupings"
       icon={UserRoundGroup}
     >
-      <div className="mt-4 space-y-4">
+      <div className="mt-4 mb-2 space-y-4">
         {families.map((family) => {
           const familyTotal = Number(family.total);
           const percentage = confirmedTotal

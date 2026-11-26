@@ -44,7 +44,7 @@ export function RegistrationCategoryChart({
         <ChartEmpty message="Category data will appear with the first registrations." />
       ) : (
         <div
-          className="mt-5"
+          className="mt-3.5"
           style={{ height: Math.max(240, chartData.length * 44) }}
         >
           <ResponsiveContainer width="100%" height="100%">
