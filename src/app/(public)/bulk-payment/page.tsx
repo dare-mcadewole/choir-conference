@@ -38,7 +38,7 @@ export default async function BulkPaymentPage({
 
         <div className="mx-auto mt-12 max-w-5xl">
           <p className="eyebrow">All Choirs&apos; Conference 2027</p>
-          <h1 className="mt-4 font-display text-4xl uppercase md:text-5xl">
+          <h1 className="mt-4 font-display text-3xl uppercase md:text-5xl">
             Assembly bulk payment
           </h1>
           <p className="mt-4 max-w-2xl text-slate-600">
