@@ -66,7 +66,7 @@ export function CountdownTimer({
   return (
     <>
       <div aria-hidden="true" className="h-9" />
-      <div className="fixed inset-x-0 top-0 z-50 overflow-hidden border-b border-primary/10 bg-secondary text-secondary-foreground shadow-lg shadow-primary/15">
+      <div className="fixed inset-x-0 top-0 z-50 overflow-hidden border-b border-primary/0 bg-secondary text-secondary-foreground shadow-lg shadow-primary/0">
         <div className="page-shell flex h-9 items-center justify-between gap-3">
           <p className="min-w-0 truncate text-[9px] font-bold uppercase tracking-[.2em] sm:text-[10px]">
             <span className="hidden sm:inline">Registration closes in</span>
