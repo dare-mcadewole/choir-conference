@@ -18,6 +18,7 @@ import {
 } from "@/features/registration/schema";
 import { ticketTypes, tickets } from "@/features/ticket/schema";
 import { normalizeEmail, normalizePhone } from "@/lib/utils";
+import * as emailService from "@/features/email/service";
 import * as paymentService from "@/features/payment/service";
 import type { RegistrationInput } from "./validation";
 import * as institutionService from "@/features/institution/service";
@@ -465,10 +466,12 @@ export async function createRegistration(input: RegistrationInput) {
         })),
       )
       .onConflictDoNothing();
-  if (confirmed && ticketToken)
+  if (confirmed && ticketToken) {
     await db
       .insert(tickets)
       .values({ registrationId: registration.id, token: ticketToken });
+    await emailService.sendRegistrationConfirmationEmail(registration.id);
+  }
   const checkoutUrl = settings.requirePayment
     ? await paymentService.initializePaystackCheckout({
         email: input.email,

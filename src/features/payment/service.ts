@@ -138,8 +138,9 @@ export async function reconcileSuccessfulPayment(
       eq(webhookEvents.eventId, eventId),
     ),
   });
-  if (existing?.processedAt) return;
-  await db.transaction(async (tx) => {
+  if (existing?.processedAt) return null;
+
+  return db.transaction(async (tx) => {
     await tx
       .insert(webhookEvents)
       .values({ provider: "paystack", eventId, payload })
@@ -147,11 +148,11 @@ export async function reconcileSuccessfulPayment(
     const payment = await tx.query.payments.findFirst({
       where: eq(payments.reference, reference),
     });
-    if (!payment || payment.status === "SUCCESSFUL") return;
+    if (!payment || payment.status === "SUCCESSFUL") return null;
     const registration = await tx.query.registrations.findFirst({
       where: eq(registrations.id, payment.registrationId),
     });
-    if (!registration || registration.status !== "PENDING_PAYMENT") return;
+    if (!registration || registration.status !== "PENDING_PAYMENT") return null;
     const registrationCode = `ACC27-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
     const ticketToken = crypto.randomBytes(32).toString("base64url");
     await tx
@@ -185,5 +186,7 @@ export async function reconcileSuccessfulPayment(
           eq(webhookEvents.eventId, eventId),
         ),
       );
+
+    return { registrationId: registration.id };
   });
 }

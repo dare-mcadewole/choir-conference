@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import * as emailService from "@/features/email/service";
 import * as paymentService from "@/features/payment/service";
 
 export async function POST(request: NextRequest) {
@@ -27,11 +28,21 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await paymentService.reconcileSuccessfulPayment(
+    const reconciled = await paymentService.reconcileSuccessfulPayment(
       event.data.reference,
       String(event.data.id),
       event,
     );
+    if (reconciled) {
+      await emailService
+        .sendRegistrationConfirmationEmail(reconciled.registrationId)
+        .catch((error) => {
+          console.error(
+            "Could not send the registration confirmation email.",
+            error,
+          );
+        });
+    }
     return NextResponse.json({ received: true });
   } catch {
     return new NextResponse("Webhook processing failed", { status: 500 });
