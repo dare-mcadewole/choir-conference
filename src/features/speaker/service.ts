@@ -61,3 +61,7 @@ export async function findPublished() {
     .where(eq(speakers.published, true))
     .orderBy(asc(speakers.sortOrder));
 }
+
+export type PublicSpeaker = Awaited<
+  ReturnType<typeof findPublished>
+>[number];
