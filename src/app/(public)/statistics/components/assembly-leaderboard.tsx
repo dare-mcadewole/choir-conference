@@ -40,7 +40,7 @@ export function AssemblyLeaderboard({
                   {assembly.name}
                 </p>
                 <p className="text-xs text-slate-500">
-                  {assembly.family ?? "Family not assigned"}
+                  {assembly.family ?? "Not assigned to a music game family yet"}
                 </p>
               </div>
             </div>

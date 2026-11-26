@@ -13,9 +13,13 @@ export function FamilyBreakdown({
 
   return (
     <section className="rounded-lg border-hairline shadow-slate-200 bg-white p-5 shadow-2xl sm:p-6">
-      <div className="flex items-center gap-2 text-secondary-700">
-        <UserRoundGroup size={20} strokeWidth={1.95} />
-        <h2 className="text-lg font-medium">By Family / Group</h2>
+      <div className="flex items-center gap-2">
+        <UserRoundGroup
+          size={20}
+          strokeWidth={1.95}
+          className="text-secondary-700"
+        />
+        <h2 className="text-lg font-medium">By Music Game Family / Group</h2>
       </div>
 
       <div className="mt-5 space-y-3">
