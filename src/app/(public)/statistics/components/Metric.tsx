@@ -20,10 +20,10 @@ export default function Metric({
       <div className="flex justify-end text-slate-300">
         <Icon size={36} strokeWidth={1} />
       </div>
-      <h3 className="relative mt-6 font-display text-4xl text-slate-900">
+      <h3 className="relative mt-4 font-bold text-6xl text-slate-900">
         {value}
       </h3>
-      <p className="relative uppercase text-sm text-slate-400 font-medium tracking-wider">
+      <p className="mt-1 relative uppercase text-sm text-slate-400 font-medium tracking-wider">
         {label}
       </p>
     </div>

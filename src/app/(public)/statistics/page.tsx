@@ -90,7 +90,7 @@ export default async function StatisticsPage() {
 
           <Metric
             icon={UserRoundGroup}
-            label="Conference families"
+            label="Music Game families"
             value={String(data.families.length)}
             iconClassName="bg-slate-100 text-slate-600"
           />
