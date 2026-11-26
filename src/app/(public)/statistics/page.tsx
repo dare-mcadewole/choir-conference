@@ -17,6 +17,7 @@ import { GenderRatioChart } from "./components/gender-ratio-chart";
 import { RegistrationCategoryChart } from "./components/registration-category-chart";
 import { RegistrationTrendChart } from "./components/registration-trend-chart";
 import { createMetadata } from "@/lib/seo";
+import { headers } from "next/headers";
 
 export const metadata = createMetadata({
   title: "Conference statistics",
@@ -42,6 +43,7 @@ async function stats() {
 }
 
 export default async function StatisticsPage() {
+  await headers();
   const [data, settings] = await Promise.all([
     stats(),
     conferenceService.findOne().catch(() => null),
