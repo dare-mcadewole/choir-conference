@@ -97,7 +97,7 @@ function buildGenderRatio(
 
 export async function findStatistics() {
   const db = getDb();
-  const [total] = await db
+  const [totalConfirmedRegistrations] = await db
     .select({ total: count() })
     .from(registrations)
     .where(eq(registrations.status, "CONFIRMED"));
@@ -178,7 +178,9 @@ export async function findStatistics() {
     db.select({ opensAt: conference.opensAt }).from(conference).limit(1),
   ]);
   return {
-    total: Number(total?.total ?? 0),
+    totalConfirmedRegistrations: Number(
+      totalConfirmedRegistrations?.total ?? 0,
+    ),
     totalRegistrations: Number(totalRegistrations?.total ?? 0),
     registrationTrend: buildRegistrationTrend(
       trendRows,

@@ -21,7 +21,7 @@ async function stats() {
     return await dashboardService.findStatistics();
   } catch {
     return {
-      total: 0,
+      totalConfirmedRegistrations: 0,
       totalRegistrations: 0,
       registrationTrend: [],
       ageDistribution: [],
@@ -95,7 +95,7 @@ export default async function StatisticsPage() {
           <Metric
             icon={UsersRound}
             label="Confirmed registrations"
-            value={String(data.total)}
+            value={String(data.totalConfirmedRegistrations)}
             iconClassName="bg-slate-100 text-slate-600"
           />
 
@@ -120,7 +120,10 @@ export default async function StatisticsPage() {
           <div className="lg:col-span-2">
             <RegistrationTrendChart data={data.registrationTrend} />
           </div>
-          <FamilyBreakdown families={data.families} total={data.total} />
+          <FamilyBreakdown
+            families={data.families}
+            total={data.totalConfirmedRegistrations}
+          />
           <GenderRatioChart data={data.genderRatio} />
           <AgeDistributionChart data={data.ageDistribution} />
           <RegistrationCategoryChart data={data.categories} />
@@ -129,7 +132,7 @@ export default async function StatisticsPage() {
         <div className="mt-8">
           <AssemblyLeaderboard
             leaderboard={data.leaderboard}
-            total={data.total}
+            totalRegistrations={data.totalRegistrations}
           />
         </div>
       </div>

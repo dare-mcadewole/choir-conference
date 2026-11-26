@@ -3,13 +3,11 @@ import { Trophy } from "lucide-react";
 
 export function AssemblyLeaderboard({
   leaderboard,
-  total,
+  totalRegistrations,
 }: {
   leaderboard: StatisticalBreakdown["leaderboard"];
-  total: number | string;
+  totalRegistrations: number | string;
 }) {
-  const confirmedTotal = Number(total);
-
   return (
     <section className="rounded-lg border-hairline shadow-slate-200 bg-white p-5 shadow-2xl sm:p-6">
       <div className="flex items-center gap-3">
@@ -47,8 +45,8 @@ export function AssemblyLeaderboard({
             <div className="shrink-0 text-right">
               <p className="font-bold text-slate-800">{assembly.total}</p>
               <p className="text-xs text-slate-500">
-                {confirmedTotal
-                  ? Math.round((Number(assembly.total) / confirmedTotal) * 100)
+                {totalRegistrations
+                  ? Math.round((+assembly.total / +totalRegistrations) * 100)
                   : 0}
                 %
               </p>
