@@ -489,6 +489,7 @@ export async function createRegistration(input: RegistrationInput) {
             family: ticketDetails.family,
             token: ticketToken,
             theme: settings.theme,
+            anchorScripture: settings.anchorScripture,
             amount: ticketType.price,
           }
         : null,

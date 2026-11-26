@@ -12,6 +12,7 @@ export default async function TicketPage({
   const { token } = await params;
   let ticket;
   let theme: string | null = null;
+  let anchorScripture: string | null = null;
 
   try {
     const [foundTicket, settings] = await Promise.all([
@@ -20,6 +21,7 @@ export default async function TicketPage({
     ]);
     ticket = foundTicket;
     theme = settings?.theme ?? null;
+    anchorScripture = settings?.anchorScripture ?? null;
   } catch {
     ticket = undefined;
   }
@@ -43,6 +45,7 @@ export default async function TicketPage({
             family: ticket.family,
             token,
             theme,
+            anchorScripture,
             amount: ticket.amount,
           }}
         />

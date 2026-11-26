@@ -243,6 +243,8 @@ export function TicketCard({ ticket }: Props) {
             : theme.length > 17
               ? 42
               : 48;
+  const anchorScripture = ticket.anchorScripture?.trim().toUpperCase() ?? "";
+  const themeRuleY = anchorScripture ? 176 : 162;
   const codeFontSize = ticket.code.length > 14 ? 23 : 32;
 
   return (
@@ -405,7 +407,28 @@ export function TicketCard({ ticket }: Props) {
         >
           {theme}
         </text>
-        <rect x="344" y="162" width="64" height="4" rx="2" fill="#d4ff00" />
+        {anchorScripture && (
+          <text
+            x="344"
+            y="164"
+            fontFamily={fonts.body}
+            fontSize="10"
+            fontWeight="700"
+            letterSpacing="2.4"
+            fill="#ffffff"
+            opacity=".7"
+          >
+            {anchorScripture}
+          </text>
+        )}
+        <rect
+          x="344"
+          y={themeRuleY}
+          width="48"
+          height="2"
+          rx="2"
+          fill="#d4ff00"
+        />
 
         <text
           x="344"

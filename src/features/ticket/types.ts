@@ -7,6 +7,7 @@ export type TicketDetails = {
   family: string | null;
   token: string;
   theme: string | null;
+  anchorScripture: string | null;
   amount: string | null;
 };
 
