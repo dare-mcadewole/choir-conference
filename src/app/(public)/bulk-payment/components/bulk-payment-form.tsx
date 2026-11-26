@@ -136,48 +136,58 @@ export function BulkPaymentForm({
         )}
       </section>
 
-      <aside className="flex flex-col rounded-2xl bg-primary-950 p-6 text-white shadow-xl shadow-primary-950/20 sm:p-7">
-        <p className="text-[10px] font-bold uppercase tracking-[.22em] text-secondary">
-          Amount due
-        </p>
-        <p className="mt-1 font-semibold text-4xl leading-none text-secondary">
-          {selected ? formatCurrency(selected.amountDue, rates.currency) : "—"}
-        </p>
-        <p className="mt-3 text-xs leading-5 text-white/60">
-          {selected
-            ? `${selected.totalRegistrations} active registration${
-                selected.totalRegistrations === 1 ? "" : "s"
-              } under ${selected.name}.`
-            : "Select an assembly to calculate its total."}
-        </p>
+      <aside
+        className="
+          flex flex-col justify-between rounded-2xl bg-primary-950 p-6 text-white
+          shadow-xl shadow-primary-950/20 sm:p-7
+        "
+      >
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[.22em] text-secondary">
+            Amount due
+          </p>
+          <p className="mt-1 font-semibold text-4xl leading-none text-secondary">
+            {selected
+              ? formatCurrency(selected.amountDue, rates.currency)
+              : "—"}
+          </p>
+          <p className="mt-3 text-xs leading-5 text-white/60">
+            {selected
+              ? `${selected.totalRegistrations} active registration${
+                  selected.totalRegistrations === 1 ? "" : "s"
+                } under ${selected.name}.`
+              : "Select an assembly to calculate its total."}
+          </p>
 
-        <div className="mt-6 space-y-2 border-t border-white/10 pt-5 text-xs">
-          <div className="flex justify-between gap-4 text-white/60">
-            <span>Student rate</span>
-            <span className="font-semibold text-white">
-              {formatCurrency(rates.student, rates.currency)}
-            </span>
-          </div>
-          <div className="flex justify-between gap-4 text-white/60">
-            <span>Non-student rate</span>
-            <span className="font-semibold text-white">
-              {formatCurrency(rates.nonStudent, rates.currency)}
-            </span>
+          <div className="mt-6 space-y-2 border-t border-white/10 pt-5 text-xs">
+            <div className="flex justify-between gap-4 text-white/60">
+              <span>Student rate</span>
+              <span className="font-semibold text-white">
+                {formatCurrency(rates.student, rates.currency)}
+              </span>
+            </div>
+            <div className="flex justify-between gap-4 text-white/60">
+              <span>Non-student rate</span>
+              <span className="font-semibold text-white">
+                {formatCurrency(rates.nonStudent, rates.currency)}
+              </span>
+            </div>
           </div>
         </div>
 
-        <Button
-          type="button"
-          variant="secondary"
-          size="lg"
-          disabled
-          className="mt-6 w-full"
-        >
-          Proceed to payment
-        </Button>
-        <p className="mt-3 text-center text-[11px] leading-5 text-white/45">
-          Bulk payment processing is coming soon.
-        </p>
+        <div>
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            className="mt-6 w-full"
+          >
+            Proceed to payment
+          </Button>
+          {/* <p className="mt-3 text-center text-[11px] leading-5 text-white/45">
+            Bulk payment processing is coming soon.
+          </p> */}
+        </div>
       </aside>
     </div>
   );
