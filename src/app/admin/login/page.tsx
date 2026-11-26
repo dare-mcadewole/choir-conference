@@ -6,8 +6,7 @@ import { createMetadata } from "@/lib/seo";
 
 export const metadata = createMetadata({
   title: "Admin sign in",
-  description:
-    "Sign in to the conference administration area.",
+  description: "Sign in to the conference administration area.",
 });
 
 const authErrors: Record<string, string> = {
@@ -44,9 +43,9 @@ export default async function AdminLoginPage({
   return (
     <main className="grid min-h-screen place-items-center p-4 sm:p-8">
       <div className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white shadow-2xl shadow-indigo-950/15 lg:min-h-[620px] lg:grid-cols-2">
-        <section className="relative hidden overflow-hidden bg-secondary-700 p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
-          <div className="pointer-events-none absolute -right-20 top-16 size-72 rounded-full bg-[#7778e8]/35 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 -left-20 size-80 rounded-full bg-[#d4ff00]/15 blur-3xl" />
+        <section className="relative hidden overflow-hidden bg-primary-950 p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
+          <div className="pointer-events-none absolute -right-20 top-16 size-72 rounded-full bg-[#7778e8]/15 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-20 size-80 rounded-full bg-[#d4ff00]/5 blur-3xl" />
           <Link href="/" className="relative flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-xl bg-white/10">
               <Logo className="size-8" />
@@ -56,13 +55,15 @@ export default async function AdminLoginPage({
             </span>
           </Link>
           <div className="relative max-w-sm">
-            <h1 className="mt-5 text-5xl font-bold text-white">Sign In</h1>
-            <p className="mt-3 text-sm leading-6 text-white/75 text-secondary-200">
+            <h1 className="mt-5 text-5xl font-bold text-secondary-200">
+              Sign In
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-secondary-100/50">
               Manage registrations, conference information, speakers, tickets,
               and payments from one place.
             </p>
           </div>
-          <p className="relative text-xs text-white/75">
+          <p className="relative text-xs text-white/35">
             All Choirs&apos; Conference · January 8–9, 2027
           </p>
         </section>
