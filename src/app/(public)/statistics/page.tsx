@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   ArrowRight,
   Building2,
+  ClipboardList,
   UserRoundGroup,
   UsersRound,
 } from "lucide-react";
@@ -16,7 +17,13 @@ async function stats() {
   try {
     return await dashboardService.findStatistics();
   } catch {
-    return { total: 0, families: [], leaderboard: [], categories: [] };
+    return {
+      total: 0,
+      totalRegistrations: 0,
+      families: [],
+      leaderboard: [],
+      categories: [],
+    };
   }
 }
 
@@ -71,7 +78,14 @@ export default async function StatisticsPage() {
       </section>
 
       <div className="page-shell relative z-10 -mt-10 pb-16 sm:-mt-12">
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Metric
+            icon={ClipboardList}
+            label="Total registrations"
+            value={String(data.totalRegistrations)}
+            iconClassName="bg-slate-100 text-slate-600"
+          />
+
           <Metric
             icon={UsersRound}
             label="Confirmed registrations"

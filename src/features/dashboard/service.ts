@@ -17,6 +17,9 @@ export async function findStatistics() {
     .select({ total: count() })
     .from(registrations)
     .where(eq(registrations.status, "CONFIRMED"));
+  const [totalRegistrations] = await db
+    .select({ total: count() })
+    .from(registrations);
   const families = await db
     .select({
       name: conferenceFamilies.name,
@@ -65,7 +68,13 @@ export async function findStatistics() {
       eq(registrationCategories.id, registrations.categoryId),
     )
     .groupBy(registrationCategories.id);
-  return { total: total?.total ?? 0, families, leaderboard, categories };
+  return {
+    total: total?.total ?? 0,
+    totalRegistrations: totalRegistrations?.total ?? 0,
+    families,
+    leaderboard,
+    categories,
+  };
 }
 export type StatisticalBreakdown = Awaited<ReturnType<typeof findStatistics>>;
 
