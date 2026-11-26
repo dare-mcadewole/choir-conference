@@ -1,7 +1,9 @@
-import { ChartCard } from "@/app/(public)/statistics/components/chart-card";
+"use client";
+
+import { CollapsibleCard } from "@/app/(public)/statistics/components/collapsible-card";
 import { Badge } from "@/components/ui/badge";
-import { StatisticalBreakdown } from "@/features/dashboard/service";
-import { UserRoundGroup, Users, UsersRound } from "lucide-react";
+import type { StatisticalBreakdown } from "@/features/dashboard/service";
+import { UserRoundGroup } from "lucide-react";
 
 export function FamilyBreakdown({
   families,
@@ -13,7 +15,7 @@ export function FamilyBreakdown({
   const confirmedTotal = Number(total);
 
   return (
-    <ChartCard
+    <CollapsibleCard
       id="music-game"
       title="By Music Game Family / Group"
       subtitle="Registration breakdown by music game groupings"
@@ -60,6 +62,6 @@ export function FamilyBreakdown({
           </p>
         )}
       </div>
-    </ChartCard>
+    </CollapsibleCard>
   );
 }

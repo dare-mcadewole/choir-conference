@@ -3,7 +3,8 @@
 import { UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StatisticalBreakdown } from "@/features/dashboard/service";
-import { ChartCard, ChartEmpty } from "./chart-card";
+import { ChartEmpty } from "./chart-card";
+import { CollapsibleCard } from "./collapsible-card";
 import { ChartDataTable } from "./chart-data-table";
 import { chartColors } from "./chart-theme";
 
@@ -21,7 +22,7 @@ export function GenderRatioChart({
   const femalePercentage = total ? 100 - malePercentage : 0;
 
   return (
-    <ChartCard
+    <CollapsibleCard
       id="gender-ratio"
       title="Gender ratio"
       subtitle="Male and female share of total registrations."
@@ -128,7 +129,7 @@ export function GenderRatioChart({
           />
         </>
       )}
-    </ChartCard>
+    </CollapsibleCard>
   );
 }
 

@@ -13,7 +13,8 @@ import {
 } from "recharts";
 import { UserRound } from "lucide-react";
 import type { StatisticalBreakdown } from "@/features/dashboard/service";
-import { ChartCard, ChartEmpty } from "./chart-card";
+import { ChartEmpty } from "./chart-card";
+import { CollapsibleCard } from "./collapsible-card";
 import { ChartDataTable } from "./chart-data-table";
 import {
   axisTick,
@@ -43,7 +44,7 @@ export function AgeDistributionChart({
   const total = data.reduce((sum, entry) => sum + Number(entry.total), 0);
 
   return (
-    <ChartCard
+    <CollapsibleCard
       id="age-distribution"
       title="Age distribution"
       subtitle="Registrants grouped by age band."
@@ -124,6 +125,6 @@ export function AgeDistributionChart({
           }))}
         />
       )}
-    </ChartCard>
+    </CollapsibleCard>
   );
 }

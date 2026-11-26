@@ -11,7 +11,8 @@ import {
 } from "recharts";
 import { LayoutGrid } from "lucide-react";
 import type { StatisticalBreakdown } from "@/features/dashboard/service";
-import { ChartCard, ChartEmpty } from "./chart-card";
+import { ChartEmpty } from "./chart-card";
+import { CollapsibleCard } from "./collapsible-card";
 import { ChartDataTable } from "./chart-data-table";
 import {
   chartColors,
@@ -34,7 +35,7 @@ export function RegistrationCategoryChart({
   const total = chartData.reduce((sum, category) => sum + category.total, 0);
 
   return (
-    <ChartCard
+    <CollapsibleCard
       id="registration-category"
       title="By Category"
       subtitle="Registrants across registration categories."
@@ -104,6 +105,6 @@ export function RegistrationCategoryChart({
           }))}
         />
       )}
-    </ChartCard>
+    </CollapsibleCard>
   );
 }
