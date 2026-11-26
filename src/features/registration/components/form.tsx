@@ -162,25 +162,21 @@ export function RegistrationForm({
 
   if (success) {
     return (
-      <div className="space-y-8">
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
-          <CheckCircle2 className="mx-auto text-emerald-600" size={42} />
+      <div className="space-y-4">
+        <div className="text-center">
+          <CheckCircle2
+            className="mx-auto text-emerald-600"
+            size={80}
+            strokeWidth={0.75}
+          />
           <h2 className="mt-4 font-display text-3xl">
-            You&apos;re registered.
+            You&apos;re Registered!
           </h2>
-          <p className="mt-3 text-slate-600">
+          <p className="mt-0.5 text-slate-600">
             {success.requiresPayment
               ? "Your registration is awaiting payment. We’ll take you to secure checkout next."
-              : "Your confirmation and digital ticket are ready."}
+              : "Your digital ticket is ready"}
           </p>
-          {success.code && (
-            <a
-              className="button-primary mt-6"
-              href={`/registration/${success.code}`}
-            >
-              View confirmation
-            </a>
-          )}
         </div>
         {success.ticket && <TicketCard ticket={success.ticket} />}
       </div>
