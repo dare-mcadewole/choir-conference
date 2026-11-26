@@ -33,7 +33,7 @@ export default async function TicketPage({
       <div className="mx-auto max-w-5xl">
         <div className="mb-6 text-center">
           <p className="eyebrow">All Choirs&apos; Conference 2027</p>
-          <h1 className="mt-3 font-display uppercase text-4xl sm:text-5xl text-ink">
+          <h1 className="mt-3 font-display uppercase text-2xl sm:text-4xl md:text-5xl text-ink">
             Your conference pass
           </h1>
         </div>
