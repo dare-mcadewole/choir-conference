@@ -51,10 +51,6 @@ export default async function StatisticsPage() {
           aria-hidden="true"
           className="pointer-events-none absolute -right-16 -top-20 size-72 rounded-full bg-[#d095ff]/25 blur-2xl"
         />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-[12%] top-[67%] h-4 w-44 -rotate-[14deg] rounded-full bg-secondary/40 sm:h-6 sm:w-64"
-        />
 
         <header className="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-6 md:px-8">
           <Link href="/" className="flex items-center gap-3">

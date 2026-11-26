@@ -36,8 +36,8 @@ export default async function HomePage() {
         <div className="pointer-events-none absolute -right-7 top-20 size-20 rounded-full bg-[#fc63c1] sm:right-[12%] sm:size-28" />
         <div className="pointer-events-none absolute -right-16 top-[-8%] h-72 w-24 rotate-45 rounded-full bg-gradient-to-b from-[#d095ff] to-[#ef75cb] opacity-80 sm:h-[30rem] sm:w-32" />
         <div className="pointer-events-none absolute -left-24 bottom-8 h-64 w-20 rotate-45 rounded-full bg-gradient-to-b from-[#d095ff] to-[#ef75cb] opacity-75 sm:h-96 sm:w-28" />
-        <div className="pointer-events-none absolute left-[13%] top-[37%] h-4 w-52 -rotate-[14deg] rounded-full bg-secondary sm:h-7 sm:w-64" />
-        <div className="pointer-events-none absolute right-[5%] top-[54%] h-3 w-28 rotate-[24deg] rounded-full bg-secondary sm:w-44" />
+        <div className="pointer-events-none absolute left-[13%] top-[37%] h-4 w-52 -rotate-[14deg] rounded-full bg-secondary/0 sm:h-7 sm:w-64" />
+        <div className="pointer-events-none absolute right-[5%] top-[54%] h-3 w-28 rotate-[24deg] rounded-full bg-secondary/0 sm:w-44" />
 
         <header className="relative page-shell flex items-center justify-between">
           <div className="flex items-center gap-3 text-base font-semibold tracking-tight sm:text-xl">
