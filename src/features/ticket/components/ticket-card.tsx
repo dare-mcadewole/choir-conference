@@ -463,7 +463,7 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <text
           x="150"
-          y="365"
+          y="360"
           textAnchor="middle"
           fontFamily={fonts.body}
           fontSize="10"
