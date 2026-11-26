@@ -7,6 +7,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
+import * as conferenceService from "@/features/conference/service";
 import * as dashboardService from "@/features/dashboard/service";
 import Metric from "@/app/(public)/statistics/components/Metric";
 import { AgeDistributionChart } from "./components/age-distribution-chart";
@@ -41,7 +42,11 @@ async function stats() {
 }
 
 export default async function StatisticsPage() {
-  const data = await stats();
+  const [data, settings] = await Promise.all([
+    stats(),
+    conferenceService.findOne().catch(() => null),
+  ]);
+  const registrationOpen = settings?.registrationOpen === true;
 
   return (
     <main className="min-h-screen overflow-hidden bg-zinc-50">
@@ -68,12 +73,18 @@ export default async function StatisticsPage() {
               All Choirs' Conference 2027
             </span>
           </Link>
-          <Link
-            href="/register"
-            className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2.5 text-sm font-bold text-primary transition hover:bg-secondary-300"
-          >
-            Register <ArrowRight size={16} />
-          </Link>
+          {registrationOpen ? (
+            <Link
+              href="/register"
+              className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2.5 text-sm font-bold text-primary transition hover:bg-secondary-300"
+            >
+              Register <ArrowRight size={16} />
+            </Link>
+          ) : (
+            <span className="rounded-full border border-white/20 px-4 py-2.5 text-sm font-medium text-white/60">
+              {settings ? "Registration closed" : "Registration unavailable"}
+            </span>
+          )}
         </header>
 
         <div className="page-shell relative py-14 sm:py-20">

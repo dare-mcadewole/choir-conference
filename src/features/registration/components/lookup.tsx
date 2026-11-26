@@ -1,14 +1,26 @@
 "use client";
 
+import Link from "next/link";
 import { SubmitEventHandler, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, LockKeyhole } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export function RegistrationLookup() {
+export function RegistrationLookup({
+  registrationOpen = true,
+  settingsAvailable = true,
+}: {
+  registrationOpen?: boolean;
+  settingsAvailable?: boolean;
+}) {
   const [value, setValue] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  if (!settingsAvailable)
+    return <RegistrationUnavailableNotice reason="unavailable" />;
+  if (!registrationOpen)
+    return <RegistrationUnavailableNotice reason="closed" />;
 
   async function check(ev: Parameters<SubmitEventHandler>[0]) {
     ev.preventDefault();
@@ -79,5 +91,29 @@ export function RegistrationLookup() {
         )}
       </div>
     </form>
+  );
+}
+
+function RegistrationUnavailableNotice({
+  reason,
+}: {
+  reason: "closed" | "unavailable";
+}) {
+  return (
+    <div className="mx-auto w-full max-w-md rounded-xl bg-black/25 p-7 text-center shadow-2xl shadow-blue-950/30 backdrop-blur-md">
+      <span className="mx-auto grid size-12 place-items-center rounded-full bg-secondary text-primary">
+        <LockKeyhole size={22} />
+      </span>
+      <p className="mt-4 text-lg font-bold text-white">
+        {reason === "closed"
+          ? "Registration is closed"
+          : "Registration is unavailable"}
+      </p>
+      <p className="mt-2 mx-4 text-sm leading-6 text-white/70">
+        {reason === "closed"
+          ? "Registration for All Choirs' Conference 2027 is not open right now."
+          : "We could not load registration right now. Please try again shortly."}
+      </p>
+    </div>
   );
 }

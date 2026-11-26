@@ -28,12 +28,16 @@ export default async function HomePage() {
   const { settings, people } = await getLandingData();
   const title = settings?.title ?? "All Choirs' Conference '27";
   const theme = settings?.theme ?? "THE ABLE MINISTER";
+  const registrationOpen = settings?.registrationOpen === true;
+  const registrationLabel = settings
+    ? "Registration closed"
+    : "Registration unavailable";
 
   return (
     <main className="min-h-screen overflow-hidden bg-primary text-white">
       <CountdownTimer
         targetDate={settings?.closesAt?.toISOString() ?? null}
-        enabled={settings?.showCountdownTimer ?? true}
+        enabled={(settings?.showCountdownTimer ?? true) && registrationOpen}
       />
       <section className="relative isolate min-h-screen overflow-hidden px-5 py-6 sm:px-8">
         <div className="pointer-events-none absolute inset-0 -z-10 opacity-30 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,.8)_1px,transparent_1.5px)] [background-size:35px_35px]" />
@@ -51,12 +55,18 @@ export default async function HomePage() {
             </span>
             {title}
           </div>
-          <a
-            href="#register"
-            className="hidden items-center gap-2 rounded-full border border-white/35 px-4 py-2 text-sm font-medium sm:inline-flex"
-          >
-            Register now <ArrowDown size={16} />
-          </a>
+          {registrationOpen ? (
+            <a
+              href="#register"
+              className="hidden items-center gap-2 rounded-full border border-white/35 px-4 py-2 text-sm font-medium sm:inline-flex"
+            >
+              Register now <ArrowDown size={16} />
+            </a>
+          ) : (
+            <span className="hidden items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white/60 sm:inline-flex">
+              {registrationLabel}
+            </span>
+          )}
         </header>
 
         <div className="relative mx-auto flex max-w-5xl flex-col items-center pt-20 text-center sm:pt-24">
@@ -73,7 +83,10 @@ export default async function HomePage() {
           </h1>
 
           <div id="register" className="mt-9 w-full mx-auto">
-            <RegistrationLookup />
+            <RegistrationLookup
+              registrationOpen={registrationOpen}
+              settingsAvailable={Boolean(settings)}
+            />
           </div>
         </div>
 
