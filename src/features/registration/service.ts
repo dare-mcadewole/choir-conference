@@ -448,7 +448,7 @@ export async function createRegistration(input: RegistrationInput) {
       institution: category.slug === "student" ? input.institution : null,
       academicLevelId:
         category.slug === "student" ? input.academicLevelId : null,
-      status: confirmed ? "CONFIRMED" : "PENDING_PAYMENT",
+      status: "PENDING_PAYMENT", // confirmed ? "CONFIRMED" : "PENDING_PAYMENT",
       registrationCode,
       ticketToken,
       confirmedAt: confirmed ? new Date() : null,
