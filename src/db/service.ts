@@ -27,28 +27,32 @@ export async function seedDefaults() {
     .insert(conferenceFamilies)
     .values([
       {
+        name: "CONCORDIA",
+        slug: "concordia",
+        alias: "Group A",
+        icon: "Users",
+        description: "A family shaped by fellowship.",
+      },
+      {
         name: "HARMONIA",
+        alias: "Group B",
         slug: "harmonia",
         icon: "Music2",
         description: "A family joined in harmony.",
       },
       {
-        name: "CONCORDIA",
-        slug: "concordia",
-        icon: "Users",
-        description: "A family shaped by fellowship.",
+        name: "MELODIA",
+        slug: "melodia",
+        alias: "Group C",
+        icon: "Music",
+        description: "A family carrying a distinct song.",
       },
       {
         name: "SYMPHONY",
         slug: "symphony",
+        alias: "Group D",
         icon: "AudioLines",
         description: "A family moving with one sound.",
-      },
-      {
-        name: "MELODIA",
-        slug: "melodia",
-        icon: "Music",
-        description: "A family carrying a distinct song.",
       },
     ])
     .onConflictDoNothing();
@@ -87,28 +91,28 @@ export async function seedDefaults() {
       { name: "Non-student", slug: "non-student", price: "10000" },
     ])
     .onConflictDoNothing();
+  const academicLevelSeed = [
+    ...[
+      "100 Level",
+      "200 Level",
+      "300 Level",
+      "400 Level",
+      "500 Level",
+      "600 Level",
+    ].map((name) => ({
+      name,
+      institutionType: "TERTIARY" as const,
+    })),
+    ...["JSS 1", "JSS 2", "JSS 3", "SS1", "SS2", "SS3"].map((name) => ({
+      name,
+      institutionType: "SECONDARY" as const,
+    })),
+  ];
+
   await db
     .insert(academicLevels)
-    .values([
-      ...["JSS 1", "JSS 2", "JSS 3", "SS1", "SS2", "SS3"].map(
-        (name, sortOrder) => ({
-          name,
-          institutionType: "SECONDARY" as const,
-          sortOrder,
-        }),
-      ),
-      ...[
-        "100 Level",
-        "200 Level",
-        "300 Level",
-        "400 Level",
-        "500 Level",
-        "600 Level",
-      ].map((name, sortOrder) => ({
-        name,
-        institutionType: "TERTIARY" as const,
-        sortOrder,
-      })),
-    ])
+    .values(
+      academicLevelSeed.map((level, sortOrder) => ({ ...level, sortOrder })),
+    )
     .onConflictDoNothing();
 }
