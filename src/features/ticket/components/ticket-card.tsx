@@ -257,7 +257,7 @@ export function TicketCard({ ticket }: Props) {
         viewBox="0 0 1000 500"
         role="img"
         aria-label={`Conference ticket for ${ticket.fullName}`}
-        className="lg:scale-75 block h-auto w-full overflow-hidden rounded-[1.95rem] shadow-2xl shadow-primary/20"
+        className="lg:scale-75 block h-auto w-full overflow-hidden rounded-2xl md:rounded-3xl lg:rounded-[1.95rem] shadow-2xl shadow-primary/20"
       >
         <defs>
           <mask
@@ -567,7 +567,8 @@ export function TicketCard({ ticket }: Props) {
 
       <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
         <p className="text-sm leading-6 text-slate-600">
-          Save this ticket and present its QR code at conference check-in.
+          <strong>Save</strong> or <strong>Screenshot</strong> this ticket and
+          present its QR code at conference check-in.
         </p>
         <button
           type="button"
