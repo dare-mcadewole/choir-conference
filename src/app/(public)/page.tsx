@@ -1,19 +1,18 @@
-import {
-  ArrowDown,
-  CalendarDays,
-  MapPin,
-  Mic,
-  Plus,
-} from "lucide-react";
-import { RegistrationLookup } from "@/features/registration/components/lookup";
-import * as conferenceService from "@/features/conference/service";
-import { CountdownTimer } from "@/features/conference/components/countdown-timer";
-import * as speakerService from "@/features/speaker/service";
-import { getInitials } from "@/features/shared/utils/strings";
-import { cn } from "@/lib/utils";
-import { Logo } from "@/components/logo";
-import { createMetadata, SITE_NAME } from "@/lib/seo";
+import { Plus } from "lucide-react";
 import { headers } from "next/headers";
+import { CountdownTimer } from "@/features/conference/components/countdown-timer";
+import * as conferenceService from "@/features/conference/service";
+import { formatConferenceDates } from "@/features/conference/utils";
+import { RegistrationLookup } from "@/features/registration/components/lookup";
+import * as speakerService from "@/features/speaker/service";
+import { createMetadata, SITE_NAME } from "@/lib/seo";
+import {
+  AnchorScripture,
+  ConferenceDetailsPill,
+} from "./_components/conference-details";
+import { LandingBackdrop } from "./_components/landing-backdrop";
+import { LandingHeader } from "./_components/landing-header";
+import { SpeakersSection } from "./_components/speakers-section";
 
 export const metadata = createMetadata({
   title: SITE_NAME,
@@ -29,60 +28,6 @@ async function getLandingData() {
   } catch {
     return { settings: null, people: [] };
   }
-}
-
-function formatConferenceDate(value: Date | null | undefined) {
-  if (!value) return null;
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(value);
-}
-
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-function formatConferenceDates(
-  start: Date | null | undefined,
-  end: Date | null | undefined,
-) {
-  if (!start && !end) return "Dates to be announced";
-  if (!start) return formatConferenceDate(end) ?? "Dates to be announced";
-  if (!end) return formatConferenceDate(start) ?? "Dates to be announced";
-
-  if (start.getTime() === end.getTime()) {
-    return formatConferenceDate(start) ?? "Dates to be announced";
-  }
-
-  const startYear = start.getUTCFullYear();
-  const endYear = end.getUTCFullYear();
-  const startMonth = start.getUTCMonth();
-  const endMonth = end.getUTCMonth();
-
-  if (startYear === endYear && startMonth === endMonth) {
-    return `${MONTHS[startMonth]} ${start.getUTCDate()}–${end.getUTCDate()}, ${startYear}`;
-  }
-
-  if (startYear === endYear) {
-    return `${MONTHS[startMonth]} ${start.getUTCDate()} – ${MONTHS[endMonth]} ${end.getUTCDate()}, ${startYear}`;
-  }
-
-  return `${formatConferenceDate(start)} – ${formatConferenceDate(end)}`;
 }
 
 export default async function HomePage() {
@@ -107,40 +52,21 @@ export default async function HomePage() {
         targetDate={settings?.closesAt?.toISOString() ?? null}
         enabled={(settings?.showCountdownTimer ?? true) && registrationOpen}
       />
-      <section className="relative isolate min-h-screen overflow-hidden px-5 py-6 sm:px-8">
-        <div className="pointer-events-none absolute inset-0 -z-10 opacity-30 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,.8)_1px,transparent_1.5px)] [background-size:35px_35px]" />
-        <div className="pointer-events-none absolute -left-14 top-[52%] size-40 rounded-full bg-[#fc63c1] sm:size-56" />
-        <div className="pointer-events-none absolute -right-7 top-20 size-20 rounded-full bg-[#fc63c1] sm:right-[12%] sm:size-28" />
-        <div className="pointer-events-none absolute -right-16 top-[-8%] h-72 w-24 rotate-45 rounded-full bg-gradient-to-b from-[#d095ff] to-[#ef75cb] opacity-80 sm:h-[30rem] sm:w-32" />
-        <div className="pointer-events-none absolute -left-24 bottom-8 h-64 w-20 rotate-45 rounded-full bg-gradient-to-b from-[#d095ff] to-[#ef75cb] opacity-75 sm:h-96 sm:w-28" />
-        <div className="pointer-events-none absolute left-[13%] top-[37%] h-4 w-52 -rotate-[14deg] rounded-full bg-secondary/0 sm:h-7 sm:w-64" />
-        <div className="pointer-events-none absolute right-[5%] top-[54%] h-3 w-28 rotate-[24deg] rounded-full bg-secondary/0 sm:w-44" />
 
-        <header className="relative page-shell flex items-center justify-between">
-          <div className="flex items-center gap-3 text-base font-semibold tracking-tight sm:text-xl">
-            <span className="grid size-9 place-items-center rounded-full bg-primary">
-              <Logo className="size-7" />
-            </span>
-            {title}
-          </div>
-          {registrationOpen ? (
-            <a
-              href="#register"
-              className="hidden items-center gap-2 rounded-full border border-white/35 px-4 py-2 text-sm font-medium sm:inline-flex"
-            >
-              Register now <ArrowDown size={16} />
-            </a>
-          ) : (
-            <span className="hidden items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white/60 sm:inline-flex">
-              {registrationLabel}
-            </span>
-          )}
-        </header>
+      <section className="relative isolate min-h-screen overflow-hidden px-5 py-6 sm:px-8">
+        <LandingBackdrop />
+
+        <LandingHeader
+          title={title}
+          registrationOpen={registrationOpen}
+          registrationLabel={registrationLabel}
+        />
 
         <div className="relative mx-auto flex max-w-5xl flex-col items-center pt-20 text-center sm:pt-24">
           <p className="text-xs sm:text-base mt-1 font-bold tracking-[.52em] text-white/75 uppercase">
             All Choirs' Conference '27
           </p>
+
           <h1
             className="
               mt-7 max-w-4xl font-display text-6xl sm:leading-[.82] tracking-[-.025em]
@@ -150,11 +76,7 @@ export default async function HomePage() {
             {theme}
           </h1>
 
-          <p className="mt-5 flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-[.28em] text-secondary sm:text-xs">
-            <span aria-hidden="true" className="h-px w-8 bg-secondary/40" />
-            {anchorScripture}
-            <span aria-hidden="true" className="h-px w-8 bg-secondary/40" />
-          </p>
+          <AnchorScripture scripture={anchorScripture} />
 
           <div id="register" className="mt-9 w-full mx-auto">
             <RegistrationLookup
@@ -163,93 +85,11 @@ export default async function HomePage() {
             />
           </div>
 
-          <div className="mx-auto mt-6 flex w-fit max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[11px] leading-5 text-white/75 sm:text-xs">
-            <span className="inline-flex items-center gap-1.5">
-              <CalendarDays size={14} className="text-secondary" />
-              <span className="font-semibold text-white">{dateLabel}</span>
-            </span>
-            <span aria-hidden="true" className="hidden text-white/25 sm:inline">
-              •
-            </span>
-            <span className="inline-flex min-w-0 items-center gap-1.5">
-              <MapPin size={14} className="shrink-0 text-secondary" />
-              <span>{venue}</span>
-            </span>
-          </div>
+          <ConferenceDetailsPill dateLabel={dateLabel} venue={venue} />
         </div>
 
-        <h4
-          className="
-            mt-12 sm:mt-20 mb-8 container text-xl text-secondary uppercase font-bold
-            flex items-center gap-2 relative
-          "
-        >
-          <Mic size={40} strokeWidth={0.75} />
-          Our Speakers
-        </h4>
-        <div
-          className="
-            relative container gap-2 sm:gap-2 gap-y-6
-            grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-6
-          "
-        >
-          {people.slice(0, 6).map((speaker) => (
-            <div
-              key={speaker.id}
-              className="flex flex-col gap-2 justify-center items-center mb-2 md:mb-4"
-            >
-              <article
-                className={cn(
-                  "group relative aspect-[.68] overflow-hidden rounded-lg h-64",
-                  "bg-primary-200 shadow-[0_16px_35px_rgba(3,15,55,.35)]",
-                )}
-              >
-                <div
-                  className="
-                    absolute inset-0 bg-[sradial-gradient(circle_at_50%_22%,rgba(255,255,255,.28),transparent_40%)]
-                  "
-                />
+        <SpeakersSection people={people} />
 
-                {speaker.imageUrl ? (
-                  <img
-                    src={speaker.imageUrl}
-                    alt={speaker.fullName}
-                    className={cn(
-                      "size-full object-cover transform transition duration-500 group-hover:opacity-90",
-                      [speaker.htmlClassName],
-                    )}
-                  />
-                ) : (
-                  <div className="grid size-full place-items-center font-display text-6xl text-white/45">
-                    {getInitials(speaker.fullName)}
-                  </div>
-                )}
-
-                <div
-                  className="
-                    absolute left-0 inset-0 right-0 top-0 bottom-0 bg-gradient-to-b from-transparent to-primary/30
-                  "
-                />
-              </article>
-
-              <div
-                className="
-                  whitespace-nowrap px-3 py-1.5 text-center tracking-wider filter backdrop-blur-md
-                  inline-block rounded-full bg-black/15 text-[10px] font-semibold text-white
-                "
-              >
-                {speaker.fullName}
-                {speaker.designation && ` (${speaker.designation})`}
-              </div>
-            </div>
-          ))}
-
-          {!people.length && (
-            <div className="rounded-2xl border border-white/35 bg-white/10 px-6 py-4 text-sm text-white/85">
-              Speakers announced soon.
-            </div>
-          )}
-        </div>
         <Plus
           className="pointer-events-none absolute bottom-[18%] left-[16%] text-white/50"
           size={19}
