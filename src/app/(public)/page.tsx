@@ -1,4 +1,10 @@
-import { ArrowDown, Mic, Plus } from "lucide-react";
+import {
+  ArrowDown,
+  CalendarDays,
+  MapPin,
+  Mic,
+  Plus,
+} from "lucide-react";
 import { RegistrationLookup } from "@/features/registration/components/lookup";
 import * as conferenceService from "@/features/conference/service";
 import { CountdownTimer } from "@/features/conference/components/countdown-timer";
@@ -25,6 +31,60 @@ async function getLandingData() {
   }
 }
 
+function formatConferenceDate(value: Date | null | undefined) {
+  if (!value) return null;
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(value);
+}
+
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+function formatConferenceDates(
+  start: Date | null | undefined,
+  end: Date | null | undefined,
+) {
+  if (!start && !end) return "Dates to be announced";
+  if (!start) return formatConferenceDate(end) ?? "Dates to be announced";
+  if (!end) return formatConferenceDate(start) ?? "Dates to be announced";
+
+  if (start.getTime() === end.getTime()) {
+    return formatConferenceDate(start) ?? "Dates to be announced";
+  }
+
+  const startYear = start.getUTCFullYear();
+  const endYear = end.getUTCFullYear();
+  const startMonth = start.getUTCMonth();
+  const endMonth = end.getUTCMonth();
+
+  if (startYear === endYear && startMonth === endMonth) {
+    return `${MONTHS[startMonth]} ${start.getUTCDate()}–${end.getUTCDate()}, ${startYear}`;
+  }
+
+  if (startYear === endYear) {
+    return `${MONTHS[startMonth]} ${start.getUTCDate()} – ${MONTHS[endMonth]} ${end.getUTCDate()}, ${startYear}`;
+  }
+
+  return `${formatConferenceDate(start)} – ${formatConferenceDate(end)}`;
+}
+
 export default async function HomePage() {
   await headers();
   const { settings, people } = await getLandingData();
@@ -34,6 +94,12 @@ export default async function HomePage() {
   const registrationLabel = settings
     ? "Registration closed"
     : "Registration unavailable";
+  const anchorScripture = settings?.anchorScripture ?? "II Corinthians 3:6";
+  const dateLabel = formatConferenceDates(
+    settings?.eventStartDate,
+    settings?.eventEndDate,
+  );
+  const venue = settings?.venue?.trim() || "Venue to be announced.";
 
   return (
     <main className="min-h-screen overflow-hidden bg-primary text-white">
@@ -84,17 +150,37 @@ export default async function HomePage() {
             {theme}
           </h1>
 
+          <p className="mt-5 flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-[.28em] text-secondary sm:text-xs">
+            <span aria-hidden="true" className="h-px w-8 bg-secondary/40" />
+            {anchorScripture}
+            <span aria-hidden="true" className="h-px w-8 bg-secondary/40" />
+          </p>
+
           <div id="register" className="mt-9 w-full mx-auto">
             <RegistrationLookup
               registrationOpen={registrationOpen}
               settingsAvailable={Boolean(settings)}
             />
           </div>
+
+          <div className="mx-auto mt-6 flex w-fit max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[11px] leading-5 text-white/75 sm:text-xs">
+            <span className="inline-flex items-center gap-1.5">
+              <CalendarDays size={14} className="text-secondary" />
+              <span className="font-semibold text-white">{dateLabel}</span>
+            </span>
+            <span aria-hidden="true" className="hidden text-white/25 sm:inline">
+              •
+            </span>
+            <span className="inline-flex min-w-0 items-center gap-1.5">
+              <MapPin size={14} className="shrink-0 text-secondary" />
+              <span>{venue}</span>
+            </span>
+          </div>
         </div>
 
         <h4
           className="
-            mt-16 sm:mt-28 mb-8 container text-xl text-secondary uppercase font-bold
+            mt-12 sm:mt-20 mb-8 container text-xl text-secondary uppercase font-bold
             flex items-center gap-2 relative
           "
         >
