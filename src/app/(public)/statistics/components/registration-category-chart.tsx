@@ -11,7 +11,8 @@ import {
 } from "recharts";
 import { LayoutGrid } from "lucide-react";
 import type { StatisticalBreakdown } from "@/features/dashboard/service";
-import { ChartCard, ChartDataTable, ChartEmpty } from "./chart-card";
+import { ChartCard, ChartEmpty } from "./chart-card";
+import { ChartDataTable } from "./chart-data-table";
 import {
   chartColors,
   tooltipContentStyle,

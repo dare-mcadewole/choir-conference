@@ -3,7 +3,8 @@
 import { UsersRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { StatisticalBreakdown } from "@/features/dashboard/service";
-import { ChartCard, ChartDataTable, ChartEmpty } from "./chart-card";
+import { ChartCard, ChartEmpty } from "./chart-card";
+import { ChartDataTable } from "./chart-data-table";
 import { chartColors } from "./chart-theme";
 
 export function GenderRatioChart({
