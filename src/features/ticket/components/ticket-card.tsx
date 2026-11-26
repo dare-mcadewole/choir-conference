@@ -125,7 +125,7 @@ export function TicketCard({ ticket }: Props) {
     setQrError(null);
 
     QRCode.toDataURL(
-      `${window.location.origin}/api/tickets/verify/${encodeURIComponent(ticket.token)}`,
+      `${window.location.origin}/ticket/${encodeURIComponent(ticket.token)}`,
       {
         margin: 0.25,
         width: 240,
