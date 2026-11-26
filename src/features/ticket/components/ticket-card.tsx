@@ -12,6 +12,10 @@ type Props = {
   ticket: TicketDetails;
 };
 
+const APP_ENV = process.env.NEXT_PUBLIC_APP_ENV?.trim().toLowerCase();
+const IS_TEST_ENVIRONMENT =
+  APP_ENV === "test" || process.env.NODE_ENV !== "production";
+
 function formatAmount(amount: string | null) {
   if (!amount) return "—";
   const value = Number(amount);
@@ -372,7 +376,7 @@ export function TicketCard({ ticket }: Props) {
         height="500"
         viewBox="0 0 1000 500"
         role="img"
-        aria-label={`Conference ticket for ${ticket.fullName}`}
+        aria-label={`${IS_TEST_ENVIRONMENT ? "Test ticket" : "Conference ticket"} for ${ticket.fullName}`}
         className="lg:scale-75 block h-auto w-full overflow-hidden rounded-2xl md:rounded-3xl lg:rounded-[1.95rem] shadow-2xl shadow-primary/20"
       >
         <defs>
@@ -410,6 +414,23 @@ export function TicketCard({ ticket }: Props) {
             opacity=".55"
           />
         </g>
+
+        {IS_TEST_ENVIRONMENT && (
+          <text
+            x="644"
+            y="270"
+            textAnchor="middle"
+            fontFamily={fonts.display}
+            fontSize="140"
+            letterSpacing="20"
+            fill="#ffffff"
+            fillOpacity=".1"
+            transform="rotate(-18 644 270)"
+            aria-hidden="true"
+          >
+            TEST
+          </text>
+        )}
 
         <line
           x1="300"
