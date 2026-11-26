@@ -33,13 +33,19 @@ export const conferenceFamilyAssemblies = pgTable(
     id: id(),
     conferenceId: uuid("conference_id")
       .notNull()
-      .references(() => conference.id),
+      .references(() => conference.id, {
+        onDelete: "cascade",
+      }),
     familyId: uuid("family_id")
       .notNull()
-      .references(() => conferenceFamilies.id),
+      .references(() => conferenceFamilies.id, {
+        onDelete: "cascade",
+      }),
     assemblyId: uuid("assembly_id")
       .notNull()
-      .references(() => assemblies.id),
+      .references(() => assemblies.id, {
+        onDelete: "cascade",
+      }),
   },
   (table) => [
     unique("conference_family_assembly_unique").on(

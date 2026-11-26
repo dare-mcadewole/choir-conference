@@ -7,6 +7,7 @@ import { getInitials } from "@/features/shared/utils/strings";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
 import { createMetadata, SITE_NAME } from "@/lib/seo";
+import { headers } from "next/headers";
 
 export const metadata = createMetadata({
   title: SITE_NAME,
@@ -25,6 +26,7 @@ async function getLandingData() {
 }
 
 export default async function HomePage() {
+  await headers();
   const { settings, people } = await getLandingData();
   const title = settings?.title ?? "All Choirs' Conference '27";
   const theme = settings?.theme ?? "THE ABLE MINISTER";
