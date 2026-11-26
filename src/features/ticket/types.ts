@@ -6,6 +6,8 @@ export type TicketDetails = {
   assembly: string | null;
   family: string | null;
   token: string;
+  theme: string | null;
+  amount: string | null;
 };
 
 export interface HistoricalJsonData {

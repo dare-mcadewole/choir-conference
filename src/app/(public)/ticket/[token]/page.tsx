@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import * as conferenceService from "@/features/conference/service";
 import * as ticketService from "@/features/ticket/service";
 import { TicketCard } from "@/features/ticket/components/ticket-card";
 
@@ -10,9 +11,15 @@ export default async function TicketPage({
 }) {
   const { token } = await params;
   let ticket;
+  let theme: string | null = null;
 
   try {
-    ticket = await ticketService.findOneByToken(token);
+    const [foundTicket, settings] = await Promise.all([
+      ticketService.findOneByToken(token),
+      conferenceService.findOne(),
+    ]);
+    ticket = foundTicket;
+    theme = settings?.theme ?? null;
   } catch {
     ticket = undefined;
   }
@@ -35,6 +42,8 @@ export default async function TicketPage({
             assembly: ticket.assembly,
             family: ticket.family,
             token,
+            theme,
+            amount: ticket.amount,
           }}
         />
         <div className="mt-8 text-center">

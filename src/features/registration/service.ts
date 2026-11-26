@@ -488,6 +488,8 @@ export async function createRegistration(input: RegistrationInput) {
             assembly: ticketDetails.assembly,
             family: ticketDetails.family,
             token: ticketToken,
+            theme: settings.theme,
+            amount: ticketType.price,
           }
         : null,
   };

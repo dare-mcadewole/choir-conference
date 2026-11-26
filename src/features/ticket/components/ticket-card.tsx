@@ -1,20 +1,123 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Download } from "lucide-react";
 import QRCode from "qrcode";
 import { toast } from "sonner";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { TicketDetails } from "@/features/ticket/types";
 
 type Props = {
   ticket: TicketDetails;
 };
 
+function formatAmount(amount: string | null) {
+  if (!amount) return "—";
+  const value = Number(amount);
+  if (!Number.isFinite(value)) return `₦${amount}`;
+  return `₦${value.toLocaleString("en-NG", { maximumFractionDigits: 0 })}`;
+}
+
+function valueFontSize(value: string | null, base: number) {
+  const length = value?.length ?? 0;
+  if (length > 48) return base - 6;
+  if (length > 40) return base - 4;
+  if (length > 32) return base - 2;
+  return base;
+}
+
+const GENERIC_FONTS = new Set([
+  "sans-serif",
+  "serif",
+  "monospace",
+  "cursive",
+  "fantasy",
+  "system-ui",
+]);
+
+function fontFamilyNames(stack: string) {
+  return stack
+    .split(",")
+    .map((family) => family.trim().replace(/^["']|["']$/g, ""))
+    .filter((family) => family && !GENERIC_FONTS.has(family.toLowerCase()));
+}
+
+async function embedFontFaces(fontStacks: string[]) {
+  const wanted = new Set(fontStacks.flatMap(fontFamilyNames));
+  const rules: CSSFontFaceRule[] = [];
+
+  for (const sheet of Array.from(document.styleSheets)) {
+    let cssRules: CSSRuleList;
+    try {
+      cssRules = sheet.cssRules;
+    } catch {
+      continue;
+    }
+    for (const rule of Array.from(cssRules)) {
+      if (rule instanceof CSSFontFaceRule) rules.push(rule);
+    }
+  }
+
+  const matching = rules.filter((rule) =>
+    wanted.has(
+      rule.style.getPropertyValue("font-family").replace(/["']/g, "").trim(),
+    ),
+  );
+
+  const inlined = new Map<string, string>();
+
+  async function inlineFontUrl(url: string) {
+    const cached = inlined.get(url);
+    if (cached) return cached;
+
+    const response = await fetch(new URL(url, document.baseURI).href);
+    if (!response.ok) throw new Error("Could not load a ticket font.");
+    const blob = await response.blob();
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
+    inlined.set(url, dataUrl);
+    return dataUrl;
+  }
+
+  const css = await Promise.all(
+    matching.map(async (rule) => {
+      let text = rule.cssText;
+      for (const match of text.matchAll(/url\((['"]?)(.*?)\1\)/g)) {
+        const url = match[2];
+        if (!url || url.startsWith("data:")) continue;
+        text = text.replace(match[0], `url("${await inlineFontUrl(url)}")`);
+      }
+      return text;
+    }),
+  );
+
+  return css.join("\n");
+}
+
 export function TicketCard({ ticket }: Props) {
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [qrError, setQrError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [fonts, setFonts] = useState({
+    display: "Arial, sans-serif",
+    body: "Arial, sans-serif",
+  });
   const ticketRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    const styles = getComputedStyle(document.documentElement);
+    const display = styles.getPropertyValue("--font-display").trim();
+    const body = styles.getPropertyValue("--font-body").trim();
+    setFonts({
+      display: display ? `${display}, sans-serif` : "Arial, sans-serif",
+      body: body ? `${body}, sans-serif` : "Arial, sans-serif",
+    });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,8 +159,23 @@ export function TicketCard({ ticket }: Props) {
     let svgUrl: string | undefined;
 
     try {
+      const clone = svg.cloneNode(true) as SVGSVGElement;
+      try {
+        const fontCss = await embedFontFaces([fonts.display, fonts.body]);
+        if (fontCss) {
+          const style = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "style",
+          );
+          style.textContent = fontCss;
+          clone.insertBefore(style, clone.firstChild);
+        }
+      } catch {
+        /* fall back to the declared font stacks */
+      }
+
       svgUrl = URL.createObjectURL(
-        new Blob([new XMLSerializer().serializeToString(svg)], {
+        new Blob([new XMLSerializer().serializeToString(clone)], {
           type: "image/svg+xml;charset=utf-8",
         }),
       );
@@ -105,8 +223,24 @@ export function TicketCard({ ticket }: Props) {
     }
   }
 
-  const nameFontSize =
-    ticket.fullName.length > 27 ? 30 : ticket.fullName.length > 19 ? 36 : 42;
+  const instanceId = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const maskId = `ticket-mask-${instanceId}`;
+  const dotsId = `ticket-dots-${instanceId}`;
+
+  const theme = (ticket.theme?.trim() || "The Able Minister").toUpperCase();
+  const themeFontSize =
+    theme.length > 40
+      ? 22
+      : theme.length > 32
+        ? 26
+        : theme.length > 26
+          ? 30
+          : theme.length > 22
+            ? 36
+            : theme.length > 17
+              ? 42
+              : 48;
+  const codeFontSize = ticket.code.length > 14 ? 23 : 32;
 
   return (
     <figure className="space-y-4">
@@ -118,174 +252,302 @@ export function TicketCard({ ticket }: Props) {
         viewBox="0 0 1000 560"
         role="img"
         aria-label={`Conference ticket for ${ticket.fullName}`}
-        className="block h-auto w-full overflow-hidden rounded-[1.75rem] shadow-2xl shadow-primary/20"
+        className="block h-auto w-full overflow-hidden rounded-[2rem] shadow-2xl shadow-primary/20"
       >
-        <rect width="1000" height="560" rx="32" fill="#0839d8" />
-        <circle cx="934" cy="48" r="190" fill="#d095ff" opacity=".28" />
-        <circle cx="670" cy="545" r="168" fill="#fc63c1" opacity=".18" />
-        <circle cx="500" cy="75" r="2" fill="white" opacity=".6" />
-        <circle cx="548" cy="75" r="2" fill="white" opacity=".6" />
-        <circle cx="596" cy="75" r="2" fill="white" opacity=".6" />
-        <path d="M682 0h24L540 560h-24z" fill="#d4ff00" opacity=".08" />
-        <path d="M710 0h10L568 560h-10z" fill="#fc63c1" opacity=".18" />
+        <defs>
+          <mask
+            id={maskId}
+            maskUnits="userSpaceOnUse"
+            x="0"
+            y="0"
+            width="1000"
+            height="560"
+          >
+            <rect width="1000" height="560" rx="32" fill="#ffffff" />
+            <circle cx="300" cy="0" r="18" fill="#000000" />
+            <circle cx="300" cy="560" r="18" fill="#000000" />
+          </mask>
+          <pattern
+            id={dotsId}
+            width="28"
+            height="28"
+            patternUnits="userSpaceOnUse"
+          >
+            <circle cx="2" cy="2" r="1.4" fill="#ffffff" opacity=".18" />
+          </pattern>
+        </defs>
 
-        <g fontFamily="Arial, sans-serif" fill="#fff">
-          <text x="64" y="74" fontSize="18" fontWeight="700" letterSpacing="3">
-            ALL CHOIRS&apos; CONFERENCE
-          </text>
-          <rect x="64" y="97" width="104" height="34" rx="17" fill="#d4ff00" />
-          <text
-            x="116"
-            y="120"
-            textAnchor="middle"
-            fontSize="16"
-            fontWeight="700"
-            fill="#0839d8"
-            letterSpacing="1"
-          >
-            ACC 2027
-          </text>
-          <text x="64" y="181" fontSize="38" fontWeight="800" letterSpacing="1">
-            THE ABLE MINISTER
-          </text>
-          <text
-            x="64"
-            y="235"
-            fontSize="13"
-            fontWeight="700"
-            letterSpacing="3"
-            fill="#d4ff00"
-          >
-            YOUR CONFERENCE PASS
-          </text>
-          <text
-            x="64"
-            y="292"
-            fontSize="13"
-            fontWeight="700"
-            letterSpacing="2"
-            fill="#ffffff"
-            opacity=".7"
-          >
-            ISSUED TO
-          </text>
-          <text x="64" y="340" fontSize={nameFontSize} fontWeight="700">
-            {ticket.fullName}
-          </text>
-          <text
-            x="64"
-            y="390"
-            fontSize="12"
-            fontWeight="700"
-            letterSpacing="2"
-            fill="#ffffff"
-            opacity=".7"
-          >
-            REGISTRATION CODE
-          </text>
-          <text x="64" y="423" fontSize="22" fontWeight="700" fill="#d4ff00">
-            {ticket.code}
-          </text>
-          <text
-            x="64"
-            y="471"
-            fontSize="12"
-            fontWeight="700"
-            letterSpacing="1.5"
-            fill="#ffffff"
-            opacity=".7"
-          >
-            ASSEMBLY
-          </text>
-          <text x="64" y="500" fontSize="16" fontWeight="700">
-            {ticket.assembly ?? "—"}
-          </text>
-          <text
-            x="355"
-            y="471"
-            fontSize="12"
-            fontWeight="700"
-            letterSpacing="1.5"
-            fill="#ffffff"
-            opacity=".7"
-          >
-            CONFERENCE FAMILY
-          </text>
-          <text x="355" y="500" fontSize="16" fontWeight="700">
-            {ticket.family ?? "—"}
-          </text>
-          <text
-            x="64"
-            y="536"
-            fontSize="11"
-            fontWeight="700"
-            letterSpacing="2"
-            fill="#d4ff00"
-          >
-            PRESENT THIS PASS AT CONFERENCE CHECK-IN
-          </text>
+        <g mask={`url(#${maskId})`}>
+          <rect width="1000" height="560" fill="#0839d8" />
+          <circle cx="944" cy="20" r="190" fill="#d095ff" opacity=".16" />
+          <circle cx="712" cy="570" r="170" fill="#fc63c1" opacity=".12" />
+          <rect
+            x="300"
+            width="700"
+            height="560"
+            fill={`url(#${dotsId})`}
+            opacity=".55"
+          />
         </g>
 
-        <rect x="744" y="122" width="208" height="260" rx="24" fill="#ffffff" />
+        <line
+          x1="300"
+          y1="26"
+          x2="300"
+          y2="534"
+          stroke="#ffffff"
+          strokeOpacity=".35"
+          strokeWidth="2"
+          strokeDasharray="5 9"
+          strokeLinecap="round"
+        />
+
+        <rect x="40" y="88" width="220" height="220" rx="22" fill="#ffffff" />
         {qrCode ? (
           <image
             href={qrCode}
-            x="768"
-            y="146"
-            width="160"
-            height="160"
+            x="58"
+            y="106"
+            width="184"
+            height="184"
             aria-label="Ticket verification QR code"
           />
         ) : (
           <text
-            x="848"
-            y="232"
+            x="150"
+            y="198"
             textAnchor="middle"
-            fontFamily="Arial, sans-serif"
-            fontSize="14"
+            fontFamily={fonts.body}
+            fontSize="11"
             fontWeight="700"
+            letterSpacing="1.5"
             fill="#0839d8"
           >
-            PREPARING QR CODE
+            {qrError ? "QR UNAVAILABLE" : "PREPARING QR CODE"}
           </text>
         )}
+
         <text
-          x="848"
-          y="340"
+          x="150"
+          y="342"
           textAnchor="middle"
-          fontFamily="Arial, sans-serif"
-          fontSize="12"
-          fontWeight="700"
-          letterSpacing="1.5"
-          fill="#0839d8"
+          fontFamily={fonts.body}
+          fontSize="10"
+          fontWeight="600"
+          letterSpacing="2.2"
+          fill="#ffffff"
+          opacity=".55"
         >
           SCAN TO VERIFY
         </text>
-        <rect x="766" y="412" width="164" height="46" rx="23" fill="#d4ff00" />
         <text
-          x="848"
-          y="441"
+          x="150"
+          y="378"
           textAnchor="middle"
-          fontFamily="Arial, sans-serif"
-          fontSize="15"
+          fontFamily={fonts.body}
+          fontSize="10"
           fontWeight="700"
-          letterSpacing="1"
+          letterSpacing="2.2"
+          fill="#d4ff00"
+        >
+          REGISTRATION CODE
+        </text>
+        <text
+          x="150"
+          y="410"
+          textAnchor="middle"
+          fontSize={codeFontSize}
+          fontWeight={700}
+          letterSpacing=".5"
+          fill="#ffffff"
+        >
+          {ticket.code}
+        </text>
+
+        <text
+          x="344"
+          y="76"
+          fontFamily={fonts.body}
+          fontSize="12"
+          fontWeight="700"
+          letterSpacing="3"
+          fill="#ffffff"
+          opacity=".65"
+        >
+          ALL CHOIRS&apos; CONFERENCE 2027
+        </text>
+
+        <rect x="822" y="50" width="122" height="34" rx="17" fill="#d4ff00" />
+        <text
+          x="883"
+          y="72"
+          textAnchor="middle"
+          fontFamily={fonts.body}
+          fontSize="13"
+          fontWeight="700"
+          letterSpacing="1.2"
           fill="#0839d8"
         >
-          VALID ENTRY
+          #ACC2027
         </text>
-        <circle cx="939" cy="497" r="8" fill="#fc63c1" />
-        <circle cx="963" cy="497" r="8" fill="#d095ff" />
+
+        <text
+          x="344"
+          y="164"
+          fontFamily={fonts.display}
+          fontSize={themeFontSize}
+          letterSpacing=".5"
+          fill="#ffffff"
+        >
+          {theme}
+        </text>
+        <rect x="344" y="188" width="72" height="5" rx="2.5" fill="#d4ff00" />
+
+        <text
+          x="344"
+          y="244"
+          fontFamily={fonts.body}
+          fontSize="10"
+          fontWeight="600"
+          letterSpacing="2.2"
+          fill="#ffffff"
+          opacity=".5"
+        >
+          NAME
+        </text>
+        <text
+          x="944"
+          y="244"
+          textAnchor="end"
+          fontFamily={fonts.body}
+          fontSize={valueFontSize(ticket.fullName, 18)}
+          fontWeight="700"
+          fill="#ffffff"
+        >
+          {ticket.fullName}
+        </text>
+        <line
+          x1="344"
+          y1="268"
+          x2="944"
+          y2="268"
+          stroke="#ffffff"
+          strokeOpacity=".14"
+        />
+
+        <text
+          x="344"
+          y="306"
+          fontFamily={fonts.body}
+          fontSize="10"
+          fontWeight="600"
+          letterSpacing="2.2"
+          fill="#ffffff"
+          opacity=".5"
+        >
+          ASSEMBLY
+        </text>
+        <text
+          x="944"
+          y="306"
+          textAnchor="end"
+          fontFamily={fonts.body}
+          fontSize={valueFontSize(ticket.assembly, 16)}
+          fontWeight="700"
+          fill="#ffffff"
+        >
+          {ticket.assembly ?? "—"}
+        </text>
+        <line
+          x1="344"
+          y1="330"
+          x2="944"
+          y2="330"
+          stroke="#ffffff"
+          strokeOpacity=".14"
+        />
+
+        <text
+          x="344"
+          y="368"
+          fontFamily={fonts.body}
+          fontSize="10"
+          fontWeight="600"
+          letterSpacing="2.2"
+          fill="#ffffff"
+          opacity=".5"
+        >
+          MUSIC GAMES FAMILY
+        </text>
+        <text
+          x="944"
+          y="368"
+          textAnchor="end"
+          fontFamily={fonts.body}
+          fontSize={valueFontSize(ticket.family, 16)}
+          fontWeight="700"
+          fill="#ffffff"
+        >
+          {ticket.family ?? "—"}
+        </text>
+        <line
+          x1="344"
+          y1="392"
+          x2="944"
+          y2="392"
+          stroke="#ffffff"
+          strokeOpacity=".14"
+        />
+
+        <text
+          x="344"
+          y="500"
+          fontFamily={fonts.body}
+          fontSize="10"
+          fontWeight="600"
+          letterSpacing="2"
+          fill="#ffffff"
+          opacity=".5"
+        >
+          PRESENT THIS PASS AT CHECK-IN
+        </text>
+
+        <text
+          x="944"
+          y="466"
+          textAnchor="end"
+          fontFamily={fonts.body}
+          fontSize="10"
+          fontWeight="600"
+          letterSpacing="2.2"
+          fill="#ffffff"
+          opacity=".55"
+        >
+          TICKET AMOUNT
+        </text>
+        <text
+          x="944"
+          y="504"
+          textAnchor="end"
+          fontWeight={700}
+          fontSize="28"
+          fill="#d4ff00"
+        >
+          {formatAmount(ticket.amount)}
+        </text>
       </svg>
       <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
-        <p className="text-sm text-slate-600">
+        <p className="text-sm leading-6 text-slate-600">
           Save this ticket and present its QR code at conference check-in.
         </p>
         <button
           type="button"
           onClick={downloadTicket}
           disabled={!qrCode || downloading}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:bg-primary/90 disabled:cursor-wait disabled:opacity-60"
+          className={cn(
+            buttonVariants({ size: "lg" }),
+            "shadow-lg shadow-primary/20 hover:-translate-y-0.5",
+          )}
         >
           <Download size={17} />
           {qrError
