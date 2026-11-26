@@ -2,7 +2,7 @@ import { randomBytes } from "crypto";
 
 export function generateRegistrationCode(name: string) {
   const collapsedName = name.replace(" ", "").slice(0, 4);
-  return `${collapsedName}-${randomBytes(3).toString("hex")}`.toUpperCase();
+  return `${collapsedName}-${randomBytes(2).toString("hex")}`.toUpperCase();
 }
 
 export function generateToken() {
