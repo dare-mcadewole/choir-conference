@@ -165,7 +165,7 @@ export function RegistrationForm({
       <div className="space-y-4">
         <div className="text-center">
           <CheckCircle2
-            className="mx-auto text-emerald-600"
+            className="mx-auto text-secondary-600"
             size={80}
             strokeWidth={0.75}
           />
