@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import * as conferenceService from "@/features/conference/service";
+import { CountdownTimer } from "@/features/conference/components/countdown-timer";
 import { RegistrationForm } from "@/features/registration/components/form";
 import * as registrationService from "@/features/registration/service";
 import { HistoricalJsonData } from "@/features/ticket/types";
@@ -10,6 +12,7 @@ export default async function RegisterPage({
   searchParams: Promise<{ lookup?: string }>;
 }) {
   const params = await searchParams;
+  const settings = await conferenceService.findOne().catch(() => null);
   let data;
   let initial:
     | {
@@ -43,6 +46,10 @@ export default async function RegisterPage({
 
   return (
     <main className="min-h-screen">
+      <CountdownTimer
+        targetDate={settings?.closesAt?.toISOString() ?? null}
+        enabled={settings?.showCountdownTimer ?? true}
+      />
       <div className="page-shell py-8">
         <Link
           href="/"

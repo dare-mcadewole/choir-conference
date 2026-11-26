@@ -1,6 +1,7 @@
 import { ArrowDown, Mic, Plus } from "lucide-react";
 import { RegistrationLookup } from "@/features/registration/components/lookup";
 import * as conferenceService from "@/features/conference/service";
+import { CountdownTimer } from "@/features/conference/components/countdown-timer";
 import * as speakerService from "@/features/speaker/service";
 import { getInitials } from "@/features/shared/utils/strings";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,10 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-primary text-white">
+      <CountdownTimer
+        targetDate={settings?.closesAt?.toISOString() ?? null}
+        enabled={settings?.showCountdownTimer ?? true}
+      />
       <section className="relative isolate min-h-screen overflow-hidden px-5 py-6 sm:px-8">
         <div className="pointer-events-none absolute inset-0 -z-10 opacity-30 [background-image:radial-gradient(circle_at_center,rgba(255,255,255,.8)_1px,transparent_1.5px)] [background-size:35px_35px]" />
         <div className="pointer-events-none absolute -left-14 top-[52%] size-40 rounded-full bg-[#fc63c1] sm:size-56" />
