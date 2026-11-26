@@ -9,6 +9,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       color="var(--primary)"
       height="3px"
       options={{ showSpinner: false }}
+      shallowRouting
     >
       {children}
       <Toaster position="top-right" richColors />
