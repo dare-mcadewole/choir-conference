@@ -39,7 +39,7 @@ export default async function HomePage() {
         <div className="pointer-events-none absolute left-[13%] top-[37%] h-4 w-52 -rotate-[14deg] rounded-full bg-secondary sm:h-7 sm:w-64" />
         <div className="pointer-events-none absolute right-[5%] top-[54%] h-3 w-28 rotate-[24deg] rounded-full bg-secondary sm:w-44" />
 
-        <header className="relative mx-auto flex max-w-7xl items-center justify-between">
+        <header className="relative page-shell flex items-center justify-between">
           <div className="flex items-center gap-3 text-base font-semibold tracking-tight sm:text-xl">
             <span className="grid size-9 place-items-center rounded-full bg-primary">
               <Logo className="size-7" />
