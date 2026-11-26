@@ -1,4 +1,6 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useState, type ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -54,16 +56,25 @@ export function ChartDataTable({
   rowLabel,
   valueLabel = "Registrations",
   rows,
+  defaultOpen = false,
 }: {
   label: string;
   rowLabel: string;
   valueLabel?: string;
   rows: Array<{ label: string; value: string | number }>;
+  /** Whether the data table starts expanded. */
+  defaultOpen?: boolean;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
+
   if (!rows.length) return null;
 
   return (
-    <details className="mt-4 border-t border-slate-100 pt-3 text-xs">
+    <details
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+      className="mt-4 border-t border-slate-100 pt-3 text-xs"
+    >
       <summary className="flex cursor-pointer list-none items-center gap-1.5 font-semibold text-slate-500 transition hover:text-primary [&::-webkit-details-marker]:hidden">
         View data
         <span aria-hidden="true" className="text-[9px]">

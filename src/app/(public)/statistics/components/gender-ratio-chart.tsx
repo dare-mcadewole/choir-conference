@@ -123,6 +123,7 @@ export function GenderRatioChart({
                 value: `${female.toLocaleString()} (${femalePercentage}%)`,
               },
             ]}
+            defaultOpen
           />
         </>
       )}
