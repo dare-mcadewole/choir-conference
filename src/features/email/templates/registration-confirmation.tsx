@@ -15,6 +15,7 @@ export function RegistrationConfirmationEmail({
   code,
   assembly,
   family,
+  familyAlias,
   ticketUrl,
   whatsappUrl,
 }: {
@@ -22,9 +23,13 @@ export function RegistrationConfirmationEmail({
   code: string;
   assembly: string;
   family: string;
+  familyAlias?: string | null;
   ticketUrl: string;
   whatsappUrl?: string;
 }) {
+  const alias = familyAlias?.trim();
+  const familyLabel = alias && alias !== family ? `${family} (${alias})` : family;
+
   return (
     <BaseEmail preview="Your All Choirs' Conference registration is confirmed">
       <Text style={styles.eyebrow}>REGISTRATION CONFIRMED</Text>
@@ -47,7 +52,7 @@ export function RegistrationConfirmationEmail({
           </Column>
           <Column style={styles.detailColumn}>
             <Text style={styles.detailLabel}>MUSIC GAMES FAMILY</Text>
-            <Text style={styles.detailValue}>{family}</Text>
+            <Text style={styles.detailValue}>{familyLabel}</Text>
           </Column>
         </Row>
       </Section>

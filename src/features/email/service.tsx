@@ -56,6 +56,7 @@ export async function sendRegistrationConfirmationEmail(
         token: registrations.ticketToken,
         assembly: assemblies.name,
         family: conferenceFamilies.name,
+        familyAlias: conferenceFamilies.alias,
         whatsappUrl: conferenceFamilies.whatsappUrl,
       })
       .from(registrations)
@@ -106,6 +107,7 @@ export async function sendRegistrationConfirmationEmail(
         code={registration.code}
         assembly={registration.assembly}
         family={registration.family ?? "Not assigned"}
+        familyAlias={registration.familyAlias}
         ticketUrl={ticketUrl}
         whatsappUrl={registration.whatsappUrl ?? undefined}
       />,
