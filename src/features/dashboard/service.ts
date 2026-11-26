@@ -1,6 +1,15 @@
 import { count, desc, eq, ilike, or, sql, sum } from "drizzle-orm";
+import {
+  differenceInCalendarDays,
+  eachDayOfInterval,
+  format,
+  parseISO,
+  startOfDay,
+  subDays,
+} from "date-fns";
 import { getDb } from "@/db";
 import { assemblies } from "@/features/assembly/schema";
+import { conference } from "@/features/conference/schema";
 import {
   conferenceFamilies,
   conferenceFamilyAssemblies,
@@ -10,6 +19,81 @@ import {
   registrationCategories,
   registrations,
 } from "@/features/registration/schema";
+
+const AGE_RANGES = [
+  "15 - 20",
+  "21 - 29",
+  "30 - 39",
+  "40 - 49",
+  "50 and above",
+] as const;
+
+function buildRegistrationTrend(
+  rows: Array<{ date: string; total: number | string }>,
+  opensAt: Date | null,
+) {
+  if (!rows.length) return [];
+
+  const counts = new Map(rows.map((row) => [row.date, Number(row.total)]));
+  const first = startOfDay(parseISO(rows[0].date));
+  const last = startOfDay(parseISO(rows[rows.length - 1].date));
+  const today = startOfDay(new Date());
+  const end = last > today ? last : today;
+  const configuredStart = opensAt ? startOfDay(opensAt) : first;
+  const start = configuredStart < first ? configuredStart : first;
+  const cappedStart =
+    differenceInCalendarDays(end, start) > 90 ? subDays(end, 90) : start;
+
+  if (cappedStart > end) return [];
+
+  return eachDayOfInterval({ start: cappedStart, end }).map((day) => {
+    const date = format(day, "yyyy-MM-dd");
+    return {
+      date,
+      label: format(day, "MMM d"),
+      total: counts.get(date) ?? 0,
+    };
+  });
+}
+
+function buildAgeDistribution(
+  rows: Array<{ range: string; total: number | string }>,
+) {
+  const counts = new Map(rows.map((row) => [row.range, Number(row.total)]));
+  const known = new Set<string>(AGE_RANGES);
+  const distribution = AGE_RANGES.map((range) => ({
+    range,
+    total: counts.get(range) ?? 0,
+  }));
+  const extras = rows
+    .filter((row) => !known.has(row.range))
+    .map((row) => ({
+      range: row.range.trim() || "Not provided",
+      total: Number(row.total),
+    }))
+    .sort((a, b) => b.total - a.total);
+
+  return [...distribution, ...extras];
+}
+
+function buildGenderRatio(
+  rows: Array<{ gender: "MALE" | "FEMALE"; total: number | string }>,
+) {
+  const counts = new Map(rows.map((row) => [row.gender, Number(row.total)]));
+
+  return [
+    {
+      key: "MALE" as const,
+      label: "Male",
+      total: counts.get("MALE") ?? 0,
+    },
+    {
+      key: "FEMALE" as const,
+      label: "Female",
+      total: counts.get("FEMALE") ?? 0,
+    },
+  ];
+}
 
 export async function findStatistics() {
   const db = getDb();
@@ -68,9 +152,40 @@ export async function findStatistics() {
       eq(registrationCategories.id, registrations.categoryId),
     )
     .groupBy(registrationCategories.id);
+  const [trendRows, ageRows, genderRows, conferenceRows] = await Promise.all([
+    db
+      .select({
+        date: sql<string>`to_char(date_trunc('day', ${registrations.createdAt}), 'YYYY-MM-DD')`,
+        total: count(),
+      })
+      .from(registrations)
+      .groupBy(sql`date_trunc('day', ${registrations.createdAt})`)
+      .orderBy(sql`date_trunc('day', ${registrations.createdAt})`),
+    db
+      .select({
+        range: registrations.ageRange,
+        total: count(),
+      })
+      .from(registrations)
+      .groupBy(registrations.ageRange),
+    db
+      .select({
+        gender: registrations.gender,
+        total: count(),
+      })
+      .from(registrations)
+      .groupBy(registrations.gender),
+    db.select({ opensAt: conference.opensAt }).from(conference).limit(1),
+  ]);
   return {
-    total: total?.total ?? 0,
-    totalRegistrations: totalRegistrations?.total ?? 0,
+    total: Number(total?.total ?? 0),
+    totalRegistrations: Number(totalRegistrations?.total ?? 0),
+    registrationTrend: buildRegistrationTrend(
+      trendRows,
+      conferenceRows[0]?.opensAt ?? null,
+    ),
+    ageDistribution: buildAgeDistribution(ageRows),
+    genderRatio: buildGenderRatio(genderRows),
     families,
     leaderboard,
     categories,

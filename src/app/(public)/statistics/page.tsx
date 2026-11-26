@@ -9,9 +9,12 @@ import {
 import { Logo } from "@/components/logo";
 import * as dashboardService from "@/features/dashboard/service";
 import Metric from "@/app/(public)/statistics/components/Metric";
+import { AgeDistributionChart } from "./components/age-distribution-chart";
 import { AssemblyLeaderboard } from "./components/assembly-leaderboard";
 import { FamilyBreakdown } from "./components/family-breakdown";
-import { RegistrationCategoryBreakdown } from "./components/registration-category-breakdown";
+import { GenderRatioChart } from "./components/gender-ratio-chart";
+import { RegistrationCategoryChart } from "./components/registration-category-chart";
+import { RegistrationTrendChart } from "./components/registration-trend-chart";
 
 async function stats() {
   try {
@@ -20,6 +23,9 @@ async function stats() {
     return {
       total: 0,
       totalRegistrations: 0,
+      registrationTrend: [],
+      ageDistribution: [],
+      genderRatio: [],
       families: [],
       leaderboard: [],
       categories: [],
@@ -110,9 +116,14 @@ export default async function StatisticsPage() {
           />
         </div>
 
-        <div className="mt-5 grid lg:grid-cols-2 gap-5">
+        <div className="mt-5 grid items-start gap-5 lg:grid-cols-2">
+          <div className="lg:col-span-2">
+            <RegistrationTrendChart data={data.registrationTrend} />
+          </div>
           <FamilyBreakdown families={data.families} total={data.total} />
-          <RegistrationCategoryBreakdown categories={data.categories} />
+          <GenderRatioChart data={data.genderRatio} />
+          <AgeDistributionChart data={data.ageDistribution} />
+          <RegistrationCategoryChart data={data.categories} />
         </div>
 
         <div className="mt-8">
