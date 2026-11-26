@@ -1,6 +1,13 @@
 import * as conferenceService from "@/features/conference/service";
 import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import { SettingsForm } from "./components/settings-form";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Settings",
+  description:
+    "Manage conference settings and registration behavior.",
+});
 
 export default async function SettingsPage() {
   const settings = await conferenceService.findOne();

@@ -3,6 +3,13 @@ import { Search, Users } from "lucide-react";
 import * as registrationService from "@/features/registration/service";
 import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import { RegistrationDirectory } from "./components/registration-directory";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Registrations",
+  description:
+    "Manage attendee registrations.",
+});
 
 export default async function RegistrationsPage({
   searchParams,

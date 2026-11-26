@@ -3,6 +3,13 @@ import { notFound } from "next/navigation";
 import * as conferenceService from "@/features/conference/service";
 import * as ticketService from "@/features/ticket/service";
 import { TicketCard } from "@/features/ticket/components/ticket-card";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Your conference pass",
+  description:
+    "Your All Choirs' Conference 2027 pass and check-in QR code.",
+});
 
 export default async function TicketPage({
   params,

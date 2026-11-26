@@ -1,6 +1,13 @@
 import { Search, Ticket } from "lucide-react";
 import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import * as ticketService from "@/features/ticket/service";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Tickets",
+  description:
+    "Review issued conference tickets.",
+});
 
 const dateFormatter = new Intl.DateTimeFormat("en-NG", {
   dateStyle: "medium",

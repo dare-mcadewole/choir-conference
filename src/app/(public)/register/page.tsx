@@ -5,6 +5,13 @@ import { CountdownTimer } from "@/features/conference/components/countdown-timer
 import { RegistrationForm } from "@/features/registration/components/form";
 import * as registrationService from "@/features/registration/service";
 import { HistoricalJsonData } from "@/features/ticket/types";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Register",
+  description:
+    "Secure your place at the All Choirs' Conference 2027.",
+});
 
 export default async function RegisterPage({
   searchParams,

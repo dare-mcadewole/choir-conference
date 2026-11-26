@@ -2,6 +2,13 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AdminLoginForm } from "./components/login-form";
 import { Logo } from "@/components/logo";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Admin sign in",
+  description:
+    "Sign in to the conference administration area.",
+});
 
 const authErrors: Record<string, string> = {
   admin_allowlist_not_configured:

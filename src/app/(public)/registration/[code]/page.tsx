@@ -5,6 +5,13 @@ import * as registrationService from "@/features/registration/service";
 import { Logo } from "@/components/logo";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Registration confirmation",
+  description:
+    "View your All Choirs' Conference 2027 registration details and ticket.",
+});
 
 export default async function ConfirmationPage({
   params,

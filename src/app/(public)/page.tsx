@@ -6,6 +6,11 @@ import * as speakerService from "@/features/speaker/service";
 import { getInitials } from "@/features/shared/utils/strings";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
+import { createMetadata, SITE_NAME } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: SITE_NAME,
+});
 
 async function getLandingData() {
   try {

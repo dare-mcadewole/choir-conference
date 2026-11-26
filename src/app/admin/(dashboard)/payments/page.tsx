@@ -1,6 +1,13 @@
 import { CreditCard, Search } from "lucide-react";
 import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import * as paymentService from "@/features/payment/service";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Payments",
+  description:
+    "Review conference payment activity.",
+});
 
 const dateFormatter = new Intl.DateTimeFormat("en-NG", {
   dateStyle: "medium",

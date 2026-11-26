@@ -4,6 +4,13 @@ import * as familyService from "@/features/family/service";
 import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import { MetricCard } from "@/app/admin/_components/metric-card";
 import { FamilyCard } from "./components/family-card";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Music game families",
+  description:
+    "Manage music game families and assembly assignments.",
+});
 
 export default async function FamiliesPage({
   searchParams,

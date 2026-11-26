@@ -3,6 +3,13 @@ import { Building2, Search } from "lucide-react";
 import * as assemblyService from "@/features/assembly/service";
 import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import { CreateAssemblyDialog } from "./components/create-assembly-dialog";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Assemblies",
+  description:
+    "Manage conference assemblies.",
+});
 
 export default async function AssembliesPage({
   searchParams,

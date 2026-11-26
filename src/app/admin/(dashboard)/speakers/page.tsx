@@ -2,6 +2,13 @@ import { Mic, Users } from "lucide-react";
 import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import * as speakerService from "@/features/speaker/service";
 import { SpeakerCard } from "./components/speaker-card";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Speakers",
+  description:
+    "Manage conference speakers.",
+});
 
 export default async function SpeakersPage() {
   const speakers = await speakerService.findAdminSpeakers();

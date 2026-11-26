@@ -19,6 +19,13 @@ import { MetricCard } from "@/app/admin/_components/metric-card";
 import { RegistrationStatus } from "@/app/admin/_components/registration-status";
 import { StatusSummary } from "@/app/admin/_components/status-summary";
 import { WorkspaceCard } from "@/app/admin/_components/workspace-card";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Dashboard",
+  description:
+    "Conference registration and activity overview.",
+});
 
 async function overview() {
   try {

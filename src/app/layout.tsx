@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
 import { IBM_Plex_Sans } from "next/font/google";
+import { createMetadata, SITE_NAME } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 import { Providers } from "./providers";
 
@@ -18,11 +18,7 @@ const titleFont = localFont({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "All Choirs' Conference 2027",
-  description:
-    "THE ABLE MINISTER — a gathering of choristers in purpose and power.",
-};
+export const metadata = createMetadata({ title: SITE_NAME });
 
 export default function RootLayout({
   children,

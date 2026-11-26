@@ -15,6 +15,13 @@ import { FamilyBreakdown } from "./components/family-breakdown";
 import { GenderRatioChart } from "./components/gender-ratio-chart";
 import { RegistrationCategoryChart } from "./components/registration-category-chart";
 import { RegistrationTrendChart } from "./components/registration-trend-chart";
+import { createMetadata } from "@/lib/seo";
+
+export const metadata = createMetadata({
+  title: "Conference statistics",
+  description:
+    "Live registration statistics for the All Choirs' Conference 2027.",
+});
 
 async function stats() {
   try {
