@@ -245,7 +245,7 @@ export function TicketCard({ ticket }: Props) {
               : 48;
   const anchorScripture = ticket.anchorScripture?.trim().toUpperCase() ?? "";
   const themeRuleY = anchorScripture ? 176 : 162;
-  const codeFontSize = ticket.code.length > 14 ? 23 : 32;
+  const codeFontSize = ticket.code.length > 14 ? 24 : 32;
 
   return (
     <figure className="space-y-4">
