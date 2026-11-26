@@ -1,6 +1,7 @@
 import { Mic, Users } from "lucide-react";
 import { AdminPageHeader } from "@/app/admin/_components/admin-page-header";
 import * as speakerService from "@/features/speaker/service";
+import { CreateSpeakerDialog } from "./components/create-speaker-dialog";
 import { SpeakerCard } from "./components/speaker-card";
 import { createMetadata } from "@/lib/seo";
 
@@ -13,13 +14,20 @@ export const metadata = createMetadata({
 export default async function SpeakersPage() {
   const speakers = await speakerService.findAdminSpeakers();
   const publishedCount = speakers.filter((speaker) => speaker.published).length;
+  const nextSortOrder =
+    speakers.reduce(
+      (highest, speaker) => Math.max(highest, speaker.sortOrder),
+      -1,
+    ) + 1;
 
   return (
     <>
       <AdminPageHeader
         title="Speakers"
         description="Manage speaker profiles and control which speakers appear on the public conference page."
-      />
+      >
+        <CreateSpeakerDialog defaultSortOrder={nextSortOrder} />
+      </AdminPageHeader>
 
       {speakers.length ? (
         <section

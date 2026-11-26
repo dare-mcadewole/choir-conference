@@ -32,8 +32,7 @@ const imageUrlSchema = z
   }, "Enter an HTTP or HTTPS image URL.")
   .transform((value) => value || null);
 
-const updateSpeakerSchema = z.object({
-  id: z.uuid("Choose a valid speaker."),
+const speakerDetailsSchema = z.object({
   fullName: z.string().trim().min(1, "Enter a speaker name.").max(160),
   designation: nullableText(160),
   organization: nullableText(160),
@@ -47,6 +46,57 @@ const updateSpeakerSchema = z.object({
     .transform(Number)
     .pipe(z.number().int().min(0).max(100000)),
 });
+
+const createSpeakerSchema = speakerDetailsSchema;
+
+const updateSpeakerSchema = speakerDetailsSchema.extend({
+  id: z.uuid("Choose a valid speaker."),
+});
+
+export async function createSpeakerAction(
+  _previousState: SpeakerActionState,
+  formData: FormData,
+): Promise<SpeakerActionState> {
+  const parsed = createSpeakerSchema.safeParse({
+    fullName: formData.get("fullName"),
+    designation: formData.get("designation"),
+    organization: formData.get("organization"),
+    biography: formData.get("biography"),
+    imageUrl: formData.get("imageUrl"),
+    htmlClassName: formData.get("htmlClassName"),
+    published: formData.get("published") === "true",
+    sortOrder: formData.get("sortOrder"),
+  });
+  if (!parsed.success) {
+    return {
+      error: parsed.error.issues[0]?.message ?? "Check the speaker details.",
+    };
+  }
+
+  let admin;
+  try {
+    admin = await getAdminUser();
+  } catch (error) {
+    console.error("Could not verify administrator session.", error);
+    return {
+      error: "Could not verify administrator access. Please sign in again.",
+    };
+  }
+  if (!admin) {
+    return { error: "Sign in with an approved administrator account." };
+  }
+
+  try {
+    await speakerService.createAdminSpeaker(parsed.data);
+  } catch (error) {
+    console.error("Could not create speaker.", error);
+    return { error: "Could not create this speaker. Please try again." };
+  }
+
+  revalidatePath("/admin/speakers");
+  revalidatePath("/");
+  return { success: "Speaker created." };
+}
 
 export async function updateSpeakerAction(
   _previousState: SpeakerActionState,

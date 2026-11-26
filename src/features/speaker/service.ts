@@ -32,6 +32,11 @@ export class SpeakerUpdateError extends Error {
   }
 }
 
+export async function createAdminSpeaker(details: AdminSpeakerUpdate) {
+  const db = getDb();
+  await db.insert(speakers).values(details);
+}
+
 export async function updateAdminSpeaker(
   id: string,
   details: AdminSpeakerUpdate,
