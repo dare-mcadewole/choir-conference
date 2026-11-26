@@ -127,9 +127,12 @@ export function TicketCard({ ticket }: Props) {
     QRCode.toDataURL(
       `${window.location.origin}/api/tickets/verify/${encodeURIComponent(ticket.token)}`,
       {
-        margin: 1,
+        margin: 0.25,
         width: 240,
-        color: { dark: "#121B2E", light: "#FFFFFF" },
+        color: {
+          dark: "#121B2E",
+          light: "#FFFFFF",
+        },
       },
     )
       .then((dataUrl) => {
@@ -248,11 +251,11 @@ export function TicketCard({ ticket }: Props) {
         ref={ticketRef}
         xmlns="http://www.w3.org/2000/svg"
         width="1000"
-        height="560"
-        viewBox="0 0 1000 560"
+        height="500"
+        viewBox="0 0 1000 500"
         role="img"
         aria-label={`Conference ticket for ${ticket.fullName}`}
-        className="block h-auto w-full overflow-hidden rounded-[2rem] shadow-2xl shadow-primary/20"
+        className="lg:scale-75 block h-auto w-full overflow-hidden rounded-[1.95rem] shadow-2xl shadow-primary/20"
       >
         <defs>
           <mask
@@ -261,11 +264,11 @@ export function TicketCard({ ticket }: Props) {
             x="0"
             y="0"
             width="1000"
-            height="560"
+            height="500"
           >
-            <rect width="1000" height="560" rx="32" fill="#ffffff" />
-            <circle cx="300" cy="0" r="18" fill="#000000" />
-            <circle cx="300" cy="560" r="18" fill="#000000" />
+            <rect width="1000" height="500" rx="28" fill="#ffffff" />
+            <circle cx="300" cy="0" r="16" fill="#000000" />
+            <circle cx="300" cy="500" r="16" fill="#000000" />
           </mask>
           <pattern
             id={dotsId}
@@ -278,13 +281,13 @@ export function TicketCard({ ticket }: Props) {
         </defs>
 
         <g mask={`url(#${maskId})`}>
-          <rect width="1000" height="560" fill="#0839d8" />
+          <rect width="1000" height="500" fill="#0839d8" />
           <circle cx="944" cy="20" r="190" fill="#d095ff" opacity=".16" />
-          <circle cx="712" cy="570" r="170" fill="#fc63c1" opacity=".12" />
+          <circle cx="712" cy="520" r="160" fill="#fc63c1" opacity=".12" />
           <rect
             x="300"
             width="700"
-            height="560"
+            height="500"
             fill={`url(#${dotsId})`}
             opacity=".55"
           />
@@ -292,9 +295,9 @@ export function TicketCard({ ticket }: Props) {
 
         <line
           x1="300"
-          y1="26"
+          y1="24"
           x2="300"
-          y2="534"
+          y2="476"
           stroke="#ffffff"
           strokeOpacity=".35"
           strokeWidth="2"
@@ -302,20 +305,20 @@ export function TicketCard({ ticket }: Props) {
           strokeLinecap="round"
         />
 
-        <rect x="40" y="88" width="220" height="220" rx="22" fill="#ffffff" />
+        <rect x="50" y="106" width="200" height="200" rx="20" fill="#ffffff" />
         {qrCode ? (
           <image
             href={qrCode}
-            x="58"
-            y="106"
-            width="184"
-            height="184"
+            x="66"
+            y="122"
+            width="168"
+            height="168"
             aria-label="Ticket verification QR code"
           />
         ) : (
           <text
             x="150"
-            y="198"
+            y="206"
             textAnchor="middle"
             fontFamily={fonts.body}
             fontSize="11"
@@ -329,7 +332,7 @@ export function TicketCard({ ticket }: Props) {
 
         <text
           x="150"
-          y="342"
+          y="330"
           textAnchor="middle"
           fontFamily={fonts.body}
           fontSize="10"
@@ -342,7 +345,7 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <text
           x="150"
-          y="378"
+          y="365"
           textAnchor="middle"
           fontFamily={fonts.body}
           fontSize="10"
@@ -354,8 +357,9 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <text
           x="150"
-          y="410"
+          y="394"
           textAnchor="middle"
+          fontFamily={fonts.body}
           fontSize={codeFontSize}
           fontWeight={700}
           letterSpacing=".5"
@@ -366,7 +370,7 @@ export function TicketCard({ ticket }: Props) {
 
         <text
           x="344"
-          y="76"
+          y="64"
           fontFamily={fonts.body}
           fontSize="12"
           fontWeight="700"
@@ -377,10 +381,10 @@ export function TicketCard({ ticket }: Props) {
           ALL CHOIRS&apos; CONFERENCE 2027
         </text>
 
-        <rect x="822" y="50" width="122" height="34" rx="17" fill="#d4ff00" />
+        <rect x="822" y="40" width="122" height="32" rx="16" fill="#d4ff00" />
         <text
           x="883"
-          y="72"
+          y="61"
           textAnchor="middle"
           fontFamily={fonts.body}
           fontSize="13"
@@ -393,7 +397,7 @@ export function TicketCard({ ticket }: Props) {
 
         <text
           x="344"
-          y="164"
+          y="142"
           fontFamily={fonts.display}
           fontSize={themeFontSize}
           letterSpacing=".5"
@@ -401,11 +405,11 @@ export function TicketCard({ ticket }: Props) {
         >
           {theme}
         </text>
-        <rect x="344" y="188" width="72" height="5" rx="2.5" fill="#d4ff00" />
+        <rect x="344" y="162" width="64" height="4" rx="2" fill="#d4ff00" />
 
         <text
           x="344"
-          y="244"
+          y="204"
           fontFamily={fonts.body}
           fontSize="10"
           fontWeight="600"
@@ -417,7 +421,7 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <text
           x="944"
-          y="244"
+          y="204"
           textAnchor="end"
           fontFamily={fonts.body}
           fontSize={valueFontSize(ticket.fullName, 18)}
@@ -428,16 +432,16 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <line
           x1="344"
-          y1="268"
+          y1="226"
           x2="944"
-          y2="268"
+          y2="226"
           stroke="#ffffff"
           strokeOpacity=".14"
         />
 
         <text
           x="344"
-          y="306"
+          y="258"
           fontFamily={fonts.body}
           fontSize="10"
           fontWeight="600"
@@ -449,7 +453,7 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <text
           x="944"
-          y="306"
+          y="258"
           textAnchor="end"
           fontFamily={fonts.body}
           fontSize={valueFontSize(ticket.assembly, 16)}
@@ -460,16 +464,16 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <line
           x1="344"
-          y1="330"
+          y1="280"
           x2="944"
-          y2="330"
+          y2="280"
           stroke="#ffffff"
           strokeOpacity=".14"
         />
 
         <text
           x="344"
-          y="368"
+          y="312"
           fontFamily={fonts.body}
           fontSize="10"
           fontWeight="600"
@@ -481,7 +485,7 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <text
           x="944"
-          y="368"
+          y="312"
           textAnchor="end"
           fontFamily={fonts.body}
           fontSize={valueFontSize(ticket.family, 16)}
@@ -492,18 +496,18 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <line
           x1="344"
-          y1="392"
+          y1="334"
           x2="944"
-          y2="392"
+          y2="334"
           stroke="#ffffff"
           strokeOpacity=".14"
         />
 
         <text
           x="344"
-          y="500"
+          y="448"
           fontFamily={fonts.body}
-          fontSize="10"
+          fontSize="9.5"
           fontWeight="600"
           letterSpacing="2"
           fill="#ffffff"
@@ -514,7 +518,7 @@ export function TicketCard({ ticket }: Props) {
 
         <text
           x="944"
-          y="466"
+          y="412"
           textAnchor="end"
           fontFamily={fonts.body}
           fontSize="10"
@@ -527,15 +531,17 @@ export function TicketCard({ ticket }: Props) {
         </text>
         <text
           x="944"
-          y="504"
+          y="448"
           textAnchor="end"
+          fontFamily={fonts.body}
           fontWeight={700}
-          fontSize="28"
+          fontSize="26"
           fill="#d4ff00"
         >
           {formatAmount(ticket.amount)}
         </text>
       </svg>
+
       <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
         <p className="text-sm leading-6 text-slate-600">
           Save this ticket and present its QR code at conference check-in.
@@ -546,6 +552,7 @@ export function TicketCard({ ticket }: Props) {
           disabled={!qrCode || downloading}
           className={cn(
             buttonVariants({ size: "lg" }),
+            "bg-slate-900 hover:bg-slate-700 text-secondary-100",
             "shadow-lg shadow-primary/20 hover:-translate-y-0.5",
           )}
         >
