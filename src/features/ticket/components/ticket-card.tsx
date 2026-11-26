@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { Download } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import QRCode from "qrcode";
 import { toast } from "sonner";
 import { buttonVariants } from "@/components/ui/button";
@@ -99,10 +99,91 @@ async function embedFontFaces(fontStacks: string[]) {
   return css.join("\n");
 }
 
+function ticketFileName(code: string) {
+  return `all-choirs-conference-2027-${code.replace(/[^a-zA-Z0-9_-]/g, "-")}.png`;
+}
+
+async function renderTicketPng(svg: SVGSVGElement, fontStacks: string[]) {
+  const clone = svg.cloneNode(true) as SVGSVGElement;
+  try {
+    const fontCss = await embedFontFaces(fontStacks);
+    if (fontCss) {
+      const style = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "style",
+      );
+      style.textContent = fontCss;
+      clone.insertBefore(style, clone.firstChild);
+    }
+  } catch {
+    /* fall back to the declared font stacks */
+  }
+
+  const svgUrl = URL.createObjectURL(
+    new Blob([new XMLSerializer().serializeToString(clone)], {
+      type: "image/svg+xml;charset=utf-8",
+    }),
+  );
+
+  try {
+    const image = new Image();
+    image.src = svgUrl;
+    await image.decode();
+
+    const scale = 2;
+    const canvas = document.createElement("canvas");
+    const { width, height } = svg.viewBox.baseVal;
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Your browser could not prepare the image.");
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    return await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        (blob) =>
+          blob
+            ? resolve(blob)
+            : reject(new Error("Your browser could not create the image.")),
+        "image/png",
+      );
+    });
+  } finally {
+    URL.revokeObjectURL(svgUrl);
+  }
+}
+
+function downloadWithAnchor(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function openTicketImage(file: File) {
+  const url = URL.createObjectURL(file);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.target = "_blank";
+  anchor.rel = "noopener noreferrer";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 300_000);
+  toast.info("Press and hold the ticket image, then choose Save to Photos.");
+}
+
 export function TicketCard({ ticket }: Props) {
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [qrError, setQrError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [isIos, setIsIos] = useState(false);
+  const [fontsReady, setFontsReady] = useState(false);
+  const [ticketFile, setTicketFile] = useState<File | null>(null);
   const [fonts, setFonts] = useState({
     display: "Arial, sans-serif",
     body: "Arial, sans-serif",
@@ -117,6 +198,7 @@ export function TicketCard({ ticket }: Props) {
       display: display ? `${display}, sans-serif` : "Arial, sans-serif",
       body: body ? `${body}, sans-serif` : "Arial, sans-serif",
     });
+    setFontsReady(true);
   }, []);
 
   useEffect(() => {
@@ -154,74 +236,84 @@ export function TicketCard({ ticket }: Props) {
     };
   }, [ticket.token]);
 
+  useEffect(() => {
+    const userAgent = navigator.userAgent;
+    setIsIos(
+      /iP(hone|ad|od)/i.test(userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1),
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!isIos || !qrCode || !fontsReady) return;
+    const svg = ticketRef.current;
+    if (!svg) return;
+
+    let cancelled = false;
+    setTicketFile(null);
+
+    renderTicketPng(svg, [fonts.display, fonts.body])
+      .then((png) => {
+        if (cancelled) return;
+        setTicketFile(
+          new File([png], ticketFileName(ticket.code), { type: "image/png" }),
+        );
+      })
+      .catch(() => {
+        /* the save action retries on demand */
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isIos, qrCode, fontsReady, fonts.display, fonts.body, ticket.code]);
+
   async function downloadTicket() {
     const svg = ticketRef.current;
     if (!svg || !qrCode) return;
 
+    if (isIos && ticketFile) {
+      openTicketImage(ticketFile);
+      return;
+    }
+
     setDownloading(true);
-    let svgUrl: string | undefined;
 
     try {
-      const clone = svg.cloneNode(true) as SVGSVGElement;
-      try {
-        const fontCss = await embedFontFaces([fonts.display, fonts.body]);
-        if (fontCss) {
-          const style = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "style",
+      if (isIos) {
+        const preview = window.open("", "_blank");
+        const file = new File(
+          [await renderTicketPng(svg, [fonts.display, fonts.body])],
+          ticketFileName(ticket.code),
+          { type: "image/png" },
+        );
+
+        if (preview) {
+          const url = URL.createObjectURL(file);
+          preview.location.href = url;
+          window.setTimeout(() => URL.revokeObjectURL(url), 300_000);
+          toast.info(
+            "Press and hold the ticket image, then choose Save to Photos.",
           );
-          style.textContent = fontCss;
-          clone.insertBefore(style, clone.firstChild);
+        } else {
+          downloadWithAnchor(file, file.name);
         }
-      } catch {
-        /* fall back to the declared font stacks */
+        return;
       }
 
-      svgUrl = URL.createObjectURL(
-        new Blob([new XMLSerializer().serializeToString(clone)], {
-          type: "image/svg+xml;charset=utf-8",
-        }),
+      const file = new File(
+        [await renderTicketPng(svg, [fonts.display, fonts.body])],
+        ticketFileName(ticket.code),
+        { type: "image/png" },
       );
-      const image = new Image();
-      image.src = svgUrl;
-      await image.decode();
-
-      const scale = 2;
-      const canvas = document.createElement("canvas");
-      const { width, height } = svg.viewBox.baseVal;
-      canvas.width = width * scale;
-      canvas.height = height * scale;
-      const context = canvas.getContext("2d");
-      if (!context)
-        throw new Error("Your browser could not prepare the image.");
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-      const png = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(
-          (blob) =>
-            blob
-              ? resolve(blob)
-              : reject(new Error("Your browser could not create the image.")),
-          "image/png",
-        );
-      });
-      const url = URL.createObjectURL(png);
-      const anchor = document.createElement("a");
-      const safeCode = ticket.code.replace(/[^a-zA-Z0-9_-]/g, "-");
-      anchor.href = url;
-      anchor.download = `all-choirs-conference-2027-${safeCode}.png`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      downloadWithAnchor(file, file.name);
     } catch (error) {
       toast.error(
         error instanceof Error
-          ? `Could not download the ticket: ${error.message}`
-          : "The ticket image could not be downloaded.",
+          ? `Could not open the ticket: ${error.message}`
+          : "The ticket image could not be opened.",
       );
     } finally {
-      if (svgUrl) URL.revokeObjectURL(svgUrl);
       setDownloading(false);
     }
   }
@@ -246,6 +338,15 @@ export function TicketCard({ ticket }: Props) {
   const anchorScripture = ticket.anchorScripture?.trim().toUpperCase() ?? "";
   const themeRuleY = anchorScripture ? 176 : 162;
   const codeFontSize = ticket.code.length > 14 ? 24 : 32;
+  const saveLabel = qrError
+    ? "Ticket unavailable"
+    : downloading
+      ? isIos
+        ? "Preparing image..."
+        : "Preparing download..."
+      : qrCode
+        ? "Download ticket (PNG)"
+        : "Preparing ticket...";
 
   return (
     <figure className="space-y-4">
@@ -567,8 +668,17 @@ export function TicketCard({ ticket }: Props) {
 
       <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
         <p className="text-sm leading-6 text-slate-600">
-          <strong>Save</strong> or <strong>Screenshot</strong> this ticket and
-          present its QR code at conference check-in.
+          {isIos ? (
+            <>
+              Tap <strong>Download ticket</strong>, then press and hold the
+              image and choose <strong>Save to Photos</strong>.
+            </>
+          ) : (
+            <>
+              <strong>Save</strong> or <strong>Screenshot</strong> this ticket
+              and present its QR code at conference check-in.
+            </>
+          )}
         </p>
         <button
           type="button"
@@ -580,14 +690,8 @@ export function TicketCard({ ticket }: Props) {
             "shadow-lg shadow-primary/20 hover:-translate-y-0.5",
           )}
         >
-          <Download size={17} />
-          {qrError
-            ? "Ticket unavailable"
-            : downloading
-              ? "Preparing download..."
-              : qrCode
-                ? "Download ticket (PNG)"
-                : "Preparing ticket..."}
+          {isIos ? <ExternalLink size={17} /> : <Download size={17} />}
+          {saveLabel}
         </button>
       </div>
     </figure>
