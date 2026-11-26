@@ -338,6 +338,21 @@ export function TicketCard({ ticket }: Props) {
   const anchorScripture = ticket.anchorScripture?.trim().toUpperCase() ?? "";
   const themeRuleY = anchorScripture ? 176 : 162;
   const codeFontSize = ticket.code.length > 14 ? 24 : 32;
+  const familyAlias = ticket.familyAlias?.trim();
+  const familyLabel = ticket.family
+    ? familyAlias && familyAlias !== ticket.family
+      ? `${ticket.family} (${familyAlias})`
+      : ticket.family
+    : familyAlias || null;
+  const statusLabel = ticket.registrationStatus
+    .replace(/_/g, " ")
+    .toUpperCase();
+  const statusColor =
+    ticket.registrationStatus === "CONFIRMED"
+      ? "#d4ff00"
+      : ticket.registrationStatus === "PENDING_PAYMENT"
+        ? "#ffc24b"
+        : "#ff8a8a";
   const saveLabel = qrError
     ? "Ticket unavailable"
     : downloading
@@ -612,11 +627,11 @@ export function TicketCard({ ticket }: Props) {
           y="312"
           textAnchor="end"
           fontFamily={fonts.body}
-          fontSize={valueFontSize(ticket.family, 16)}
+          fontSize={valueFontSize(familyLabel, 16)}
           fontWeight="700"
           fill="#ffffff"
         >
-          {ticket.family ?? "—"}
+          {familyLabel ?? "—"}
         </text>
         <line
           x1="344"
@@ -626,6 +641,23 @@ export function TicketCard({ ticket }: Props) {
           stroke="#ffffff"
           strokeOpacity=".14"
         />
+
+        <circle cx="347" cy="426" r="2.5" fill={statusColor} />
+        <text
+          x="356"
+          y="430"
+          fontFamily={fonts.body}
+          fontSize="9"
+          fontWeight="600"
+          letterSpacing="1.6"
+          fill="#ffffff"
+          fillOpacity=".5"
+        >
+          REGISTRATION{" "}
+          <tspan fill={statusColor} fillOpacity="1" fontWeight="700">
+            {statusLabel}
+          </tspan>
+        </text>
 
         <text
           x="344"

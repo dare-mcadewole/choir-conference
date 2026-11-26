@@ -5,10 +5,12 @@ export type TicketDetails = {
   code: string;
   assembly: string | null;
   family: string | null;
+  familyAlias: string | null;
   token: string;
   theme: string | null;
   anchorScripture: string | null;
   amount: string | null;
+  registrationStatus: string;
 };
 
 export interface HistoricalJsonData {

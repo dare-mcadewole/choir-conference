@@ -43,10 +43,12 @@ export default async function TicketPage({
             code: ticket.code ?? "—",
             assembly: ticket.assembly,
             family: ticket.family,
+            familyAlias: ticket.familyAlias,
             token,
             theme,
             anchorScripture,
             amount: ticket.amount,
+            registrationStatus: ticket.registrationStatus,
           }}
         />
         <div className="mt-8 text-center">

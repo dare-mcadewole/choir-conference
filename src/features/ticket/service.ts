@@ -47,10 +47,12 @@ export async function findOneByToken(token: string) {
   const [row] = await db
     .select({
       status: tickets.status,
+      registrationStatus: registrations.status,
       fullName: registrations.fullName,
       code: registrations.registrationCode,
       assembly: assemblies.name,
       family: conferenceFamilies.name,
+      familyAlias: conferenceFamilies.alias,
       categorySlug: registrationCategories.slug,
     })
     .from(tickets)
@@ -86,10 +88,12 @@ export async function findOneByToken(token: string) {
 
   return {
     status: row.status,
+    registrationStatus: row.registrationStatus,
     fullName: row.fullName,
     code: row.code,
     assembly: row.assembly,
     family: row.family,
+    familyAlias: row.familyAlias,
     amount: ticketType?.price ?? null,
   };
 }

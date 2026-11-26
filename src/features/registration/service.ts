@@ -405,6 +405,7 @@ export async function createRegistration(input: RegistrationInput) {
     .select({
       assembly: assemblies.name,
       family: conferenceFamilies.name,
+      familyAlias: conferenceFamilies.alias,
     })
     .from(assemblies)
     .innerJoin(
@@ -487,10 +488,12 @@ export async function createRegistration(input: RegistrationInput) {
             code: registrationCode,
             assembly: ticketDetails.assembly,
             family: ticketDetails.family,
+            familyAlias: ticketDetails.familyAlias,
             token: ticketToken,
             theme: settings.theme,
             anchorScripture: settings.anchorScripture,
             amount: ticketType.price,
+            registrationStatus: registration.status,
           }
         : null,
   };
