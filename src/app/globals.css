@@ -18,6 +18,9 @@
     @apply transition-colors;
   }
   :root {
+    --font-body: var(--font-body-latin), var(--font-body-latin-ext),
+      sans-serif;
+
     --background: oklch(1 0 0);
 
     --foreground: oklch(0.145 0 0);
