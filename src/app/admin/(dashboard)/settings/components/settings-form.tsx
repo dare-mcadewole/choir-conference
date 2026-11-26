@@ -204,6 +204,25 @@ export function SettingsForm({ settings }: { settings: ConferenceSettings }) {
       <section className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6">
         <div className="border-b border-slate-100 pb-4">
           <h2 className="text-base font-semibold text-slate-900">
+            Public page
+          </h2>
+          <p className="mt-1 text-xs text-slate-500">
+            Control what attendees see on the conference site.
+          </p>
+        </div>
+        <div className="mt-5 grid gap-3 md:grid-cols-2">
+          <SettingToggle
+            name="showCountdownTimer"
+            title="Show countdown timer"
+            description="Display a live countdown to the conference on the landing page."
+            defaultChecked={settings.showCountdownTimer ?? true}
+          />
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6">
+        <div className="border-b border-slate-100 pb-4">
+          <h2 className="text-base font-semibold text-slate-900">
             Registration settings
           </h2>
           <p className="mt-1 text-xs text-slate-500">

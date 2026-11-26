@@ -55,6 +55,7 @@ const settingsSchema = z
     registrationOpen: z.boolean(),
     allowDuplicates: z.boolean(),
     requirePayment: z.boolean(),
+    showCountdownTimer: z.boolean(),
   })
   .superRefine((settings, context) => {
     if (
@@ -88,6 +89,7 @@ export async function updateConferenceSettingsAction(
     registrationOpen: formData.get("registrationOpen") === "true",
     allowDuplicates: formData.get("allowDuplicates") === "true",
     requirePayment: formData.get("requirePayment") === "true",
+    showCountdownTimer: formData.get("showCountdownTimer") === "true",
   });
   if (!parsed.success) {
     return {

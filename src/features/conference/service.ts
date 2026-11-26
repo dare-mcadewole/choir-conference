@@ -24,6 +24,7 @@ export type ConferenceSettingsUpdate = {
   registrationOpen: boolean;
   allowDuplicates: boolean;
   requirePayment: boolean;
+  showCountdownTimer: boolean;
 };
 
 export class ConferenceSettingsError extends Error {
