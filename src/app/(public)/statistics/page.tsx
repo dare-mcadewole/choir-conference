@@ -48,8 +48,8 @@ export default async function StatisticsPage() {
             <span className="grid size-10 place-items-center rounded-full bg-primary">
               <Logo className="size-8" />
             </span>
-            <span className="font-display text-xl sm:text-2xl">
-              ACC <span className="text-secondary">2027</span>
+            <span className="text-base font-semibold tracking-tight sm:text-xl">
+              All Choirs' Conference 2027
             </span>
           </Link>
           <Link
