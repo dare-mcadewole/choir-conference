@@ -1,27 +1,59 @@
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 
+const quickLinks = [
+  { href: "/", label: "Home" },
+  { href: "/register", label: "Register" },
+  // { href: "/statistics", label: "Statistics" },
+  { href: "/admin/login", label: "Login" },
+] as const;
+
+const year = new Date().getFullYear();
+
 export function Footer() {
   return (
-    <footer className="bg-ink py-12 text-slate-300">
-      <div className="page-shell flex flex-col justify-between gap-8 md:flex-row">
-        <div className="flex items-center gap-3">
-          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/10">
-            <Logo className="size-8" />
-          </span>
-          <div>
-            <p className="font-display text-xl text-white">
-              ALL CHOIRS&apos; CONFERENCE 2027
+    <footer
+      id="site-footer"
+      className="border-t border-white/10 bg-primary-950 text-white"
+    >
+      <div className="page-shell py-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <span className="grid size-10 place-items-center rounded-full border border-white/15 bg-white/10">
+              <Logo className="size-7" />
+            </span>
+            <span>
+              <span className="block font-medium text-xs uppercase sm:text-sm">
+                All Choirs&apos; Conference
+              </span>
+              <span className="mt-0.5 block text-[10px] uppercase tracking-[.24em] text-secondary">
+                The Able Minister
+              </span>
+            </span>
+          </Link>
+
+          <nav aria-label="Footer" className="md:text-right">
+            <p className="text-[10px] font-bold uppercase tracking-[.22em] text-secondary">
+              Quick links
             </p>
-            <p className="mt-2 text-sm text-gold">THE ABLE MINISTER</p>
-          </div>
+            <ul className="mt-2 flex flex-wrap gap-3 text-xs md:justify-end">
+              {quickLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-white/80 transition hover:text-secondary"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
-        <div className="flex gap-6 text-sm">
-          <Link href="/register">Registration</Link>
-          <Link href="/statistics">Conference statistics</Link>
-          <Link href="/admin">Administration</Link>
+
+        <div className="mt-5 flex flex-col gap-2 border-t border-white/10 pt-5 text-[11px] leading-5 text-white/60 sm:flex-row sm:items-center sm:justify-center">
+          <p>&copy; {year} All Choirs&apos; Conference. All rights reserved.</p>
         </div>
-        <p className="text-sm">© 2027 All Choirs&apos; Conference.</p>
       </div>
     </footer>
   );
