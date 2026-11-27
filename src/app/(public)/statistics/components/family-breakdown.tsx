@@ -12,8 +12,6 @@ export function FamilyBreakdown({
   families: StatisticalBreakdown["families"];
   total: number | string;
 }) {
-  const confirmedTotal = Number(total);
-
   return (
     <CollapsibleCard
       id="music-game"
@@ -24,8 +22,8 @@ export function FamilyBreakdown({
       <div className="mt-4 mb-2 space-y-4">
         {families.map((family) => {
           const familyTotal = Number(family.total);
-          const percentage = confirmedTotal
-            ? Math.min(100, Math.round((familyTotal / confirmedTotal) * 100))
+          const percentage = +total
+            ? Math.min(100, Math.round((familyTotal / +total) * 100))
             : 0;
 
           return (
@@ -42,14 +40,14 @@ export function FamilyBreakdown({
                   )}
                 </div>
 
-                <h2 className="font-display text-slate-800 text-2xl">
+                <h2 className="font-semibold text-slate-800 text-2xl">
                   {family.total}
                 </h2>
               </div>
 
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-primary-100">
                 <div
-                  className="h-full rounded-full bg-slate-300 transition-[width]"
+                  className="h-full rounded-full bg-primary transition-[width]"
                   style={{ width: `${percentage}%` }}
                 />
               </div>
