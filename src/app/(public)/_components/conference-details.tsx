@@ -2,11 +2,18 @@ import { CalendarDays, MapPin } from "lucide-react";
 
 export function AnchorScripture({ scripture }: { scripture: string }) {
   return (
-    <p className="mt-5 flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-[.28em] text-secondary sm:text-xs">
+    <a
+      href="https://www.bible.com/bible/111/2CO.3.6.NIV"
+      target="_blank"
+      className="
+        mt-5 flex items-center justify-center gap-3 text-[10px] font-bold
+        uppercase tracking-[.28em] text-secondary sm:text-xs
+      "
+    >
       <span aria-hidden="true" className="h-px w-8 bg-secondary/40" />
       {scripture}
       <span aria-hidden="true" className="h-px w-8 bg-secondary/40" />
-    </p>
+    </a>
   );
 }
 

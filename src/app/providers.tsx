@@ -12,7 +12,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       shallowRouting
     >
       {children}
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-center" richColors />
     </ProgressProvider>
   );
 }

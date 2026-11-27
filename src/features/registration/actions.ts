@@ -4,11 +4,12 @@ import * as registrationService from "@/features/registration/service";
 
 export async function submitRegistration(payload: unknown) {
   const parsed = registrationSchema.safeParse(payload);
-  if (!parsed.success)
+  if (!parsed.success) {
     return {
       ok: false as const,
       error: parsed.error.issues[0]?.message ?? "Please review the form.",
     };
+  }
 
   try {
     const result = await registrationService.createRegistration(parsed.data);

@@ -1,9 +1,23 @@
 import crypto from "crypto";
-import { and, desc, eq, ilike, or } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  or,
+  sql,
+} from "drizzle-orm";
 import { getDb } from "@/db";
+import { assemblies } from "@/features/assembly/schema";
 import { payments, webhookEvents } from "@/features/payment/schema";
-import { registrations } from "@/features/registration/schema";
-import { tickets } from "@/features/ticket/schema";
+import {
+  registrationCategories,
+  registrations,
+} from "@/features/registration/schema";
+import { ticketTypes, tickets } from "@/features/ticket/schema";
 
 export async function findAdminPayments(search?: string) {
   const db = getDb();
@@ -39,6 +53,98 @@ export async function findAdminPayments(search?: string) {
     .orderBy(desc(payments.createdAt));
 }
 
+const ACTIVE_REGISTRATION_STATUSES = [
+  "PENDING_PAYMENT",
+  "CONFIRMED",
+] as const;
+
+export type AssemblyBulkPaymentSummary = {
+  id: string;
+  name: string;
+  totalRegistrations: number;
+  studentRegistrations: number;
+  nonStudentRegistrations: number;
+  studentAmount: number;
+  nonStudentAmount: number;
+  amountDue: number;
+};
+
+export type BulkPaymentRates = {
+  student: number;
+  nonStudent: number;
+  currency: string;
+};
+
+export async function findBulkPaymentSummaries() {
+  const db = getDb();
+  const [rateRows, assemblyRows] = await Promise.all([
+    db
+      .select({
+        slug: ticketTypes.slug,
+        price: ticketTypes.price,
+        currency: ticketTypes.currency,
+      })
+      .from(ticketTypes),
+    db
+      .select({
+        id: assemblies.id,
+        name: assemblies.name,
+        total: count(registrations.id),
+        students: sql<number>`count(${registrations.id}) filter (where ${registrationCategories.slug} = 'student')`,
+      })
+      .from(assemblies)
+      .leftJoin(
+        registrations,
+        and(
+          eq(assemblies.id, registrations.assemblyId),
+          inArray(registrations.status, ACTIVE_REGISTRATION_STATUSES),
+        ),
+      )
+      .leftJoin(
+        registrationCategories,
+        eq(registrations.categoryId, registrationCategories.id),
+      )
+      .groupBy(assemblies.id, assemblies.name)
+      .orderBy(asc(assemblies.name)),
+  ]);
+
+  const studentRate = rateRows.find((rate) => rate.slug === "student");
+  const nonStudentRate = rateRows.find(
+    (rate) => rate.slug === "non-student",
+  );
+  const rates: BulkPaymentRates = {
+    student: Number(studentRate?.price ?? 0),
+    nonStudent: Number(nonStudentRate?.price ?? 0),
+    currency: studentRate?.currency ?? nonStudentRate?.currency ?? "NGN",
+  };
+
+  const summaries = assemblyRows
+    .map((row): AssemblyBulkPaymentSummary => {
+      const totalRegistrations = Number(row.total);
+      const studentRegistrations = Number(row.students);
+      const nonStudentRegistrations = Math.max(
+        0,
+        totalRegistrations - studentRegistrations,
+      );
+      const studentAmount = studentRegistrations * rates.student;
+      const nonStudentAmount = nonStudentRegistrations * rates.nonStudent;
+
+      return {
+        id: row.id,
+        name: row.name,
+        totalRegistrations,
+        studentRegistrations,
+        nonStudentRegistrations,
+        studentAmount,
+        nonStudentAmount,
+        amountDue: studentAmount + nonStudentAmount,
+      };
+    })
+    .filter((row) => row.totalRegistrations > 0);
+
+  return { assemblies: summaries, rates };
+}
+
 export type PaymentProvider = {
   verify(reference: string): Promise<{
     successful: boolean;
@@ -46,8 +152,7 @@ export type PaymentProvider = {
     currency: string;
     raw: unknown;
   }>;
-};
-export const paystack: PaymentProvider = {
+};export const paystack: PaymentProvider = {
   async verify(reference) {
     const secret = process.env.PAYSTACK_SECRET_KEY;
     if (!secret) throw new Error("PAYSTACK_SECRET_KEY is not configured.");

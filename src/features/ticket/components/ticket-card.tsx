@@ -5,7 +5,7 @@ import { Download, ExternalLink } from "lucide-react";
 import QRCode from "qrcode";
 import { toast } from "sonner";
 import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import type { TicketDetails } from "@/features/ticket/types";
 
 type Props = {
@@ -15,13 +15,6 @@ type Props = {
 const APP_ENV = process.env.NEXT_PUBLIC_APP_ENV?.trim().toLowerCase();
 const IS_TEST_ENVIRONMENT =
   APP_ENV === "test" || process.env.NODE_ENV !== "production";
-
-function formatAmount(amount: string | null) {
-  if (!amount) return "—";
-  const value = Number(amount);
-  if (!Number.isFinite(value)) return `₦${amount}`;
-  return `₦${value.toLocaleString("en-NG", { maximumFractionDigits: 0 })}`;
-}
 
 function valueFontSize(value: string | null, base: number) {
   const length = value?.length ?? 0;
@@ -715,7 +708,7 @@ export function TicketCard({ ticket }: Props) {
           fontSize="26"
           fill="#d4ff00"
         >
-          {formatAmount(ticket.amount)}
+          {formatCurrency(ticket.amount)}
         </text>
       </svg>
 
