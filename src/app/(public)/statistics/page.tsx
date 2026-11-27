@@ -138,7 +138,7 @@ export default async function StatisticsPage() {
           </div>
           <FamilyBreakdown
             families={data.families}
-            total={data.totalConfirmedRegistrations}
+            total={data.totalRegistrations}
           />
           <GenderRatioChart data={data.genderRatio} />
           <AgeDistributionChart data={data.ageDistribution} />
