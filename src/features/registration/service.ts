@@ -388,7 +388,9 @@ export async function createRegistration(input: RegistrationInput) {
           ? "email"
           : "phone number";
       throw new Error(
-        `An existing registration was found with that ${entity}. Please check again or contact support.`,
+        `An existing registration was found with that ${entity} (${
+          entity === "email" ? input.email : input.phone
+        }). Please check again or contact support.`,
       );
     }
   }

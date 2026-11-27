@@ -5,15 +5,6 @@ import { CheckCircle2 } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { submitRegistration } from "@/features/registration/actions";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Combobox,
@@ -34,6 +25,7 @@ import {
   registrationSchema,
   type RegistrationInput,
 } from "@/features/registration/validation";
+import { RegistrationErrorDialog } from "./error-dialog";
 import { Field } from "./field";
 import { Input } from "@/components/ui/input";
 import { Gender, VOCAL_PART_OPTIONS, VocalPart } from "@/db/schema";
@@ -590,46 +582,11 @@ export function RegistrationForm({
         </div>
       </form>
 
-      <AlertDialog
-        open={error !== null}
-        onOpenChange={(open) => {
-          if (!open) setError(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Registration could not be completed
-            </AlertDialogTitle>
-            <AlertDialogDescription className="break-words">
-              {error}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            {supportContact && (
-              <Button
-                size="sm"
-                variant="outline"
-                nativeButton={false}
-                render={
-                  <a
-                    href={`https://wa.me/${supportContact}?text=${encodeURIComponent(
-                      `Hi support, I couldn't complete my registration: ${error}`,
-                    )}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  />
-                }
-              >
-                Contact support
-              </Button>
-            )}
-            <AlertDialogAction size="sm" onClick={() => setError(null)}>
-              Try again
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <RegistrationErrorDialog
+        error={error}
+        onClose={() => setError(null)}
+        supportContact={supportContact}
+      />
     </>
   );
 }
