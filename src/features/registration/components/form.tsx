@@ -55,6 +55,9 @@ type Props = {
   };
 };
 
+const supportTemplate =
+  "Hi support, please add my assembly to the choir conference registration site: ";
+
 export function RegistrationForm({
   assemblies,
   categories,
@@ -196,6 +199,8 @@ export function RegistrationForm({
     setSuccess(response);
   });
 
+  const supportContact = process.env.NEXT_PUBLIC_SUPPORT_CONTACT;
+
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-7">
       <div className="grid gap-5 md:grid-cols-2">
@@ -312,7 +317,20 @@ export function RegistrationForm({
               <Field
                 id="assembly-picker"
                 label="Assembly"
-                hint="Make sure to double-check selected assembly"
+                hint={
+                  supportContact && (
+                    <span>
+                      <a
+                        href={`https://wa.me/${supportContact}?text=${supportTemplate}`}
+                        target="_blank"
+                        className="font-semibold text-primary"
+                      >
+                        Reach out
+                      </a>{" "}
+                      if you can't find your assembly
+                    </span>
+                  )
+                }
                 error={errors.assemblyId?.message}
               >
                 <ComboboxInput
