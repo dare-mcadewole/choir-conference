@@ -33,11 +33,7 @@ export type GroupingFamily = {
   registrationCount: number;
 };
 
-export function GroupingsDirectory({
-  groups,
-}: {
-  groups: GroupingFamily[];
-}) {
+export function GroupingsDirectory({ groups }: { groups: GroupingFamily[] }) {
   const [query, setQuery] = useState("");
   const normalized = query.trim().toLowerCase();
   const results = normalized
@@ -213,17 +209,12 @@ export function GroupingsDirectory({
                           {group.name}
                         </h2>
                         {group.alias && (
-                          <span className="rounded-full border border-slate-200 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                          <span className="rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                             {group.alias}
                           </span>
                         )}
                       </div>
-                      {group.description && (
-                        <p className="mt-1 text-xs leading-5 text-slate-500">
-                          {group.description}
-                        </p>
-                      )}
-                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[.18em] text-slate-400">
+                      <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[.18em] text-slate-400">
                         {group.assemblies.length}{" "}
                         {group.assemblies.length === 1
                           ? "assembly"
