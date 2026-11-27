@@ -382,10 +382,15 @@ export async function createRegistration(input: RegistrationInput) {
         eq(registrations.phone, normalizedPhone),
       ),
     });
-    if (duplicate)
+    if (duplicate) {
+      const entity =
+        duplicate.email.toLowerCase() === normalizedEmail
+          ? "email"
+          : "phone number";
       throw new Error(
-        "An existing registration was found. Please use your confirmation link or contact support.",
+        `An existing registration was found with that ${entity}. Please check again or contact support.`,
       );
+    }
   }
 
   const ticketType = await db.query.ticketTypes.findFirst({
