@@ -329,7 +329,7 @@ export function RegistrationForm({
                         >
                           Reach out
                         </a>{" "}
-                        if you can't find your assembly
+                        if you can't find your assembly.
                       </span>
                     )
                   }
@@ -456,8 +456,8 @@ export function RegistrationForm({
 
               return (
                 <Field
-                  label="Position held"
-                  hint="Search and select all positions that apply to you."
+                  label="Position held (Optional)"
+                  hint="Select all the positions that apply to you."
                   error={errors.positionIds?.message}
                   group
                 >
